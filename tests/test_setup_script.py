@@ -13,23 +13,47 @@ steps still run, which is what matters for the smoke contract.
 """
 from __future__ import annotations
 
+import os
+import socket
 import subprocess
 import sys
 from pathlib import Path
+
+import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SETUP_PY = REPO_ROOT / "scripts" / "setup.py"
 
 
-def _run_setup(*args: str, timeout: int = 60) -> subprocess.CompletedProcess:
-    """Invoke setup.py as a subprocess with the running pytest interpreter."""
+def _run_setup(
+    *args: str,
+    timeout: int = 60,
+    env: "dict[str, str] | None" = None,
+) -> subprocess.CompletedProcess:
+    """Invoke setup.py as a subprocess with the running pytest interpreter.
+
+    ``env`` overrides specific env vars for the subprocess (default: inherit).
+    """
+    full_env = os.environ.copy()
+    if env:
+        full_env.update(env)
     return subprocess.run(
         [sys.executable, str(SETUP_PY), *args],
         capture_output=True,
         text=True,
         timeout=timeout,
         cwd=str(REPO_ROOT),
+        env=full_env,
     )
+
+
+def _network_available(host: str = "huggingface.co", port: int = 443) -> bool:
+    """Quick TCP probe so the WARN-path test self-skips when offline (CI sandbox)."""
+    try:
+        with socket.create_connection((host, port), timeout=3):
+            return True
+    except OSError:
+        return False
 
 
 class TestSetupScriptOfflineFlags:
@@ -119,4 +143,54 @@ class TestSetupDeviceFlag:
         assert "Detected device: cpu" in proc.stdout, (
             f"--device cpu should force CPU in the probe step; "
             f"stdout={proc.stdout!r}"
+        )
+
+
+class TestSetupWarnAndContinue:
+    """The unified setup-script's contract is that a download failure in any
+    one step (e.g., HF repo not yet uploaded — the live default for v0.1.0
+    until the user creates the placeholder repos) WARNs and continues so
+    that the device-probe step and the summary still run.
+
+    Reviewer specifically asked us to verify this path because the placeholder
+    repo IDs ``YairAmar/SE-Probe-{models,data}`` may not be publicly reachable
+    when a fresh user runs ``python scripts/setup.py``.
+    """
+
+    def test_unreachable_hf_ckpt_warns_but_exits_zero(self):
+        # Need to actually reach huggingface.co to confirm the repo doesn't
+        # exist — otherwise we can't distinguish "WARN-and-continue worked"
+        # from "no network at all". Skip cleanly on offline CI.
+        if not _network_available():
+            pytest.skip(
+                "huggingface.co not reachable; skipping HF-WARN integration test"
+            )
+        # Invoke setup with the reverb-ckpt step ENABLED but pointed at a
+        # nonsense repo, while skipping the git-clone step (which would
+        # also need network and would muddy the assertion).
+        proc = _run_setup(
+            "--no-muse-pretrained",
+            "--device", "cpu",
+            env={"SEPROBE_HF_CKPT": "se-probe-tester-nonexistent-org/no-such-repo-xxxx"},
+            timeout=120,  # HF DNS + 404 round-trip
+        )
+        assert proc.returncode == 0, (
+            "setup.py must exit 0 even when the reverb-ckpt download fails — "
+            "WARN-and-continue is the documented contract (Task 3.4 / D18). "
+            f"returncode={proc.returncode}\nstdout={proc.stdout}\nstderr={proc.stderr}"
+        )
+        assert "WARN" in proc.stdout, (
+            f"failed HF download should print a WARN line; stdout={proc.stdout!r}"
+        )
+        # Device probe must still run after the failed step — this is the
+        # whole point of try/except per-step.
+        assert "Detected device: cpu" in proc.stdout, (
+            "device-probe step must still run after a failed HF step; "
+            f"stdout={proc.stdout!r}"
+        )
+        # And the summary must show the failure visibly so users can audit.
+        assert "=== setup summary ===" in proc.stdout, proc.stdout
+        assert "FAIL" in proc.stdout, (
+            "summary should mark the failed step with [FAIL] so the user "
+            f"sees what didn't run; stdout={proc.stdout!r}"
         )
