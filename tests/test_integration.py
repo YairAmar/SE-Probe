@@ -1,11 +1,11 @@
 """
 Integration tests for the diffusion maps pipeline.
 """
+import os
+import tempfile
+
 import numpy as np
 import pandas as pd
-import pytest
-import tempfile
-import os
 
 from se_probe.diffusion_maps import diffusion_map_torch
 

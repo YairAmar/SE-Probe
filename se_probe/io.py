@@ -1,10 +1,11 @@
-import os
 import glob
+import os
+
 import librosa
 import numpy as np
 import scipy.io
 
-from se_probe.consts import SAMPLE_RATE, TEST_SPEAKERS, CKA_RIRS, AIR_TEST_ROOMS
+from se_probe.consts import AIR_TEST_ROOMS, CKA_RIRS, SAMPLE_RATE, TEST_SPEAKERS
 
 __all__ = ["load_clean_wavs", "load_air_rirs", "load_air_test_rirs"]
 

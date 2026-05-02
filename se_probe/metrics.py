@@ -1,11 +1,23 @@
+"""Audio quality metrics (CPU + GPU evaluators).
+
+The ``GPU*Evaluator`` classes depend on optional packages (``torch_stoi``,
+``onnx2torch``, ``speechmos``) that are *not* in the SE-Probe core deps —
+install them yourself if you want fast batched STOI / DNSMOS computation:
+
+    pip install torch_stoi onnx2torch speechmos
+
+Top-level imports here only reference packages declared in
+``pyproject.toml`` so ``from se_probe.metrics import c50`` works on a fresh
+install.
+"""
 import os
+from typing import Dict, Optional, Union
+
+import numpy as np
 import pesq
 import torch
 import torchaudio
-import numpy as np
 from pystoi import stoi
-from typing import Dict, Optional, Union
-from torch_stoi import NegSTOILoss
 
 from se_probe.device import get_device
 
@@ -208,6 +220,8 @@ class GPUSTOIEvaluator:
     """GPU-accelerated STOI evaluator using torch-stoi."""
 
     def __init__(self, sample_rate: int = 16000, device: Optional[Union[str, torch.device]] = None):
+        from torch_stoi import NegSTOILoss
+
         device = get_device(device) if not isinstance(device, torch.device) else device
         self.sample_rate = sample_rate
         self.device = device
@@ -253,8 +267,8 @@ class GPUDNSMOSEvaluator:
     """
 
     def __init__(self, sample_rate: int = 16000, device: Optional[Union[str, torch.device]] = None):
-        from onnx2torch import convert
         import speechmos
+        from onnx2torch import convert
 
         device = get_device(device) if not isinstance(device, torch.device) else device
         self.sample_rate = sample_rate

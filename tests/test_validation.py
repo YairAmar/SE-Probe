@@ -6,12 +6,12 @@ are gated behind the presence of ``results_df/diffusion_maps/diffusion_maps_all.
 and skipped on a fresh clone. Lighter checks run against the always-shipped
 ``tests/fixtures/smoke.parquet`` so ``pytest tests/`` passes out of the box.
 """
-import numpy as np
-import pandas as pd
-import pytest
 import os
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+import pytest
 
 # Path to full results (only present after the full pipeline / `setup --full-data`).
 DIFFUSION_MAPS_PATH = "results_df/diffusion_maps/diffusion_maps_all.parquet"

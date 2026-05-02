@@ -1,14 +1,20 @@
 import json
 import os
-import torch
 from pathlib import Path
 from typing import Optional, Union
+
+import torch
+
 from se_probe.activation_extraction import ActivationsExtractor
 from se_probe.device import get_device
 from se_probe.muse.consts import CHECKPOINT_FILE, CONFIG_FILE
-from se_probe.muse.models.generator import MUSE
 from se_probe.muse.consts import LAYERS as MUSE_LAYERS
-from se_probe.muse.models.pooling import pool_muse_activations, pool_muse_activations_mean, select_first_segment
+from se_probe.muse.models.generator import MUSE
+from se_probe.muse.models.pooling import (
+    pool_muse_activations,
+    pool_muse_activations_mean,
+    select_first_segment,
+)
 
 __all__ = ["load_muse_model", "load_muse_activation_extractor", "load_muse_activation_extractor_reverb"]
 

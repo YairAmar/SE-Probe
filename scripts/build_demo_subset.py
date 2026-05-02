@@ -2,15 +2,22 @@
 """Build the < 50 MB demo data subset shipped under ``results_demo/``.
 
 Reads the full per-model SNR parquets, the epoch-48 reverb parquet, and the
-per-layer diffusion-maps parquet from a local seint-style results directory,
-filters them to a small, evenly-spaced slice, and writes 5 output parquets.
+per-layer diffusion-maps parquet from a local seint-style ``results_df/``
+directory, filters them to a small, evenly-spaced slice, and writes 5 output
+parquets.
 
-Default source: ``~/Desktop/msc/seint/results_df`` (the build-time staging
-location). Override with ``--source-dir``.
+Source path is required — pass ``--source-dir <path>`` or set the
+``SEPROBE_RESULTS_DF`` env var. There is no built-in default (it would leak
+the maintainer's local layout).
+
+Usage:
+    python scripts/build_demo_subset.py --source-dir /path/to/results_df
+    SEPROBE_RESULTS_DF=/path/to/results_df python scripts/build_demo_subset.py
 """
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 from typing import Iterable, List
@@ -24,8 +31,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-DEFAULT_SOURCE = Path.home() / "Desktop/msc/seint/results_df"
-DEFAULT_TARGET = Path(__file__).resolve().parents[1] / "results_demo"
+DEFAULT_TARGET = _REPO_ROOT / "results_demo"
 DEFAULT_BUDGET_MB = 50.0
 
 DEFAULT_SNRS = [-10, 0, 10, 20, 30]
@@ -109,9 +115,12 @@ def _human_bytes(n: int) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-dir", type=Path, default=DEFAULT_SOURCE,
-                        help=f"Source results_df/ (default: {DEFAULT_SOURCE})")
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("--source-dir", type=Path, default=None,
+                        help="Source results_df/ directory (required; overrides $SEPROBE_RESULTS_DF).")
     parser.add_argument("--target-dir", type=Path, default=DEFAULT_TARGET,
                         help=f"Output dir (default: {DEFAULT_TARGET})")
     parser.add_argument("--noise", default=DEFAULT_NOISE,
@@ -123,7 +132,20 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
 
-    src = args.source_dir.expanduser().resolve()
+    source_dir = args.source_dir or (
+        Path(os.environ["SEPROBE_RESULTS_DF"])
+        if "SEPROBE_RESULTS_DF" in os.environ
+        else None
+    )
+    if source_dir is None:
+        print(
+            "ERROR: source results_df/ directory is required.\n"
+            "       Pass --source-dir <path> or set $SEPROBE_RESULTS_DF.",
+            file=sys.stderr,
+        )
+        return 2
+
+    src = source_dir.expanduser().resolve()
     dst = args.target_dir.expanduser().resolve()
     if not src.exists():
         print(f"ERROR: source dir not found: {src}", file=sys.stderr)

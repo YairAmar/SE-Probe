@@ -1,6 +1,7 @@
-import torch
+from typing import Callable, Dict, List, Optional, Tuple, Union
+
 import numpy as np
-from typing import Dict, List, Optional, Tuple, Union, Callable
+import torch
 
 from se_probe.device import get_device
 
@@ -305,5 +306,7 @@ def load_mpsenet_activation_extractor_reverb(device: Optional[Union[str, torch.d
         ActivationsExtractor configured for MPSENet reverb analysis.
     """
     device = get_device(device) if not isinstance(device, torch.device) else device
-    from se_probe.mpsenet.model import load_mpsenet_activation_extractor_reverb as _load_mpsenet_reverb
+    from se_probe.mpsenet.model import (
+        load_mpsenet_activation_extractor_reverb as _load_mpsenet_reverb,
+    )
     return _load_mpsenet_reverb(device=device)

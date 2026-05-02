@@ -4,9 +4,10 @@ Diffusion maps implementation using PyTorch.
 Ported from the old repo's activation_research_utils.py.
 """
 import math
-import torch
-import numpy as np
 from typing import Optional, Tuple, Union
+
+import numpy as np
+import torch
 
 from se_probe.device import get_device
 
