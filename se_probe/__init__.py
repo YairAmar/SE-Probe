@@ -5,6 +5,16 @@ Provides CKA, diffusion maps, and activation-extraction utilities for
 analysing MUSE, MP-SENet, and Demucs.
 """
 
+# Apple Silicon (MPS) backend doesn't implement every PyTorch op (e.g.
+# aten::_linalg_eigh). PyTorch reads PYTORCH_ENABLE_MPS_FALLBACK during
+# interpreter / first-MPS-dispatch initialisation, so it must be set BEFORE
+# any torch import — including any transitively pulled in by submodules
+# below. ``setdefault`` preserves a user override (export=0 to force hard
+# failures).
+import os as _os
+
+_os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+
 from se_probe.activation_extraction import (
     ActivationsExtractor,
     extract_activations_on_audios,
