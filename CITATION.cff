@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use SE-Probe in your research, please cite it as below."
+title: "SE-Probe: Probing representations of deep speech enhancement models"
+authors:
+  - family-names: "Amar"
+    given-names: "Yair"
+  - family-names: "Ivry"
+    given-names: "Amir"
+  - family-names: "Cohen"
+    given-names: "Israel"
+version: "0.1.0"
+date-released: "2026-05-02"
+license: MIT
+repository-code: "https://github.com/YairAmar/SE-Probe"
+keywords:
+  - speech-enhancement
+  - interpretability
+  - probing
+  - CKA
+  - diffusion-maps

@@ -1,3 +1,36 @@
 # Internal scratchpad — plans, mid-run results, ad-hoc notes.
 # Not part of the shipped repo.
 _workspace/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+
+# Pretrained model artefacts (fetched via scripts/setup.py)
+pretrained_models/*.pt
+pretrained_models/muse/g_best
+pretrained_models/*/g_best
+
+# Local dataset roots and full-result staging
+data/*
+!data/README.md
+results_df/
+
+# Audio (allow only the curated samples under docs/audio_samples/)
+*.wav
+!docs/audio_samples/*.wav
+
+# Release staging area (gitignored)
+_workspace/release_artifacts/
+
+# Editor / OS noise
+.DS_Store
+.vscode/
+.idea/
