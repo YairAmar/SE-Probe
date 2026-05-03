@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use SE-Probe in your research, please cite it as below."
+message: "If you use SE-Probe in your research, please cite the paper below."
 title: "SE-Probe: Probing representations of deep speech enhancement models"
 authors:
   - family-names: "Amar"
@@ -8,8 +8,8 @@ authors:
     given-names: "Amir"
   - family-names: "Cohen"
     given-names: "Israel"
-version: "0.1.0"
-date-released: "2026-05-02"
+version: "0.1.2"
+date-released: "2026-05-03"
 license: MIT
 repository-code: "https://github.com/YairAmar/SE-Probe"
 keywords:
@@ -18,3 +18,19 @@ keywords:
   - probing
   - CKA
   - diffusion-maps
+preferred-citation:
+  type: article
+  title: "Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation"
+  authors:
+    - family-names: "Amar"
+      given-names: "Yair"
+    - family-names: "Ivry"
+      given-names: "Amir"
+    - family-names: "Cohen"
+      given-names: "Israel"
+  year: 2026
+  url: "https://arxiv.org/abs/2512.00482"
+  identifiers:
+    - type: other
+      value: "arXiv:2512.00482"
+      description: "arXiv preprint"
