@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "se-probe"
-version = "0.1.0"
+version = "0.1.2"
 description = "SE-Probe: Probing representations of deep speech enhancement models"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
@@ -68,8 +68,9 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/YairAmar/SE-Probe"
-Documentation = "https://github.com/YairAmar/SE-Probe"
+Homepage = "https://yairamar.github.io/SE-Probe/"
+Paper = "https://arxiv.org/abs/2512.00482"
+Documentation = "https://yairamar.github.io/SE-Probe/"
 Repository = "https://github.com/YairAmar/SE-Probe"
 Issues = "https://github.com/YairAmar/SE-Probe/issues"
 

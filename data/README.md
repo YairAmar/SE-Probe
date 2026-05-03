@@ -36,7 +36,7 @@ The full `results_df/` (~3.1 GB of parquets, every model × every SNR × every n
 python scripts/setup.py --full-data
 ```
 
-This downloads from `HF_REPO_DATA` (default `YairAmar/SE-Probe-data`).
+This downloads from `HF_REPO_DATA` (default `yairamr/SE-Probe-data`).
 
 ## Quick sanity check
 

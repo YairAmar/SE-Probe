@@ -46,4 +46,4 @@ First public release accompanying the paper *"Where Does Speech Enhancement Adap
 ### Notes on locked decisions
 - D14 (Git LFS for `results_demo/*.parquet`) was a contingency for the case where the demo-data subset exceeded a comfortable in-tree size. The actual subset totals ~200 KB across five parquets (three per-model SNR tables, one reverb table, one diffusion-maps table), so LFS was not configured for v0.1.0. If a future release expands the demo set, ship `.gitattributes` with `*.parquet filter=lfs diff=lfs merge=lfs -text`.
 
-[Unreleased]: https://github.com/YairAmar/SE-Probe/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/YairAmar/SE-Probe/compare/v0.1.2...HEAD
