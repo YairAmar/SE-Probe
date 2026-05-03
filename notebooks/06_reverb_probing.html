@@ -612,7 +612,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
     <span class="n">ckpt</span> <span class="o">=</span> <span class="n">canonical</span> <span class="k">if</span> <span class="n">canonical</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="n">staging</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ckpt</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-            <span class="s2">&quot;Reverb checkpoint not found. Run `python scripts/setup.py` to fetch the placeholder.&quot;</span>
+            <span class="s2">&quot;Reverb checkpoint not found. Run `python scripts/setup.py` to fetch it from HuggingFace.&quot;</span>
         <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading reverb FT MUSE from: </span><span class="si">{</span><span class="n">ckpt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -630,7 +630,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
     <span class="n">layer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">act_clean</span><span class="p">))</span>
     <span class="n">val</span> <span class="o">=</span> <span class="n">cka</span><span class="p">(</span><span class="n">act_clean</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="n">act_rev</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Live CKA on synthetic reverb clip (</span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Note: numbers are placeholder-grade until the cluster checkpoint replaces this file.&quot;</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SE_PROBE_RUN_INFERENCE not set — skipping live inference. Set it to &#39;1&#39; to enable.&quot;</span><span class="p">)</span>
 </pre></div>
