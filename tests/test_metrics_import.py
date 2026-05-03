@@ -73,7 +73,7 @@ class TestPackageImport:
     def test_se_probe_imports(self):
         sys.modules.pop("se_probe", None)
         pkg = importlib.import_module("se_probe")
-        assert pkg.__version__ == "0.1.1"
+        assert pkg.__version__ == "0.1.2"
 
     def test_public_surface_resolves(self):
         import se_probe
