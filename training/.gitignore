@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+logs/
+wandb/
+data/
+generated_files/
+
+# Only keep the published checkpoint; ignore any new training output
+checkpoints/*
+!checkpoints/config.json
+!checkpoints/g_00051852

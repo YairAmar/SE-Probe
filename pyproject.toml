@@ -89,6 +89,8 @@ extend-exclude = [
     "se_probe/muse/models/",
     "se_probe/mpsenet/",
     "se_probe/demucs/",
+    # Vendored training pipeline (github.com/YairAmar/muse-dereverb-ft).
+    "training/",
 ]
 
 [tool.ruff.lint]
