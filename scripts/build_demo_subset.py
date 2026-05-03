@@ -197,15 +197,15 @@ def main() -> int:
     print(f"  {diff_out.name}: {len(diff_sub):>7} rows  ({_human_bytes(diff_out.stat().st_size)})")
 
     arch_in = src / DIFFUSION_ARCH_FILE
-    if not arch_in.exists():
-        print(f"ERROR: missing diffusion-arch parquet: {arch_in}", file=sys.stderr)
-        return 2
-    arch_df = pd.read_parquet(arch_in)
-    arch_sub = _filter_diffusion_arch(arch_df, DEFAULT_SNRS)
-    arch_out = dst / "diffusion_maps_architecture_demo.parquet"
-    arch_sub.to_parquet(arch_out, index=False)
-    written.append(arch_out)
-    print(f"  {arch_out.name}: {len(arch_sub):>7} rows  ({_human_bytes(arch_out.stat().st_size)})")
+    if arch_in.exists():
+        arch_df = pd.read_parquet(arch_in)
+        arch_sub = _filter_diffusion_arch(arch_df, DEFAULT_SNRS)
+        arch_out = dst / "diffusion_maps_architecture_demo.parquet"
+        arch_sub.to_parquet(arch_out, index=False)
+        written.append(arch_out)
+        print(f"  {arch_out.name}: {len(arch_sub):>7} rows  ({_human_bytes(arch_out.stat().st_size)})")
+    else:
+        print(f"  (skipping arch parquet, source not present: {arch_in.name})")
 
     total = sum(p.stat().st_size for p in written)
     budget = int(args.budget_mb * 1024 * 1024)

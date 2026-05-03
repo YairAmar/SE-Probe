@@ -2,7 +2,7 @@
 
 SE-Probe is a small library plus three frozen-model adapters. The library is plain PyTorch + NumPy + pandas; nothing is locked to a specific GPU or to the cluster the original research ran on. The pipeline is: **load model → register hooks → push (clean, degraded) pairs through it → compute CKA / diffusion distances on the activations → regress against degradation severity → plot**.
 
-## Top-level modules — `se_probe/`
+## Top-level modules, `se_probe/`
 
 ### `cka.py`
 Linear CKA between two batches of activations. The implementation centers features (columns), forms the per-batch cross-covariance `XᵀY` and self-covariances `XᵀX`, `YᵀY`, and combines them into `‖XᵀY‖_F² / (‖XᵀX‖_F · ‖YᵀY‖_F)` averaged across the batch. Inputs may be raw `(B, T, F, H)` or already time-averaged `(B, F, H)`; the function handles both. This is the only similarity metric used in notebooks 02–04.
@@ -11,10 +11,10 @@ Linear CKA between two batches of activations. The implementation centers featur
 Forward-hook layer used to harvest intermediate activations from each frozen SE model. Exports `ActivationsExtractor`, `get_activations()`, `extract_activations_on_audios()`, plus model-specific loaders: `load_muse_activation_extractor`, `load_mpsenet_activation_extractor`, `load_demucs_activation_extractor`, and reverb-tuned variants. Loaders return a model wrapped with hooks already registered on every `target_layer`. All loaders accept a `device` argument; pass `get_device()` to stay device-agnostic.
 
 ### `consts.py`
-Probe-layer constants per architecture, default SNR ladders, sample rate (`16000`), reverb constants (target C50 levels, AIR room splits, RIR counts per utterance), and the dataset path resolvers backed by `SEPROBE_VCTK_DIR`, `SEPROBE_DEMAND_DIR`, `SEPROBE_AIR_RIR_DIR`. Calling `set_paths(...)` programmatically overrides the env vars — tests use this against the smoke fixture.
+Probe-layer constants per architecture, default SNR ladders, sample rate (`16000`), reverb constants (target C50 levels, AIR room splits, RIR counts per utterance), and the dataset path resolvers backed by `SEPROBE_VCTK_DIR`, `SEPROBE_DEMAND_DIR`, `SEPROBE_AIR_RIR_DIR`. Calling `set_paths(...)` programmatically overrides the env vars, tests use this against the smoke fixture.
 
 ### `data_generation.py`
-Audio degradation utilities. `load_demand_noise()` lazily reads and caches DEMAND noise files. `add_noise_at_snr()` mixes a clean utterance with a noise track at a target SNR. `convolve_audio()` applies a room impulse response and `compute_ratio_for_target_c50()` rescales early-vs-late RIR energy to hit a desired C50 — together they generate the controlled-reverb conditions used in notebook 06.
+Audio degradation utilities. `load_demand_noise()` lazily reads and caches DEMAND noise files. `add_noise_at_snr()` mixes a clean utterance with a noise track at a target SNR. `convolve_audio()` applies a room impulse response and `compute_ratio_for_target_c50()` rescales early-vs-late RIR energy to hit a desired C50, together they generate the controlled-reverb conditions used in notebook 06.
 
 ### `diffusion_maps.py`
 PyTorch implementation of diffusion maps. `diffusion_map_torch()` builds a kernel matrix, applies the alpha-normalisation, and returns the leading eigenvectors / eigenvalues either via a full eigendecomposition or LOBPCG for large `N`. Supports `cutoff` (cumulative-energy stopping criterion) or fixed `k`. Honours `get_device()` for CUDA/MPS acceleration on dense kernels.
@@ -34,9 +34,9 @@ Disk helpers for the source corpora: `load_clean_wavs()` walks `$SEPROBE_VCTK_DI
 ### `device.py`
 `get_device(prefer=None)` autodetects CUDA → MPS → CPU and sets `PYTORCH_ENABLE_MPS_FALLBACK=1` automatically when MPS is selected, so unsupported ops fall back to CPU silently. `device_info(device)` returns a one-line human-readable summary used in notebook bootstraps. This module is the only place CUDA/MPS strings should appear; everything downstream takes a `torch.device` argument.
 
-## Model adapters — `se_probe/{muse,mpsenet,demucs}/`
+## Model adapters, `se_probe/{muse,mpsenet,demucs}/`
 
-Each subpackage vendors the upstream model definition and a thin loader compatible with `activation_extraction.py`. Weights are not redistributed — `scripts/setup.py` clones the upstream MUSE repo to retrieve `g_best`, and the reverb fine-tuned MUSE checkpoint is fetched from the SE-Probe HuggingFace model repo. Adapters expose the layer name list that the probe-layer constants in `consts.py` reference.
+Each subpackage vendors the upstream model definition and a thin loader compatible with `activation_extraction.py`. Weights are not redistributed, `scripts/setup.py` clones the upstream MUSE repo to retrieve `g_best`, and the reverb fine-tuned MUSE checkpoint is fetched from the SE-Probe HuggingFace model repo. Adapters expose the layer name list that the probe-layer constants in `consts.py` reference.
 
 ## Data flow
 

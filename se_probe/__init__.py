@@ -43,7 +43,7 @@ from se_probe.diffusion_analysis import (
 from se_probe.diffusion_maps import diffusion_map_torch
 from se_probe.io import load_clean_wavs
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     # CKA
