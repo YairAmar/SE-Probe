@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>05: Diffusion-map distance vs SNR &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
+    <title>05 — Diffusion &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -60,7 +60,7 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05_diffusion_maps';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05_diffusion';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="04: CKA vs PESQ gain (within-group residualised)" href="04_cka_to_pesq.html" />
@@ -167,7 +167,7 @@
 <li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">05: Diffusion-map distance vs SNR</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">05 — Diffusion</a></li>
 </ul>
 
     </div>
@@ -244,7 +244,7 @@
       
       
       
-      <li><a href="https://github.com/YairAmar/SE-Probe/edit/main/./notebooks/05_diffusion_maps.ipynb" target="_blank"
+      <li><a href="https://github.com/YairAmar/SE-Probe/edit/main/./notebooks/05_diffusion.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -261,7 +261,7 @@
       
       
       
-      <li><a href="https://github.com/YairAmar/SE-Probe/issues/new?title=Issue%20on%20page%20%2Fnotebooks/05_diffusion_maps.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/YairAmar/SE-Probe/issues/new?title=Issue%20on%20page%20%2Fnotebooks/05_diffusion.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -291,7 +291,7 @@
       
       
       
-      <li><a href="../_sources/notebooks/05_diffusion_maps.ipynb" target="_blank"
+      <li><a href="../_sources/notebooks/05_diffusion.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -367,7 +367,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>05: Diffusion-map distance vs SNR</h1>
+    <h1>05 — Diffusion</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -377,8 +377,8 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-precomputed-diffusion-map-embeddings">Load precomputed diffusion-map embeddings</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mean-distance-vs-snr-for-the-6-representative-blocks">Mean distance vs SNR for the 6 representative blocks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-1-per-layer-diffusion-distance-vs-snr">Figure 1 — Per-layer diffusion distance vs SNR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level">Figure 2 — Pairwise layer distance per SNR (architecture-level)</a></li>
 </ul>
             </nav>
         </div>
@@ -390,10 +390,14 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="diffusion-map-distance-vs-snr">
-<h1>05: Diffusion-map distance vs SNR<a class="headerlink" href="#diffusion-map-distance-vs-snr" title="Link to this heading">#</a></h1>
-<p><strong>What this shows.</strong> Per-layer diffusion-map embeddings (one point per (layer, SNR, noise)), reduced to a low-dimensional manifold and read out as Euclidean distance from the SNR=30 reference. We then plot mean distance vs SNR for the six representative MUSE blocks and report Spearman ρ — high ρ means the layer’s representation orders monotonically with SNR.</p>
-<p><strong>What to look for.</strong> Encoder blocks have small distance and a clean monotone slope. Latent and decoder layers travel further along the manifold; the refinement block sits between.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="diffusion">
+<h1>05 — Diffusion<a class="headerlink" href="#diffusion" title="Link to this heading">#</a></h1>
+<p><strong>What this shows.</strong> Two complementary views of the diffusion-map manifold:</p>
+<ul class="simple">
+<li><p><strong>Per-layer distance vs SNR</strong> — for the six representative MUSE blocks, the diffusion distance from the SNR=ref reference traces the manifold travel as the input degrades. Spearman ρ pins the per-block monotonicity.</p></li>
+<li><p><strong>Pairwise layer distance per SNR</strong> — for the architecture-level diffusion (blocks rather than per-layer norms), the layer-vs-layer distance matrix at six SNR slices shows how within-architecture geometry tightens at high SNR and spreads at low SNR.</p></li>
+</ul>
+<p><strong>What to look for.</strong> Encoder blocks have small per-layer distance and clean monotone slopes; decoder blocks travel further. The architecture heatmap shows clean block structure at SNR=30 and the boundaries blur as SNR drops.</p>
 <p><strong>Runtime.</strong> &lt;30 s on any device.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -428,9 +432,9 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </div>
-<section id="load-precomputed-diffusion-map-embeddings">
-<h2>Load precomputed diffusion-map embeddings<a class="headerlink" href="#load-precomputed-diffusion-map-embeddings" title="Link to this heading">#</a></h2>
-<p>We use the per-layer table at diffusion time <code class="docutils literal notranslate"><span class="pre">t=0.5</span></code>. Helpers <code class="docutils literal notranslate"><span class="pre">create_psi_column</span></code> and <code class="docutils literal notranslate"><span class="pre">compute_distance_from_ref_snr</span></code> collapse the <code class="docutils literal notranslate"><span class="pre">psi_*</span></code> columns into a single <code class="docutils literal notranslate"><span class="pre">psi</span></code> vector per row and compute Euclidean distance to the SNR=30 reference.</p>
+<section id="figure-1-per-layer-diffusion-distance-vs-snr">
+<h2>Figure 1 — Per-layer diffusion distance vs SNR<a class="headerlink" href="#figure-1-per-layer-diffusion-distance-vs-snr" title="Link to this heading">#</a></h2>
+<p>We load the per-layer diffusion-map table at diffusion time <code class="docutils literal notranslate"><span class="pre">t=0.5</span></code>. Helpers <code class="docutils literal notranslate"><span class="pre">create_psi_column</span></code> and <code class="docutils literal notranslate"><span class="pre">compute_distance_from_ref_snr</span></code> collapse the <code class="docutils literal notranslate"><span class="pre">psi_*</span></code> columns into a single <code class="docutils literal notranslate"><span class="pre">psi</span></code> vector per row and compute Euclidean distance to the SNR=ref reference.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.diffusion_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -463,9 +467,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </div>
-</section>
-<section id="mean-distance-vs-snr-for-the-6-representative-blocks">
-<h2>Mean distance vs SNR for the 6 representative blocks<a class="headerlink" href="#mean-distance-vs-snr-for-the-6-representative-blocks" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -600,12 +601,116 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">):]:</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Diffusion-map distance vs SNR (MUSE, representative blocks)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <img alt="../_images/61f55a0a0d5edd65e2041fd12471a8689dc3abfebe46735896f5b2d1906d61da.png" src="../_images/61f55a0a0d5edd65e2041fd12471a8689dc3abfebe46735896f5b2d1906d61da.png" />
+</div>
+</div>
+</section>
+<section id="figure-2-pairwise-layer-distance-per-snr-architecture-level">
+<h2>Figure 2 — Pairwise layer distance per SNR (architecture-level)<a class="headerlink" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level" title="Link to this heading">#</a></h2>
+<p>The second view is computed at the architecture level (blocks rather than per-layer norms). We load the diffusion-map table at <code class="docutils literal notranslate"><span class="pre">t=5</span></code> and compute the pairwise Euclidean distance between layer centroids in the diffusion-coordinate space, then plot the per-SNR distance matrix. Layers are reordered into architectural order (Enc-L1, Enc-L2, Dec-L2, Dec-L1).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.diffusion_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BLOCK_ORDER</span><span class="p">,</span>
+    <span class="n">compute_layer_distance_matrix</span><span class="p">,</span>
+    <span class="n">get_layer_order_key</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">arch_full</span> <span class="o">=</span> <span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">&quot;diffusion_maps/diffusion_maps_architecture_t5.parquet&quot;</span>
+<span class="n">arch_demo</span> <span class="o">=</span> <span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">&quot;diffusion_maps_architecture_demo.parquet&quot;</span>
+<span class="n">arch_path</span> <span class="o">=</span> <span class="n">arch_full</span> <span class="k">if</span> <span class="n">arch_full</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="n">arch_demo</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">arch_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Architecture-level diffusion parquet not found. Looked at:</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">arch_full</span><span class="si">}</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">arch_demo</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;Run `python scripts/build_demo_subset.py` to populate results_demo/.&quot;</span>
+    <span class="p">)</span>
+<span class="n">arch_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">arch_path</span><span class="p">)</span>
+<span class="n">arch_df</span> <span class="o">=</span> <span class="n">create_psi_column</span><span class="p">(</span><span class="n">arch_df</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">arch_df</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> architecture-level rows; SNRs = </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">arch_df</span><span class="p">[</span><span class="s1">&#39;snr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loaded 80 architecture-level rows; SNRs = [np.float64(-10.0), np.float64(0.0), np.float64(10.0), np.float64(20.0), np.float64(30.0)]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">layer_distance_matrices</span> <span class="o">=</span> <span class="n">compute_layer_distance_matrix</span><span class="p">(</span><span class="n">arch_df</span><span class="p">)</span>
+
+<span class="n">snr_values</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">arch_df</span><span class="p">[</span><span class="s2">&quot;snr&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">snr_values</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">6</span><span class="p">:</span>
+    <span class="n">snr_values</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">snr_values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">snr_values</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">snr_values</span><span class="p">)</span><span class="o">//</span><span class="mi">4</span><span class="p">],</span>
+                             <span class="n">snr_values</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">snr_values</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">],</span> <span class="n">snr_values</span><span class="p">[</span><span class="mi">3</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">snr_values</span><span class="p">)</span><span class="o">//</span><span class="mi">4</span><span class="p">],</span>
+                             <span class="n">snr_values</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">snr_values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]))</span>
+
+<span class="n">first_snr</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">layer_distance_matrices</span><span class="p">))</span>
+<span class="n">layers</span> <span class="o">=</span> <span class="n">layer_distance_matrices</span><span class="p">[</span><span class="n">first_snr</span><span class="p">][</span><span class="s2">&quot;layers&quot;</span><span class="p">]</span>
+<span class="n">encoder_layers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">L</span> <span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="n">layers</span> <span class="k">if</span> <span class="s2">&quot;encoder&quot;</span> <span class="ow">in</span> <span class="n">L</span><span class="o">.</span><span class="n">lower</span><span class="p">()])</span>
+<span class="n">decoder_l2</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">L</span> <span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="n">layers</span> <span class="k">if</span> <span class="s2">&quot;decoder_level2&quot;</span> <span class="ow">in</span> <span class="n">L</span><span class="o">.</span><span class="n">lower</span><span class="p">()])</span>
+<span class="n">decoder_l1</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">L</span> <span class="k">for</span> <span class="n">L</span> <span class="ow">in</span> <span class="n">layers</span> <span class="k">if</span> <span class="s2">&quot;decoder_level1&quot;</span> <span class="ow">in</span> <span class="n">L</span><span class="o">.</span><span class="n">lower</span><span class="p">()])</span>
+<span class="n">all_layers</span> <span class="o">=</span> <span class="n">encoder_layers</span> <span class="o">+</span> <span class="n">decoder_l2</span> <span class="o">+</span> <span class="n">decoder_l1</span>
+<span class="n">block_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_layers</span><span class="p">)</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">BLOCK_ORDER</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.5</span><span class="p">,</span> <span class="mf">5.4</span><span class="p">),</span>
+                          <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;wspace&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;hspace&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">})</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">snr_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">snr_values</span><span class="p">[:</span><span class="mi">6</span><span class="p">]):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">snr_val</span> <span class="ow">in</span> <span class="n">layer_distance_matrices</span><span class="p">:</span>
+        <span class="n">dist_mat</span> <span class="o">=</span> <span class="n">layer_distance_matrices</span><span class="p">[</span><span class="n">snr_val</span><span class="p">][</span><span class="s2">&quot;matrix&quot;</span><span class="p">]</span>
+        <span class="n">layer_list</span> <span class="o">=</span> <span class="n">layer_distance_matrices</span><span class="p">[</span><span class="n">snr_val</span><span class="p">][</span><span class="s2">&quot;layers&quot;</span><span class="p">]</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">layer_list</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">get_layer_order_key</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">new_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">dist_mat</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">new_idx</span><span class="p">,</span> <span class="n">new_idx</span><span class="p">)]</span>
+        <span class="n">dmin</span><span class="p">,</span> <span class="n">dmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">mat</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+        <span class="n">mat_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">mat</span> <span class="o">-</span> <span class="n">dmin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">dmax</span> <span class="o">-</span> <span class="n">dmin</span><span class="p">)</span> <span class="k">if</span> <span class="n">dmax</span> <span class="o">&gt;</span> <span class="n">dmin</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mat_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">all_layers</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_layers</span><span class="p">)))</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mat_norm</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SNR = </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">snr_val</span><span class="p">)</span><span class="si">}</span><span class="s2"> dB&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">BLOCK_ORDER</span><span class="p">)):</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">block_size</span> <span class="o">-</span> <span class="mf">0.5</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+
+    <span class="n">tick_pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="o">*</span> <span class="n">block_size</span> <span class="o">+</span> <span class="n">block_size</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">BLOCK_ORDER</span><span class="p">))]</span>
+    <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">col</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">tick_pos</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">BLOCK_ORDER</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+    <span class="k">if</span> <span class="n">row</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">tick_pos</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">BLOCK_ORDER</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">snr_values</span><span class="p">[:</span><span class="mi">6</span><span class="p">]):]:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">&quot;Pairwise layer distance per SNR (architecture-level diffusion)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_2294/538993602.py:59: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  plt.tight_layout()
+</pre></div>
+</div>
+<img alt="../_images/8bf56e97c9ce70d2c41448c68194e5d19d1705c492d2c8c40174a8068c910d87.png" src="../_images/8bf56e97c9ce70d2c41448c68194e5d19d1705c492d2c8c40174a8068c910d87.png" />
 </div>
 </div>
 </section>
@@ -668,8 +773,8 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-precomputed-diffusion-map-embeddings">Load precomputed diffusion-map embeddings</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mean-distance-vs-snr-for-the-6-representative-blocks">Mean distance vs SNR for the 6 representative blocks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-1-per-layer-diffusion-distance-vs-snr">Figure 1 — Per-layer diffusion distance vs SNR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level">Figure 2 — Pairwise layer distance per SNR (architecture-level)</a></li>
 </ul>
   </nav></div>
 
