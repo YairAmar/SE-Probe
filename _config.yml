@@ -1,7 +1,7 @@
 # SE-Probe — Jupyter Book configuration
 # See https://jupyterbook.org/en/stable/customize/config.html for the full schema.
 
-title: "SE-Probe — Where Does Speech Enhancement Adapt?"
+title: "SE-Probe: Where Does Speech Enhancement Adapt?"
 author: "Yair Amar, Amir Ivry, Israel Cohen"
 copyright: "2026"
 logo: ""
