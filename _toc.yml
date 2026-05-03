@@ -6,4 +6,4 @@ chapters:
   - file: notebooks/06_reverb_probing
   - file: notebooks/03_cross_architectures
   - file: notebooks/04_cka_to_pesq
-  - file: notebooks/05_diffusion_maps
+  - file: notebooks/05_diffusion

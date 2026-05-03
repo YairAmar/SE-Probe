@@ -45,6 +45,7 @@ SNR_FILES = {
 }
 REVERB_FILE = "reverb/cka_reverb_muse_epoch_48.parquet"
 DIFFUSION_FILE = "diffusion_maps/diffusion_maps_per_layer_t0.5.parquet"
+DIFFUSION_ARCH_FILE = "diffusion_maps/diffusion_maps_architecture_t5.parquet"
 
 
 def _filter_snr(df: pd.DataFrame, snrs: Iterable[int], noise: str, utts: int, seed: int) -> pd.DataFrame:
@@ -82,6 +83,13 @@ def _filter_diffusion(df: pd.DataFrame, snrs: Iterable[int], noise: str) -> pd.D
         & df["snr"].isin(list(snrs))
         & (df["noise_name"] == noise)
     ].copy()
+
+
+def _filter_diffusion_arch(df: pd.DataFrame, snrs: Iterable[int]) -> pd.DataFrame:
+    """Subset architecture-level diffusion maps to demo SNRs. No noise column
+    in this parquet — the architecture-level diffusion is computed across
+    noise types."""
+    return df[df["snr"].isin([float(s) for s in snrs])].copy()
 
 
 def _filter_reverb(df: pd.DataFrame, utts: int, seed: int) -> pd.DataFrame:
@@ -187,6 +195,17 @@ def main() -> int:
     diff_sub.to_parquet(diff_out, index=False)
     written.append(diff_out)
     print(f"  {diff_out.name}: {len(diff_sub):>7} rows  ({_human_bytes(diff_out.stat().st_size)})")
+
+    arch_in = src / DIFFUSION_ARCH_FILE
+    if not arch_in.exists():
+        print(f"ERROR: missing diffusion-arch parquet: {arch_in}", file=sys.stderr)
+        return 2
+    arch_df = pd.read_parquet(arch_in)
+    arch_sub = _filter_diffusion_arch(arch_df, DEFAULT_SNRS)
+    arch_out = dst / "diffusion_maps_architecture_demo.parquet"
+    arch_sub.to_parquet(arch_out, index=False)
+    written.append(arch_out)
+    print(f"  {arch_out.name}: {len(arch_sub):>7} rows  ({_human_bytes(arch_out.stat().st_size)})")
 
     total = sum(p.stat().st_size for p in written)
     budget = int(args.budget_mb * 1024 * 1024)
