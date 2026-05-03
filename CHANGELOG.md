@@ -2,6 +2,12 @@
 
 All notable changes to SE-Probe are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to semantic versioning.
 
+## v0.1.1 — Hosted book (2026-05-03)
+
+### Added
+- Jupyter Book hosted at <https://yairamar.github.io/SE-Probe/>, deployed automatically from `main` via GitHub Actions (`.github/workflows/deploy-book.yml`). The book renders the six notebooks in chapter order from the in-tree `results_demo/` parquets; inference cells stay gated by `SE_PROBE_RUN_INFERENCE` and are skipped on CI.
+- `[project.optional-dependencies].docs` extra (`jupyter-book>=1.0,<2`, `sphinx-copybutton`, `sphinx-design`) so `pip install -e .[docs]` is enough to rebuild the book locally.
+
 ## v0.1.0 — Initial public release (2026-05-02)
 
 First public release accompanying the paper *"Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation"*.
@@ -30,4 +36,4 @@ First public release accompanying the paper *"Where Does Speech Enhancement Adap
 ### Notes on locked decisions
 - D14 (Git LFS for `results_demo/*.parquet`) was a contingency for the case where the demo-data subset exceeded a comfortable in-tree size. The actual subset totals ~200 KB across five parquets (three per-model SNR tables, one reverb table, one diffusion-maps table), so LFS was not configured for v0.1.0. If a future release expands the demo set, ship `.gitattributes` with `*.parquet filter=lfs diff=lfs merge=lfs -text`.
 
-[Unreleased]: https://github.com/YairAmar/SE-Probe/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/YairAmar/SE-Probe/compare/v0.1.1...HEAD

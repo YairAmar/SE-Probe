@@ -1,5 +1,7 @@
 # SE-Probe
 
+📖 **Read the book:** <https://yairamar.github.io/SE-Probe/>
+
 > Probing internal representations of deep speech enhancement models under controlled noise and reverberation.
 
 SE-Probe is the public companion code for *"Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation"* (Amar, Ivry, Cohen, 2026). It computes layer-wise CKA, diffusion maps, and PESQ/STOI correlations across MUSE, MP-SENet, and Demucs, and ships six notebooks that reproduce the poster figures from a 50 MB demo subset.

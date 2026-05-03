@@ -61,6 +61,11 @@ dev = [
     "nbstripout>=0.6.0",
     "pre-commit>=3.0.0",
 ]
+docs = [
+    "jupyter-book>=1.0,<2",
+    "sphinx-copybutton",
+    "sphinx-design",
+]
 
 [project.urls]
 Homepage = "https://github.com/YairAmar/SE-Probe"

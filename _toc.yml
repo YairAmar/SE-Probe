@@ -1,0 +1,9 @@
+format: jb-book
+root: intro
+chapters:
+  - file: notebooks/01_pipeline_overview
+  - file: notebooks/02_cka_per_layer
+  - file: notebooks/03_cross_architectures
+  - file: notebooks/04_cka_to_pesq
+  - file: notebooks/05_diffusion_maps
+  - file: notebooks/06_reverb_probing

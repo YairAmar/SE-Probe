@@ -60,3 +60,14 @@ RIR  ───────┘                                                │
 ```
 
 The expensive step is activation extraction. Once `results_df/` (or `results_demo/`) is on disk, every analysis notebook is a few-second pandas / matplotlib operation.
+
+## Building the book locally
+
+The notebooks are also published as a Jupyter Book at <https://yairamar.github.io/SE-Probe/>. To rebuild it locally:
+
+```bash
+pip install -e .[docs]
+jupyter-book build .
+```
+
+Output lands in `_build/html/index.html`. The first build executes every notebook end-to-end against `results_demo/` and caches the results under `_build/.jupyter_cache/`; subsequent builds reuse the cache and finish in well under a minute. The CI deploy workflow at `.github/workflows/deploy-book.yml` runs the same command on every push to `main` and publishes `_build/html` to the `gh-pages` branch via `peaceiris/actions-gh-pages`. `SE_PROBE_RUN_INFERENCE` is intentionally left unset during the build, so notebooks 01 and 06 render their figure-from-parquet branches and skip the model-inference cells.

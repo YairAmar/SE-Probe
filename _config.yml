@@ -1,0 +1,57 @@
+# SE-Probe — Jupyter Book configuration
+# See https://jupyterbook.org/en/stable/customize/config.html for the full schema.
+
+title: "SE-Probe — Where Does Speech Enhancement Adapt?"
+author: "Yair Amar, Amir Ivry, Israel Cohen"
+copyright: "2026"
+logo: ""
+
+only_build_toc_files: true
+
+exclude_patterns:
+  - "_build"
+  - "_workspace"
+  - ".venv*"
+  - ".pytest_cache"
+  - ".ruff_cache"
+  - ".github"
+  - "se_probe"
+  - "tests"
+  - "scripts"
+  - "data"
+  - "docs"
+  - "pretrained_models"
+  - "results_demo"
+  - "**.ipynb_checkpoints"
+  - ".DS_Store"
+  - "Thumbs.db"
+  - "README.md"
+  - "CHANGELOG.md"
+
+execute:
+  execute_notebooks: cache
+  timeout: 600
+  allow_errors: false
+
+repository:
+  url: https://github.com/YairAmar/SE-Probe
+  branch: main
+  path_to_book: .
+
+html:
+  use_repository_button: true
+  use_issues_button: true
+  use_edit_page_button: true
+  home_page_in_navbar: true
+
+sphinx:
+  extra_extensions:
+    - sphinx_copybutton
+    - sphinx_design
+
+parse:
+  myst_enable_extensions:
+    - dollarmath
+    - amsmath
+    - deflist
+    - colon_fence

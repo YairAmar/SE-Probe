@@ -34,3 +34,6 @@ _workspace/release_artifacts/
 .DS_Store
 .vscode/
 .idea/
+
+# Jupyter Book build output
+_build/
