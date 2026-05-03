@@ -5,7 +5,7 @@ Run this **after** ``pip install -e .`` to fetch the artefacts the demo
 notebooks need:
 
 1. Reverb-FT MUSE checkpoint from HuggingFace Hub
-   (default repo: ``YairAmar/SE-Probe-models``; override via the
+   (default repo: ``yairamr/SE-Probe-models``; override via the
    ``SEPROBE_HF_CKPT`` env var). Skip with ``--no-reverb-ckpt``.
 
 2. Upstream noise-only MUSE pretrained (``g_best`` + ``config.json``) from
@@ -13,7 +13,7 @@ notebooks need:
    discarded after copying the two files. Skip with ``--no-muse-pretrained``.
 
 3. (Optional, ``--full-data``) Full HuggingFace dataset snapshot
-   (default repo: ``YairAmar/SE-Probe-data``; override via
+   (default repo: ``yairamr/SE-Probe-data``; override via
    ``SEPROBE_HF_DATA``). ~3 GB.
 
 4. Device probe via :mod:`se_probe.device`.
@@ -39,8 +39,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 PRETRAINED_DIR = REPO_ROOT / "pretrained_models" / "muse"
 RESULTS_FULL_DIR = REPO_ROOT / "results_df"
 
-DEFAULT_HF_CKPT = "YairAmar/SE-Probe-models"
-DEFAULT_HF_DATA = "YairAmar/SE-Probe-data"
+DEFAULT_HF_CKPT = "yairamr/SE-Probe-models"
+DEFAULT_HF_DATA = "yairamr/SE-Probe-data"
 DEFAULT_HF_CKPT_FILE = "muse_reverb_e48.pt"
 UPSTREAM_MUSE_REPO = "https://github.com/huaidanquede/MUSE-Speech-Enhancement"
 
