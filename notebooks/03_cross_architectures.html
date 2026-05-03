@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>03 — Cross-architecture comparison &#8212; SE-Probe — Where Does Speech Enhancement Adapt?</title>
+    <title>03: Cross-architecture comparison &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -63,8 +63,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/03_cross_architectures';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="04 — CKA vs PESQ gain (within-group residualised)" href="04_cka_to_pesq.html" />
-    <link rel="prev" title="02 — Per-layer CKA, by SNR" href="02_cka_per_layer.html" />
+    <link rel="next" title="04: CKA vs PESQ gain (within-group residualised)" href="04_cka_to_pesq.html" />
+    <link rel="prev" title="06: Reverb probing (C50 sensitivity)" href="06_reverb_probing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -142,7 +142,7 @@
   
   
   
-    <p class="title logo__title">SE-Probe — Where Does Speech Enhancement Adapt?</p>
+    <p class="title logo__title">SE-Probe: Where Does Speech Enhancement Adapt?</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -158,17 +158,17 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    SE-Probe — Where Does Speech Enhancement Adapt?
+                    SE-Probe: Where Does Speech Enhancement Adapt?
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01 — Pipeline overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02 — Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">03 — Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04 — CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05_diffusion_maps.html">05 — Diffusion-map distance vs SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06 — Reverb probing (C50 sensitivity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01: Pipeline overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02: Per-layer CKA, by SNR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">03: Cross-architecture comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_diffusion_maps.html">05: Diffusion-map distance vs SNR</a></li>
 </ul>
 
     </div>
@@ -368,7 +368,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>03 — Cross-architecture comparison</h1>
+    <h1>03: Cross-architecture comparison</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -393,7 +393,7 @@
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="cross-architecture-comparison">
-<h1>03 — Cross-architecture comparison<a class="headerlink" href="#cross-architecture-comparison" title="Link to this heading">#</a></h1>
+<h1>03: Cross-architecture comparison<a class="headerlink" href="#cross-architecture-comparison" title="Link to this heading">#</a></h1>
 <p><strong>What this shows.</strong> Per-layer linear fit of CKA vs SNR for MUSE, MP-SENet, and Demucs, plotted as <strong>slope vs intercept</strong>. Slope is <em>adaptivity</em> (how much CKA changes per dB), intercept is <em>robustness</em> (CKA at 0 dB). This is the qualitative shape of Fig. 5 in the poster.</p>
 <p><strong>What to look for.</strong> Each architecture forms its own cluster with a negative slope-intercept correlation: the more robust a layer, the less adaptive — and vice versa. Demucs sits at the highly-adaptive / lowly-robust corner; MUSE has the widest spread; MP-SENet is between.</p>
 <p><strong>Runtime.</strong> &lt;30 s on any device.</p>
@@ -644,12 +644,12 @@ Demucs: 2,000 rows, 40 probe layers
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="02_cka_per_layer.html"
+       href="06_reverb_probing.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">02 — Per-layer CKA, by SNR</p>
+        <p class="prev-next-title">06: Reverb probing (C50 sensitivity)</p>
       </div>
     </a>
     <a class="right-next"
@@ -657,7 +657,7 @@ Demucs: 2,000 rows, 40 probe layers
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">04 — CKA vs PESQ gain (within-group residualised)</p>
+        <p class="prev-next-title">04: CKA vs PESQ gain (within-group residualised)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

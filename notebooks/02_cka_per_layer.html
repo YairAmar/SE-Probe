@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>02 — Per-layer CKA, by SNR &#8212; SE-Probe — Where Does Speech Enhancement Adapt?</title>
+    <title>02: Per-layer CKA, by SNR &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -63,8 +63,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/02_cka_per_layer';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="03 — Cross-architecture comparison" href="03_cross_architectures.html" />
-    <link rel="prev" title="01 — Pipeline overview" href="01_pipeline_overview.html" />
+    <link rel="next" title="06: Reverb probing (C50 sensitivity)" href="06_reverb_probing.html" />
+    <link rel="prev" title="01: Pipeline overview" href="01_pipeline_overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -142,7 +142,7 @@
   
   
   
-    <p class="title logo__title">SE-Probe — Where Does Speech Enhancement Adapt?</p>
+    <p class="title logo__title">SE-Probe: Where Does Speech Enhancement Adapt?</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -158,17 +158,17 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    SE-Probe — Where Does Speech Enhancement Adapt?
+                    SE-Probe: Where Does Speech Enhancement Adapt?
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01 — Pipeline overview</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">02 — Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03 — Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04 — CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05_diffusion_maps.html">05 — Diffusion-map distance vs SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06 — Reverb probing (C50 sensitivity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01: Pipeline overview</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">02: Per-layer CKA, by SNR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_diffusion_maps.html">05: Diffusion-map distance vs SNR</a></li>
 </ul>
 
     </div>
@@ -368,7 +368,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>02 — Per-layer CKA, by SNR</h1>
+    <h1>02: Per-layer CKA, by SNR</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -380,7 +380,7 @@
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-cka-vs-snr-table">Load MUSE CKA-vs-SNR table</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap-layer-x-snr">Heatmap: layer x SNR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-snr-sensitivity-regression-slope-95-ci">Per-layer SNR sensitivity (regression slope + 95% CI)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-snr-sensitivity-regression-slope">Per-layer SNR sensitivity (regression slope)</a></li>
 </ul>
             </nav>
         </div>
@@ -393,10 +393,10 @@
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="per-layer-cka-by-snr">
-<h1>02 — Per-layer CKA, by SNR<a class="headerlink" href="#per-layer-cka-by-snr" title="Link to this heading">#</a></h1>
-<p><strong>What this shows.</strong> Two views of where MUSE adapts in its layer stack: a layer x SNR heatmap of mean CKA, and a per-layer SNR-sensitivity profile (linear regression slope of CKA vs SNR with bootstrapped 95% CI).</p>
+<h1>02: Per-layer CKA, by SNR<a class="headerlink" href="#per-layer-cka-by-snr" title="Link to this heading">#</a></h1>
+<p><strong>What this shows.</strong> Two views of where MUSE adapts in its layer stack: a layer x SNR heatmap of mean CKA, and a per-layer SNR-sensitivity profile (linear regression slope of CKA vs SNR).</p>
 <p><strong>What to look for.</strong> Encoder-1/2 stay near 1.0 across all SNRs (low slope, low sensitivity). Latent and decoder layers drop with worsening SNR (negative slope, high sensitivity). The refinement block partly recovers — that’s the qualitative signature reproduced in the paper.</p>
-<p><strong>Runtime.</strong> &lt;30 s on any device (pandas + a small bootstrap).</p>
+<p><strong>Runtime.</strong> &lt;30 s on any device.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -490,28 +490,13 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </section>
-<section id="per-layer-snr-sensitivity-regression-slope-95-ci">
-<h2>Per-layer SNR sensitivity (regression slope + 95% CI)<a class="headerlink" href="#per-layer-snr-sensitivity-regression-slope-95-ci" title="Link to this heading">#</a></h2>
-<p>For each layer we regress mean CKA on SNR and bootstrap a 95% CI for the slope. Layers with slope near 0 are robust to SNR; large positive slopes mark layers where representations track the input degradation.</p>
+<section id="per-layer-snr-sensitivity-regression-slope">
+<h2>Per-layer SNR sensitivity (regression slope)<a class="headerlink" href="#per-layer-snr-sensitivity-regression-slope" title="Link to this heading">#</a></h2>
+<p>For each layer we regress mean CKA on SNR. Layers with slope near 0 are robust to SNR; large positive slopes mark layers where representations track the input degradation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.linear_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearRegression</span>
 
-
-<span class="k">def</span><span class="w"> </span><span class="nf">bootstrap_slope_ci</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">n_boot</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ci</span><span class="o">=</span><span class="mi">95</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    <span class="n">slopes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_boot</span><span class="p">)</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_boot</span><span class="p">):</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">xs</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">slopes</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">xs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">ys</span><span class="p">)</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">slopes</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-    <span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">slopes</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">ci</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span><span class="n">slopes</span><span class="p">,</span> <span class="mi">100</span> <span class="o">-</span> <span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">ci</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span>
 
 <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">norm1_layers</span><span class="p">:</span>
@@ -520,9 +505,8 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">continue</span>
     <span class="n">reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
-    <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">bootstrap_slope_ci</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;layer&quot;</span><span class="p">:</span> <span class="n">layer</span><span class="p">,</span> <span class="s2">&quot;slope&quot;</span><span class="p">:</span> <span class="n">reg</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;intercept&quot;</span><span class="p">:</span> <span class="n">reg</span><span class="o">.</span><span class="n">intercept_</span><span class="p">,</span>
-                  <span class="s2">&quot;r2&quot;</span><span class="p">:</span> <span class="n">reg</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span> <span class="s2">&quot;ci_lo&quot;</span><span class="p">:</span> <span class="n">lo</span><span class="p">,</span> <span class="s2">&quot;ci_hi&quot;</span><span class="p">:</span> <span class="n">hi</span><span class="p">})</span>
+                  <span class="s2">&quot;r2&quot;</span><span class="p">:</span> <span class="n">reg</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="p">)})</span>
 <span class="n">sens</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;layers fit: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sens</span><span class="p">)</span><span class="si">}</span><span class="s2"> | mean R²: </span><span class="si">{</span><span class="n">sens</span><span class="p">[</span><span class="s1">&#39;r2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">sens</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -555,8 +539,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <th>slope</th>
       <th>intercept</th>
       <th>r2</th>
-      <th>ci_lo</th>
-      <th>ci_hi</th>
     </tr>
   </thead>
   <tbody>
@@ -566,8 +548,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <td>0.000047</td>
       <td>0.997719</td>
       <td>0.907619</td>
-      <td>0.000016</td>
-      <td>0.000073</td>
     </tr>
     <tr>
       <th>1</th>
@@ -575,8 +555,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <td>0.002861</td>
       <td>0.908020</td>
       <td>0.982802</td>
-      <td>0.002355</td>
-      <td>0.003609</td>
     </tr>
     <tr>
       <th>2</th>
@@ -584,8 +562,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <td>0.008459</td>
       <td>0.736349</td>
       <td>0.989695</td>
-      <td>0.007590</td>
-      <td>0.010225</td>
     </tr>
     <tr>
       <th>3</th>
@@ -593,8 +569,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <td>0.009767</td>
       <td>0.690371</td>
       <td>0.992276</td>
-      <td>0.008811</td>
-      <td>0.011525</td>
     </tr>
     <tr>
       <th>4</th>
@@ -602,8 +576,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <td>0.005241</td>
       <td>0.843335</td>
       <td>0.977763</td>
-      <td>0.003706</td>
-      <td>0.006395</td>
     </tr>
   </tbody>
 </table>
@@ -614,8 +586,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">))</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sens</span><span class="p">))</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sens</span><span class="p">[</span><span class="s2">&quot;slope&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">MODEL_COLORS</span><span class="p">[</span><span class="s2">&quot;muse&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;slope&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sens</span><span class="p">[</span><span class="s2">&quot;ci_lo&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">sens</span><span class="p">[</span><span class="s2">&quot;ci_hi&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-                <span class="n">color</span><span class="o">=</span><span class="n">MODEL_COLORS</span><span class="p">[</span><span class="s2">&quot;muse&quot;</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;95% CI&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Block&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;d CKA / d SNR&quot;</span><span class="p">)</span>
@@ -624,13 +594,12 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">tick_labels</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sens</span><span class="p">),</span> <span class="n">block_size</span><span class="p">):</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">i</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/be691aa94328712db60f0d292275ce6bec7425005140ba387e8038d5cb68216f.png" src="../_images/be691aa94328712db60f0d292275ce6bec7425005140ba387e8038d5cb68216f.png" />
+<img alt="../_images/3bdaadc87f0731f928d1a48ebcaa36696af5353cc6c02730855de62290cce523.png" src="../_images/3bdaadc87f0731f928d1a48ebcaa36696af5353cc6c02730855de62290cce523.png" />
 </div>
 </div>
 </section>
@@ -672,15 +641,15 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">01 — Pipeline overview</p>
+        <p class="prev-next-title">01: Pipeline overview</p>
       </div>
     </a>
     <a class="right-next"
-       href="03_cross_architectures.html"
+       href="06_reverb_probing.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">03 — Cross-architecture comparison</p>
+        <p class="prev-next-title">06: Reverb probing (C50 sensitivity)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -704,7 +673,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-cka-vs-snr-table">Load MUSE CKA-vs-SNR table</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap-layer-x-snr">Heatmap: layer x SNR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-snr-sensitivity-regression-slope-95-ci">Per-layer SNR sensitivity (regression slope + 95% CI)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-snr-sensitivity-regression-slope">Per-layer SNR sensitivity (regression slope)</a></li>
 </ul>
   </nav></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>06 — Reverb probing (C50 sensitivity) &#8212; SE-Probe — Where Does Speech Enhancement Adapt?</title>
+    <title>06: Reverb probing (C50 sensitivity) &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -63,7 +63,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/06_reverb_probing';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="05 — Diffusion-map distance vs SNR" href="05_diffusion_maps.html" />
+    <link rel="next" title="03: Cross-architecture comparison" href="03_cross_architectures.html" />
+    <link rel="prev" title="02: Per-layer CKA, by SNR" href="02_cka_per_layer.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -141,7 +142,7 @@
   
   
   
-    <p class="title logo__title">SE-Probe — Where Does Speech Enhancement Adapt?</p>
+    <p class="title logo__title">SE-Probe: Where Does Speech Enhancement Adapt?</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -157,17 +158,17 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    SE-Probe — Where Does Speech Enhancement Adapt?
+                    SE-Probe: Where Does Speech Enhancement Adapt?
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01 — Pipeline overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02 — Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03 — Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04 — CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05_diffusion_maps.html">05 — Diffusion-map distance vs SNR</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">06 — Reverb probing (C50 sensitivity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01: Pipeline overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02: Per-layer CKA, by SNR</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">06: Reverb probing (C50 sensitivity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_diffusion_maps.html">05: Diffusion-map distance vs SNR</a></li>
 </ul>
 
     </div>
@@ -367,7 +368,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>06 — Reverb probing (C50 sensitivity)</h1>
+    <h1>06: Reverb probing (C50 sensitivity)</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -392,7 +393,7 @@
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="reverb-probing-c50-sensitivity">
-<h1>06 — Reverb probing (C50 sensitivity)<a class="headerlink" href="#reverb-probing-c50-sensitivity" title="Link to this heading">#</a></h1>
+<h1>06: Reverb probing (C50 sensitivity)<a class="headerlink" href="#reverb-probing-c50-sensitivity" title="Link to this heading">#</a></h1>
 <p><strong>What this shows.</strong> Per-layer regression slope of CKA vs C50 (reverb late-energy ratio) for the reverb fine-tuned MUSE — the same robustness/adaptivity question as notebook 02, but for room reverberation instead of additive noise.</p>
 <p><strong>What to look for.</strong> Encoder layers stay flat (low slope, robust to C50). The latent and decoder bands track the C50 axis (positive slope), and the magnitude-refinement block partly recovers — analogous to the noise picture but with a different shape because reverb perturbs the signal multiplicatively.</p>
 <p><strong>Two-tier design.</strong> The figure cells below always run from a precomputed parquet so the published shape is correct on any laptop. A bottom cell loads the model for live inference and is gated by <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE=1</span></code>; <strong>the shipped checkpoint is a placeholder</strong> (= upstream noise-only <code class="docutils literal notranslate"><span class="pre">g_best</span></code>) so its inference output will <em>not</em> match the paper. Replace with the cluster checkpoint to reproduce paper numbers.</p>
@@ -661,13 +662,22 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="05_diffusion_maps.html"
+       href="02_cka_per_layer.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">05 — Diffusion-map distance vs SNR</p>
+        <p class="prev-next-title">02: Per-layer CKA, by SNR</p>
       </div>
+    </a>
+    <a class="right-next"
+       href="03_cross_architectures.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">03: Cross-architecture comparison</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>

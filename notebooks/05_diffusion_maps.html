@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>05 — Diffusion-map distance vs SNR &#8212; SE-Probe — Where Does Speech Enhancement Adapt?</title>
+    <title>05: Diffusion-map distance vs SNR &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -63,8 +63,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05_diffusion_maps';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="06 — Reverb probing (C50 sensitivity)" href="06_reverb_probing.html" />
-    <link rel="prev" title="04 — CKA vs PESQ gain (within-group residualised)" href="04_cka_to_pesq.html" />
+    <link rel="prev" title="04: CKA vs PESQ gain (within-group residualised)" href="04_cka_to_pesq.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -142,7 +141,7 @@
   
   
   
-    <p class="title logo__title">SE-Probe — Where Does Speech Enhancement Adapt?</p>
+    <p class="title logo__title">SE-Probe: Where Does Speech Enhancement Adapt?</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -158,17 +157,17 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    SE-Probe — Where Does Speech Enhancement Adapt?
+                    SE-Probe: Where Does Speech Enhancement Adapt?
                 </a>
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01 — Pipeline overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02 — Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03 — Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04 — CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">05 — Diffusion-map distance vs SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06 — Reverb probing (C50 sensitivity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01: Pipeline overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02: Per-layer CKA, by SNR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">05: Diffusion-map distance vs SNR</a></li>
 </ul>
 
     </div>
@@ -368,7 +367,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>05 — Diffusion-map distance vs SNR</h1>
+    <h1>05: Diffusion-map distance vs SNR</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -392,7 +391,7 @@
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="diffusion-map-distance-vs-snr">
-<h1>05 — Diffusion-map distance vs SNR<a class="headerlink" href="#diffusion-map-distance-vs-snr" title="Link to this heading">#</a></h1>
+<h1>05: Diffusion-map distance vs SNR<a class="headerlink" href="#diffusion-map-distance-vs-snr" title="Link to this heading">#</a></h1>
 <p><strong>What this shows.</strong> Per-layer diffusion-map embeddings (one point per (layer, SNR, noise)), reduced to a low-dimensional manifold and read out as Euclidean distance from the SNR=30 reference. We then plot mean distance vs SNR for the six representative MUSE blocks and report Spearman ρ — high ρ means the layer’s representation orders monotonically with SNR.</p>
 <p><strong>What to look for.</strong> Encoder blocks have small distance and a clean monotone slope. Latent and decoder layers travel further along the manifold; the refinement block sits between.</p>
 <p><strong>Runtime.</strong> &lt;30 s on any device.</p>
@@ -648,17 +647,8 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">04 — CKA vs PESQ gain (within-group residualised)</p>
+        <p class="prev-next-title">04: CKA vs PESQ gain (within-group residualised)</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="06_reverb_probing.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">06 — Reverb probing (C50 sensitivity)</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
