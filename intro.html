@@ -60,12 +60,10 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="01: Pipeline overview" href="notebooks/01_pipeline_overview.html" />
+    <link rel="next" title="Pipeline overview" href="notebooks/01_pipeline_overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -166,12 +164,27 @@
             </li>
         </ul>
         <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="notebooks/01_pipeline_overview.html">01: Pipeline overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/02_cka_per_layer.html">02: Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/03_cross_architectures.html">03: Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/05_diffusion.html">05 — Diffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/01_pipeline_overview.html">Pipeline overview</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/02_cka_per_layer.html">CKA per layer</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/06_reverb_probing.html">Reverb probing</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03_cross_architectures.html">Cross-architecture profiles</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/04_cka_to_pesq.html">CKA to PESQ</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05_diffusion.html">Diffusion</a></li>
+
+
 </ul>
 
     </div>
@@ -358,9 +371,7 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="fa-solid fa-list"></span>
-</button>
+
 </div></div>
       
     </div>
@@ -376,15 +387,6 @@
     <div id="print-main-content">
         <div id="jb-print-toc">
             
-            <div>
-                <h2> Contents </h2>
-            </div>
-            <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-this-book">How to read this book</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
-</ul>
-            </nav>
         </div>
     </div>
 </div>
@@ -396,16 +398,10 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="se-probe-where-does-speech-enhancement-adapt">
 <h1>SE-Probe: Where Does Speech Enhancement Adapt?<a class="headerlink" href="#se-probe-where-does-speech-enhancement-adapt" title="Link to this heading">#</a></h1>
-<p>SE-Probe is the public companion code for <em>“Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation”</em> (Amar, Ivry, Cohen, 2026). We treat speech-enhancement networks as black boxes and ask which layers actually adapt to a given degradation: clean and noisy or reverberant utterances are pushed through a frozen SE model, activations are harvested layer by layer, clean-vs-degraded representations are compared with linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50) to surface the layers most sensitive to each condition. Diffusion-map distances and downstream PESQ/STOI correlations cross-check the picture from a different angle.</p>
-<p>The book renders this analysis end-to-end across three architectures — MUSE, MP-SENet, and Demucs — using the precomputed CKA tables shipped under <code class="docutils literal notranslate"><span class="pre">results_demo/</span></code>. Two of the notebooks (01 and 06) optionally re-run model inference when hardware is available; in the version you are reading those cells are skipped, and every figure is rebuilt from parquet.</p>
-<section id="how-to-read-this-book">
-<h2>How to read this book<a class="headerlink" href="#how-to-read-this-book" title="Link to this heading">#</a></h2>
-<p>Each chapter opens with a short <em>what this shows / what to look for / runtime</em> block, so a reader can dip in at any chapter and quickly tell whether the figure they want is on that page. Reading top to bottom traces the same arc as the paper: the pipeline walkthrough in chapter 01 sets up the per-layer CKA heatmap in 02, the reverb-specific probe in 06, the cross-architecture scatter in 03, the within-group correlation with PESQ in 04, and the diffusion-map view in 05.</p>
-</section>
-<section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<p>The full paper is <em>“Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation”</em> (Amar, Ivry, Cohen, 2026). Source code, issue tracker, and citation metadata live at <a class="github reference external" href="https://github.com/YairAmar/SE-Probe">YairAmar/SE-Probe</a>.</p>
-</section>
+<p>Public companion code for <em>“Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation”</em> (Amar, Ivry, Cohen, 2026). Speech enhancement networks are treated as black boxes: clean and degraded utterances are pushed through a frozen SE model, activations are extracted layer by layer, clean and degraded representations are compared by linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50) to identify the layers most sensitive to each condition. Diffusion map distances and downstream PESQ correlations cross check the picture from a different angle.</p>
+<p>The book renders the analysis end to end across MUSE, MP-SENet, and Demucs, using the precomputed CKA tables shipped under <code class="docutils literal notranslate"><span class="pre">results_demo/</span></code>. Two chapters (01 and 06) optionally re-run model inference when hardware is available; the published version skips those cells, and every figure is rebuilt from parquet.</p>
+<p>Each chapter opens with a short statement of what it shows. Reading top to bottom traces the same arc as the paper: the pipeline walkthrough in chapter 01 sets up the per-layer CKA heatmap in 02, the reverb probe in 06, the cross-architecture scatter in 03, the within-group correlation with PESQ in 04, and the diffusion view in 05.</p>
+<p>Source code, issue tracker, and citation metadata at <a class="github reference external" href="https://github.com/YairAmar/SE-Probe">YairAmar/SE-Probe</a>.</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -445,7 +441,7 @@
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">01: Pipeline overview</p>
+        <p class="prev-next-title">Pipeline overview</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -455,24 +451,6 @@
             </div>
             
             
-              
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-
-  <div class="sidebar-secondary-item"><div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
-  </div>
-  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-read-this-book">How to read this book</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
-</ul>
-  </nav></div>
-
-</div></div>
               
             
           </div>

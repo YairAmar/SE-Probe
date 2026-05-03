@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>04: CKA vs PESQ gain (within-group residualised) &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
+    <title>CKA to PESQ &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -63,8 +63,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/04_cka_to_pesq';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="05 — Diffusion" href="05_diffusion.html" />
-    <link rel="prev" title="03: Cross-architecture comparison" href="03_cross_architectures.html" />
+    <link rel="next" title="Diffusion" href="05_diffusion.html" />
+    <link rel="prev" title="Cross-architecture profiles" href="03_cross_architectures.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -163,12 +163,27 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01: Pipeline overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02: Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">04: CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">05 — Diffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">Pipeline overview</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">CKA per layer</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">Reverb probing</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">Cross-architecture profiles</a></li>
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CKA to PESQ</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">Diffusion</a></li>
+
+
 </ul>
 
     </div>
@@ -368,7 +383,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>04: CKA vs PESQ gain (within-group residualised)</h1>
+    <h1>CKA to PESQ</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -378,9 +393,11 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-table-and-compute-centered-residuals">Load MUSE table and compute centered residuals</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-correlation">Per-layer correlation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CKA to PESQ</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-table-and-compute-centered-residuals">Load MUSE table and compute centered residuals</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-correlation">Per-layer correlation</a></li>
 </ul>
+
             </nav>
         </div>
     </div>
@@ -391,11 +408,10 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="cka-vs-pesq-gain-within-group-residualised">
-<h1>04: CKA vs PESQ gain (within-group residualised)<a class="headerlink" href="#cka-vs-pesq-gain-within-group-residualised" title="Link to this heading">#</a></h1>
-<p><strong>What this shows.</strong> Per-layer Pearson correlation between <em>centered</em> CKA and <em>centered</em> PESQ gain, where centering means “subtract the (layer, SNR) cell mean”. This partials out the dominant SNR effect and asks: <em>holding SNR fixed, does a layer with a higher CKA on this utterance also see a bigger PESQ improvement?</em></p>
-<p><strong>What to look for.</strong> Encoder layers near zero correlation; the latent / decoder block trends positive — the “adapting” layers also predict per-utterance PESQ gain. Refinement is mixed.</p>
-<p><strong>Runtime.</strong> &lt;30 s on any device.</p>
+  <section id="cka-to-pesq">
+<h1>CKA to PESQ<a class="headerlink" href="#cka-to-pesq" title="Link to this heading">#</a></h1>
+<p>A per-utterance correlation between layer-wise CKA and PESQ improvement is dominated by SNR: both quantities track degradation severity. To isolate any predictive relationship internal to a fixed degradation level, we remove the SNR-dependent mean effect by within-group centering before correlating. Encoder and latent layers correlate near zero. Decoder and refinement layers show increasingly negative centered correlations through the first decoder block, which then saturate.</p>
+<p>Runtime: under 30 seconds on any device.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -429,8 +445,9 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </div>
+</section>
 <section id="load-muse-table-and-compute-centered-residuals">
-<h2>Load MUSE table and compute centered residuals<a class="headerlink" href="#load-muse-table-and-compute-centered-residuals" title="Link to this heading">#</a></h2>
+<h1>Load MUSE table and compute centered residuals<a class="headerlink" href="#load-muse-table-and-compute-centered-residuals" title="Link to this heading">#</a></h1>
 <p>PESQ gain = enhanced_pesq − noisy_pesq, then subtract the per-(layer, SNR) cell mean for both CKA and PESQ-gain. Same for STOI gain so we can do a side-by-side.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -458,7 +475,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </section>
 <section id="per-layer-correlation">
-<h2>Per-layer correlation<a class="headerlink" href="#per-layer-correlation" title="Link to this heading">#</a></h2>
+<h1>Per-layer correlation<a class="headerlink" href="#per-layer-correlation" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
@@ -565,7 +582,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </section>
-</section>
 
     <script type="text/x-thebe-config">
     {
@@ -603,7 +619,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">03: Cross-architecture comparison</p>
+        <p class="prev-next-title">Cross-architecture profiles</p>
       </div>
     </a>
     <a class="right-next"
@@ -611,7 +627,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">05 — Diffusion</p>
+        <p class="prev-next-title">Diffusion</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -633,9 +649,11 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-table-and-compute-centered-residuals">Load MUSE table and compute centered residuals</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-correlation">Per-layer correlation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CKA to PESQ</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-table-and-compute-centered-residuals">Load MUSE table and compute centered residuals</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-correlation">Per-layer correlation</a></li>
 </ul>
+
   </nav></div>
 
 </div></div>

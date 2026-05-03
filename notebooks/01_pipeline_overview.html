@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>01: Pipeline overview &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
+    <title>Pipeline overview &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -60,12 +60,10 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/01_pipeline_overview';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="02: Per-layer CKA, by SNR" href="02_cka_per_layer.html" />
+    <link rel="next" title="CKA per layer" href="02_cka_per_layer.html" />
     <link rel="prev" title="SE-Probe: Where Does Speech Enhancement Adapt?" href="../intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -165,12 +163,27 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">01: Pipeline overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02: Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">05 — Diffusion</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Pipeline overview</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">CKA per layer</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">Reverb probing</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">Cross-architecture profiles</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">CKA to PESQ</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">Diffusion</a></li>
+
+
 </ul>
 
     </div>
@@ -370,7 +383,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>01: Pipeline overview</h1>
+    <h1>Pipeline overview</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -380,9 +393,11 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-utterance-one-snr-one-model">One utterance, one SNR, one model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference">Optional: live inference</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Pipeline overview</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#one-utterance-one-snr-one-model">One utterance, one SNR, one model</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference">Optional: live inference</a></li>
 </ul>
+
             </nav>
         </div>
     </div>
@@ -393,12 +408,10 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="pipeline-overview">
-<h1>01: Pipeline overview<a class="headerlink" href="#pipeline-overview" title="Link to this heading">#</a></h1>
-<p><strong>What this shows.</strong> The probing pipeline in one diagram, then the smallest end-to-end sample of it: a single utterance pushed through MUSE, with per-layer CKA between clean and noisy activations read out from the demo parquet.</p>
-<p><strong>What to look for.</strong> A clean utterance <span class="math notranslate nohighlight">\(x_s\)</span> and its degraded version <span class="math notranslate nohighlight">\(y\)</span> both pass through the (frozen) SE network. We harvest activations <span class="math notranslate nohighlight">\(\mathbf{A}^{(\ell)}\)</span> at every probed layer <span class="math notranslate nohighlight">\(\ell\)</span>, time-pool them into representations <span class="math notranslate nohighlight">\(\mathbf{H}^{(\ell)}\)</span>, and compare clean vs degraded with linear CKA. The output is a similarity score per layer per condition.</p>
-<p><strong>Runtime.</strong> &lt;30 s on any device (reads the demo parquet). Optional inference cell at the bottom adds ~30 s on CUDA, ~2 min on MPS, ~5 min on CPU.</p>
-<p><img alt="Pipeline overview" src="../_images/pipeline_flow.png" /></p>
+  <section id="pipeline-overview">
+<h1>Pipeline overview<a class="headerlink" href="#pipeline-overview" title="Link to this heading">#</a></h1>
+<p>A single utterance walked through the probing pipeline. The same clean signal is paired with a noisy counterpart at one SNR; both are passed through the frozen MUSE model; activations at one probed layer are extracted and time averaged; the resulting representation matrices are compared by linear CKA. The remaining chapters repeat this construction across the SNR sweep, all probed layers, the three architectures, and reverberation, but the geometry of a single comparison is easier to read in isolation.</p>
+<p>Runtime: under 60 seconds on CPU; faster with CUDA or MPS.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -432,8 +445,9 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </div>
+</section>
 <section id="one-utterance-one-snr-one-model">
-<h2>One utterance, one SNR, one model<a class="headerlink" href="#one-utterance-one-snr-one-model" title="Link to this heading">#</a></h2>
+<h1>One utterance, one SNR, one model<a class="headerlink" href="#one-utterance-one-snr-one-model" title="Link to this heading">#</a></h1>
 <p>We pick a single clean utterance (<code class="docutils literal notranslate"><span class="pre">clean_idx</span></code>) and a single SNR for MUSE on the TBUS noise. The demo parquet ships precomputed CKA values; if <code class="docutils literal notranslate"><span class="pre">results_df/</span></code> is present the notebook silently uses the full table instead.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -541,7 +555,7 @@ CKA minimum across layers: 0.0271
 </div>
 </section>
 <section id="optional-live-inference">
-<h2>Optional: live inference<a class="headerlink" href="#optional-live-inference" title="Link to this heading">#</a></h2>
+<h1>Optional: live inference<a class="headerlink" href="#optional-live-inference" title="Link to this heading">#</a></h1>
 <p>Set <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE=1</span></code> (and have run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/setup.py</span></code> to fetch the upstream MUSE weights) to recompute one CKA value from raw audio. The cell loads the model, mixes a synthetic noisy clip, and runs a single forward pass through the activation extractor. Skipped by default.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -580,7 +594,6 @@ CKA minimum across layers: 0.0271
 </div>
 </div>
 </div>
-</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -627,7 +640,7 @@ CKA minimum across layers: 0.0271
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">02: Per-layer CKA, by SNR</p>
+        <p class="prev-next-title">CKA per layer</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -649,9 +662,11 @@ CKA minimum across layers: 0.0271
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-utterance-one-snr-one-model">One utterance, one SNR, one model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference">Optional: live inference</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Pipeline overview</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#one-utterance-one-snr-one-model">One utterance, one SNR, one model</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference">Optional: live inference</a></li>
 </ul>
+
   </nav></div>
 
 </div></div>

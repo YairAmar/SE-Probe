@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>06: Reverb probing (C50 sensitivity) &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
+    <title>Reverb probing &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -63,8 +63,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/06_reverb_probing';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="03: Cross-architecture comparison" href="03_cross_architectures.html" />
-    <link rel="prev" title="02: Per-layer CKA, by SNR" href="02_cka_per_layer.html" />
+    <link rel="next" title="Cross-architecture profiles" href="03_cross_architectures.html" />
+    <link rel="prev" title="CKA per layer" href="02_cka_per_layer.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -163,12 +163,27 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01: Pipeline overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02: Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">06: Reverb probing (C50 sensitivity)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">05 — Diffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">Pipeline overview</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">CKA per layer</a></li>
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reverb probing</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">Cross-architecture profiles</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">CKA to PESQ</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">Diffusion</a></li>
+
+
 </ul>
 
     </div>
@@ -368,7 +383,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>06: Reverb probing (C50 sensitivity)</h1>
+    <h1>Reverb probing</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -378,10 +393,12 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-reverb-cka-table">Load reverb CKA table</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-slope-of-cka-vs-c50">Per-layer slope of CKA vs C50</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference-with-the-reverb-fine-tuned-muse">Optional: live inference with the reverb fine-tuned MUSE</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Reverb probing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#load-reverb-cka-table">Load reverb CKA table</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-slope-of-cka-vs-c50">Per-layer slope of CKA vs C50</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference-with-the-reverb-fine-tuned-muse">Optional: live inference with the reverb fine-tuned MUSE</a></li>
 </ul>
+
             </nav>
         </div>
     </div>
@@ -392,12 +409,11 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="reverb-probing-c50-sensitivity">
-<h1>06: Reverb probing (C50 sensitivity)<a class="headerlink" href="#reverb-probing-c50-sensitivity" title="Link to this heading">#</a></h1>
-<p><strong>What this shows.</strong> Per-layer regression slope of CKA vs C50 (reverb late-energy ratio) for the reverb fine-tuned MUSE — the same robustness/adaptivity question as notebook 02, but for room reverberation instead of additive noise.</p>
-<p><strong>What to look for.</strong> Encoder layers stay flat (low slope, robust to C50). The latent and decoder bands track the C50 axis (positive slope), and the magnitude-refinement block partly recovers — analogous to the noise picture but with a different shape because reverb perturbs the signal multiplicatively.</p>
-<p><strong>Two-tier design.</strong> The figure cells below always run from a precomputed parquet so the published shape is correct on any laptop. A bottom cell loads the model for live inference and is gated by <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE=1</span></code>; <strong>the shipped checkpoint is a placeholder</strong> (= upstream noise-only <code class="docutils literal notranslate"><span class="pre">g_best</span></code>) so its inference output will <em>not</em> match the paper. Replace with the cluster checkpoint to reproduce paper numbers.</p>
-<p><strong>Runtime.</strong> Figure cells: &lt;30 s. Inference (only when env var is set): ~1 min CUDA / ~5 min MPS / ~15 min CPU.</p>
+  <section id="reverb-probing">
+<h1>Reverb probing<a class="headerlink" href="#reverb-probing" title="Link to this heading">#</a></h1>
+<p>The regression analysis of chapter 02 repeated under reverberation, sweeping C50 from −5 to 25 dB on a MUSE checkpoint fine-tuned for reverb (PESQ 2.17 to 3.02, STOI 0.834 to 0.944). The same depth-dependent progression of slopes and intercepts is recovered, with a compressed dynamic range relative to the noise setting.</p>
+<p>The figure cells below run from the precomputed CKA parquet and are correct on any laptop. A bottom cell loads the model for live inference and is gated by <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE=1</span></code>. The shipped checkpoint is a placeholder (upstream noise-only <code class="docutils literal notranslate"><span class="pre">g_best</span></code>), so its inference output will not match the paper. Replace with the cluster checkpoint to reproduce paper numbers.</p>
+<p>Runtime: figure cells under 30 seconds; live inference about 1 minute on CUDA, 5 minutes on MPS.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -431,8 +447,9 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </div>
+</section>
 <section id="load-reverb-cka-table">
-<h2>Load reverb CKA table<a class="headerlink" href="#load-reverb-cka-table" title="Link to this heading">#</a></h2>
+<h1>Load reverb CKA table<a class="headerlink" href="#load-reverb-cka-table" title="Link to this heading">#</a></h1>
 <p>C50 is the early-to-late energy ratio of the room impulse response (in dB); higher = drier. We restrict to the <code class="docutils literal notranslate"><span class="pre">[-5,</span> <span class="pre">25]</span></code> C50 window where the linear fit makes sense and average across utterances.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -456,7 +473,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </section>
 <section id="per-layer-slope-of-cka-vs-c50">
-<h2>Per-layer slope of CKA vs C50<a class="headerlink" href="#per-layer-slope-of-cka-vs-c50" title="Link to this heading">#</a></h2>
+<h1>Per-layer slope of CKA vs C50<a class="headerlink" href="#per-layer-slope-of-cka-vs-c50" title="Link to this heading">#</a></h1>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -575,12 +592,12 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 <img alt="../_images/5e26c59b2e442751485e39a8722e5f7369c3307ff9ec58e1b552f1f45d2f3421.png" src="../_images/5e26c59b2e442751485e39a8722e5f7369c3307ff9ec58e1b552f1f45d2f3421.png" />
 </div>
 </div>
-</section>
 <hr class="docutils" />
+</section>
 <section id="optional-live-inference-with-the-reverb-fine-tuned-muse">
-<h2>Optional: live inference with the reverb fine-tuned MUSE<a class="headerlink" href="#optional-live-inference-with-the-reverb-fine-tuned-muse" title="Link to this heading">#</a></h2>
+<h1>Optional: live inference with the reverb fine-tuned MUSE<a class="headerlink" href="#optional-live-inference-with-the-reverb-fine-tuned-muse" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p>⚠️ <strong>Placeholder checkpoint warning.</strong> The file shipped at <code class="docutils literal notranslate"><span class="pre">pretrained_models/muse/muse_reverb_e48.pt</span></code> is a copy of the upstream noise-only <code class="docutils literal notranslate"><span class="pre">g_best</span></code> weights — it is <strong>not</strong> the paper’s reverb fine-tuned model. Loading it works (the architecture matches), but inference numbers will not reproduce the paper. The real epoch-48 checkpoint lives on the iscohen_prj cluster; once retrieved and uploaded to the SE-Probe HuggingFace model repo, <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/setup.py</span></code> will fetch it and this cell will produce paper-grade numbers automatically.</p>
+<div><p>⚠️ <strong>Placeholder checkpoint warning.</strong> The file shipped at <code class="docutils literal notranslate"><span class="pre">pretrained_models/muse/muse_reverb_e48.pt</span></code> is a copy of the upstream noise-only <code class="docutils literal notranslate"><span class="pre">g_best</span></code> weights, it is <strong>not</strong> the paper’s reverb fine-tuned model. Loading it works (the architecture matches), but inference numbers will not reproduce the paper. The real epoch-48 checkpoint lives on the iscohen_prj cluster; once retrieved and uploaded to the SE-Probe HuggingFace model repo, <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/setup.py</span></code> will fetch it and this cell will produce paper-grade numbers automatically.</p>
 </div></blockquote>
 <p>Set <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE=1</span></code> to enable the cell below.</p>
 <div class="cell docutils container">
@@ -629,7 +646,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </section>
-</section>
 
     <script type="text/x-thebe-config">
     {
@@ -667,7 +683,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">02: Per-layer CKA, by SNR</p>
+        <p class="prev-next-title">CKA per layer</p>
       </div>
     </a>
     <a class="right-next"
@@ -675,7 +691,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">03: Cross-architecture comparison</p>
+        <p class="prev-next-title">Cross-architecture profiles</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -697,10 +713,12 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-reverb-cka-table">Load reverb CKA table</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-slope-of-cka-vs-c50">Per-layer slope of CKA vs C50</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference-with-the-reverb-fine-tuned-muse">Optional: live inference with the reverb fine-tuned MUSE</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Reverb probing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#load-reverb-cka-table">Load reverb CKA table</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-slope-of-cka-vs-c50">Per-layer slope of CKA vs C50</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference-with-the-reverb-fine-tuned-muse">Optional: live inference with the reverb fine-tuned MUSE</a></li>
 </ul>
+
   </nav></div>
 
 </div></div>

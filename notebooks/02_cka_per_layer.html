@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>02: Per-layer CKA, by SNR &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
+    <title>CKA per layer &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -63,8 +63,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/02_cka_per_layer';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="06: Reverb probing (C50 sensitivity)" href="06_reverb_probing.html" />
-    <link rel="prev" title="01: Pipeline overview" href="01_pipeline_overview.html" />
+    <link rel="next" title="Reverb probing" href="06_reverb_probing.html" />
+    <link rel="prev" title="Pipeline overview" href="01_pipeline_overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -163,12 +163,27 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01: Pipeline overview</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">02: Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">05 — Diffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">Pipeline overview</a></li>
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CKA per layer</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">Reverb probing</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">Cross-architecture profiles</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">CKA to PESQ</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">Diffusion</a></li>
+
+
 </ul>
 
     </div>
@@ -368,7 +383,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>02: Per-layer CKA, by SNR</h1>
+    <h1>CKA per layer</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -378,10 +393,12 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-cka-vs-snr-table">Load MUSE CKA-vs-SNR table</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap-layer-x-snr">Heatmap: layer x SNR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-snr-sensitivity-regression-slope">Per-layer SNR sensitivity (regression slope)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CKA per layer</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-cka-vs-snr-table">Load MUSE CKA-vs-SNR table</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap-layer-x-snr">Heatmap: layer x SNR</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-snr-sensitivity-regression-slope">Per-layer SNR sensitivity (regression slope)</a></li>
 </ul>
+
             </nav>
         </div>
     </div>
@@ -392,11 +409,10 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="per-layer-cka-by-snr">
-<h1>02: Per-layer CKA, by SNR<a class="headerlink" href="#per-layer-cka-by-snr" title="Link to this heading">#</a></h1>
-<p><strong>What this shows.</strong> Two views of where MUSE adapts in its layer stack: a layer x SNR heatmap of mean CKA, and a per-layer SNR-sensitivity profile (linear regression slope of CKA vs SNR).</p>
-<p><strong>What to look for.</strong> Encoder-1/2 stay near 1.0 across all SNRs (low slope, low sensitivity). Latent and decoder layers drop with worsening SNR (negative slope, high sensitivity). The refinement block partly recovers — that’s the qualitative signature reproduced in the paper.</p>
-<p><strong>Runtime.</strong> &lt;30 s on any device.</p>
+  <section id="cka-per-layer">
+<h1>CKA per layer<a class="headerlink" href="#cka-per-layer" title="Link to this heading">#</a></h1>
+<p>The per-utterance comparison from chapter 01, extended across all 24 probed layers and the SNR sweep. The first plot shows mean CKA as a heatmap over (layer, SNR), revealing a near-uniform high-CKA band in the early encoder and a strengthening SNR gradient toward the decoder. The second plot summarises each layer’s CKA-versus-SNR curve by a linear fit (α + β s), giving the compact (αℓ, βℓ) robustness/adaptivity profile used throughout the rest of the book. All fits achieve R² above 0.95.</p>
+<p>Runtime: under 30 seconds on any device.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -430,8 +446,9 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </div>
+</section>
 <section id="load-muse-cka-vs-snr-table">
-<h2>Load MUSE CKA-vs-SNR table<a class="headerlink" href="#load-muse-cka-vs-snr-table" title="Link to this heading">#</a></h2>
+<h1>Load MUSE CKA-vs-SNR table<a class="headerlink" href="#load-muse-cka-vs-snr-table" title="Link to this heading">#</a></h1>
 <p>The norm1 layers (one per transformer layer) are the ones used in the paper. We pull them from the demo parquet itself so the notebook stays self-contained.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -457,7 +474,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </section>
 <section id="heatmap-layer-x-snr">
-<h2>Heatmap: layer x SNR<a class="headerlink" href="#heatmap-layer-x-snr" title="Link to this heading">#</a></h2>
+<h1>Heatmap: layer x SNR<a class="headerlink" href="#heatmap-layer-x-snr" title="Link to this heading">#</a></h1>
 <p>Rows are layers (encoder → latent → decoder → refinement), columns are SNR. Yellow = clean-like representations; dark = strongly perturbed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -491,7 +508,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </section>
 <section id="per-layer-snr-sensitivity-regression-slope">
-<h2>Per-layer SNR sensitivity (regression slope)<a class="headerlink" href="#per-layer-snr-sensitivity-regression-slope" title="Link to this heading">#</a></h2>
+<h1>Per-layer SNR sensitivity (regression slope)<a class="headerlink" href="#per-layer-snr-sensitivity-regression-slope" title="Link to this heading">#</a></h1>
 <p>For each layer we regress mean CKA on SNR. Layers with slope near 0 are robust to SNR; large positive slopes mark layers where representations track the input degradation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -602,7 +619,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </section>
-</section>
 
     <script type="text/x-thebe-config">
     {
@@ -640,7 +656,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">01: Pipeline overview</p>
+        <p class="prev-next-title">Pipeline overview</p>
       </div>
     </a>
     <a class="right-next"
@@ -648,7 +664,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">06: Reverb probing (C50 sensitivity)</p>
+        <p class="prev-next-title">Reverb probing</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -670,10 +686,12 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-cka-vs-snr-table">Load MUSE CKA-vs-SNR table</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap-layer-x-snr">Heatmap: layer x SNR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-snr-sensitivity-regression-slope">Per-layer SNR sensitivity (regression slope)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">CKA per layer</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#load-muse-cka-vs-snr-table">Load MUSE CKA-vs-SNR table</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap-layer-x-snr">Heatmap: layer x SNR</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#per-layer-snr-sensitivity-regression-slope">Per-layer SNR sensitivity (regression slope)</a></li>
 </ul>
+
   </nav></div>
 
 </div></div>

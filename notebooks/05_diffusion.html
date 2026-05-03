@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>05 — Diffusion &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
+    <title>Diffusion &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
   
   
   
@@ -63,7 +63,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/05_diffusion';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="04: CKA vs PESQ gain (within-group residualised)" href="04_cka_to_pesq.html" />
+    <link rel="prev" title="CKA to PESQ" href="04_cka_to_pesq.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -162,12 +162,27 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">01: Pipeline overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">02: Per-layer CKA, by SNR</a></li>
-<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">06: Reverb probing (C50 sensitivity)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">03: Cross-architecture comparison</a></li>
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">04: CKA vs PESQ gain (within-group residualised)</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">05 — Diffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">Pipeline overview</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">CKA per layer</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">Reverb probing</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">Cross-architecture profiles</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">CKA to PESQ</a></li>
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Diffusion</a></li>
+
+
 </ul>
 
     </div>
@@ -367,7 +382,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>05 — Diffusion</h1>
+    <h1>Diffusion</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -377,9 +392,11 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-1-per-layer-diffusion-distance-vs-snr">Figure 1 — Per-layer diffusion distance vs SNR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level">Figure 2 — Pairwise layer distance per SNR (architecture-level)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Diffusion</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-1-per-layer-diffusion-distance-vs-snr">Figure 1, Per-layer diffusion distance vs SNR</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level">Figure 2, Pairwise layer distance per SNR (architecture-level)</a></li>
 </ul>
+
             </nav>
         </div>
     </div>
@@ -390,15 +407,10 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="diffusion">
-<h1>05 — Diffusion<a class="headerlink" href="#diffusion" title="Link to this heading">#</a></h1>
-<p><strong>What this shows.</strong> Two complementary views of the diffusion-map manifold:</p>
-<ul class="simple">
-<li><p><strong>Per-layer distance vs SNR</strong> — for the six representative MUSE blocks, the diffusion distance from the SNR=ref reference traces the manifold travel as the input degrades. Spearman ρ pins the per-block monotonicity.</p></li>
-<li><p><strong>Pairwise layer distance per SNR</strong> — for the architecture-level diffusion (blocks rather than per-layer norms), the layer-vs-layer distance matrix at six SNR slices shows how within-architecture geometry tightens at high SNR and spreads at low SNR.</p></li>
-</ul>
-<p><strong>What to look for.</strong> Encoder blocks have small per-layer distance and clean monotone slopes; decoder blocks travel further. The architecture heatmap shows clean block structure at SNR=30 and the boundaries blur as SNR drops.</p>
-<p><strong>Runtime.</strong> &lt;30 s on any device.</p>
+  <section id="diffusion">
+<h1>Diffusion<a class="headerlink" href="#diffusion" title="Link to this heading">#</a></h1>
+<p>Two views of the diffusion-map manifold. First, per-layer diffusion distance from the SNR=ref reference, traced across the SNR sweep for the six representative MUSE blocks; the per-block Spearman ρ summarises monotonicity. Second, the architecture-level pairwise distance between layer centroids in diffusion-coordinate space, plotted as a heatmap at six SNR slices; layers are reordered into architectural order (Enc-L1, Enc-L2, Dec-L2, Dec-L1). Both views recover the same depth-and-block structure as the CKA-based analyses.</p>
+<p>Runtime: about a minute on any device.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -432,8 +444,9 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </div>
+</section>
 <section id="figure-1-per-layer-diffusion-distance-vs-snr">
-<h2>Figure 1 — Per-layer diffusion distance vs SNR<a class="headerlink" href="#figure-1-per-layer-diffusion-distance-vs-snr" title="Link to this heading">#</a></h2>
+<h1>Figure 1, Per-layer diffusion distance vs SNR<a class="headerlink" href="#figure-1-per-layer-diffusion-distance-vs-snr" title="Link to this heading">#</a></h1>
 <p>We load the per-layer diffusion-map table at diffusion time <code class="docutils literal notranslate"><span class="pre">t=0.5</span></code>. Helpers <code class="docutils literal notranslate"><span class="pre">create_psi_column</span></code> and <code class="docutils literal notranslate"><span class="pre">compute_distance_from_ref_snr</span></code> collapse the <code class="docutils literal notranslate"><span class="pre">psi_*</span></code> columns into a single <code class="docutils literal notranslate"><span class="pre">psi</span></code> vector per row and compute Euclidean distance to the SNR=ref reference.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -611,7 +624,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </section>
 <section id="figure-2-pairwise-layer-distance-per-snr-architecture-level">
-<h2>Figure 2 — Pairwise layer distance per SNR (architecture-level)<a class="headerlink" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level" title="Link to this heading">#</a></h2>
+<h1>Figure 2, Pairwise layer distance per SNR (architecture-level)<a class="headerlink" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level" title="Link to this heading">#</a></h1>
 <p>The second view is computed at the architecture level (blocks rather than per-layer norms). We load the diffusion-map table at <code class="docutils literal notranslate"><span class="pre">t=5</span></code> and compute the pairwise Euclidean distance between layer centroids in the diffusion-coordinate space, then plot the per-SNR distance matrix. Layers are reordered into architectural order (Enc-L1, Enc-L2, Dec-L2, Dec-L1).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -714,7 +727,6 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 </section>
-</section>
 
     <script type="text/x-thebe-config">
     {
@@ -752,7 +764,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">04: CKA vs PESQ gain (within-group residualised)</p>
+        <p class="prev-next-title">CKA to PESQ</p>
       </div>
     </a>
 </div>
@@ -773,9 +785,11 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-1-per-layer-diffusion-distance-vs-snr">Figure 1 — Per-layer diffusion distance vs SNR</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level">Figure 2 — Pairwise layer distance per SNR (architecture-level)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Diffusion</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-1-per-layer-diffusion-distance-vs-snr">Figure 1, Per-layer diffusion distance vs SNR</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-2-pairwise-layer-distance-per-snr-architecture-level">Figure 2, Pairwise layer distance per SNR (architecture-level)</a></li>
 </ul>
+
   </nav></div>
 
 </div></div>
