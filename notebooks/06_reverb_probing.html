@@ -411,7 +411,7 @@
                   
   <section id="reverb-probing">
 <h1>Reverb probing<a class="headerlink" href="#reverb-probing" title="Link to this heading">#</a></h1>
-<p>The regression analysis of chapter 02 repeated under reverberation, sweeping C50 from −5 to 25 dB on a MUSE checkpoint fine-tuned for reverb (PESQ 2.17 to 3.02). The same depth-dependent progression of slopes and intercepts is recovered, with a compressed dynamic range relative to the noise setting.</p>
+<p>The regression analysis of chapter 02 repeated under reverberation, sweeping C50 from −5 to 25 dB on a MUSE checkpoint fine-tuned for reverb (PESQ 2.17 to 3.02, STOI 0.834 to 0.944). The same depth-dependent progression of slopes and intercepts is recovered, with a compressed dynamic range relative to the noise setting.</p>
 <p>The figure cells below run from the precomputed CKA parquet and are correct on any laptop. A bottom cell loads the model for live inference and is gated by <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE=1</span></code>. The fine-tuned checkpoint is fetched from HuggingFace by <code class="docutils literal notranslate"><span class="pre">scripts/setup.py</span></code>; the training pipeline that produced it lives at <a class="github reference external" href="https://github.com/YairAmar/muse-dereverb-ft">YairAmar/muse-dereverb-ft</a> (also vendored under <code class="docutils literal notranslate"><span class="pre">training/</span></code>).</p>
 <p>Runtime: figure cells under 30 seconds; live inference about 1 minute on CUDA, 5 minutes on MPS.</p>
 <div class="cell docutils container">
