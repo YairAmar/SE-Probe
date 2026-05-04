@@ -1,6 +1,6 @@
 # SE-Probe: Where Does Speech Enhancement Adapt?
 
-📄 **Paper:** [arXiv:2512.00482](https://arxiv.org/abs/2512.00482) · [PDF](https://amir-ivry.github.io/assets/papers/SE_probing.pdf) &nbsp;·&nbsp; 💻 **Code:** <https://github.com/YairAmar/SE-Probe>
+📄 **Paper (PDF):** [SE Probing](https://amir-ivry.github.io/assets/papers/SE_probing.pdf) &nbsp;·&nbsp; 💻 **Code:** <https://github.com/YairAmar/SE-Probe>
 
 Public companion code for *"Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation"* (Amar, Ivry, Cohen, 2026). Speech enhancement networks are treated as black boxes: clean and degraded utterances are pushed through a frozen SE model, activations are extracted layer by layer, clean and degraded representations are compared by linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50) to identify the layers most sensitive to each condition. Diffusion map distances and downstream PESQ correlations cross check the picture from a different angle.
 

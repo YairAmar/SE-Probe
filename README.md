@@ -1,10 +1,10 @@
 # SE-Probe
 
-📄 **Paper:** [arXiv](https://arxiv.org/abs/2512.00482) · [PDF](https://amir-ivry.github.io/assets/papers/SE_probing.pdf) &nbsp;·&nbsp; 📖 **Book:** <https://yairamar.github.io/SE-Probe/>
+📄 **Paper (PDF):** [SE Probing](https://amir-ivry.github.io/assets/papers/SE_probing.pdf) &nbsp;·&nbsp; 📖 **Book:** <https://yairamar.github.io/SE-Probe/>
 
 ## Background
 
-Public companion code for *"Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation"* (Amar, Ivry, Cohen, 2026; [arXiv:2512.00482](https://arxiv.org/abs/2512.00482)). Speech enhancement networks are treated as black boxes: clean and degraded utterances are pushed through a frozen SE model, activations are extracted layer by layer, clean and degraded representations are compared by linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50). Diffusion-map distances and downstream PESQ correlations cross check the picture from a different angle. The analysis is run end to end across MUSE, MP-SENet, and Demucs.
+Public companion code for *"Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation"* (Amar, Ivry, Cohen, 2026; [PDF](https://amir-ivry.github.io/assets/papers/SE_probing.pdf)). Speech enhancement networks are treated as black boxes: clean and degraded utterances are pushed through a frozen SE model, activations are extracted layer by layer, clean and degraded representations are compared by linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50). Diffusion-map distances and downstream PESQ correlations cross check the picture from a different angle. The analysis is run end to end across MUSE, MP-SENet, and Demucs.
 
 The full narrative lives in the book linked above. This README is just enough to get the code running.
 
@@ -25,13 +25,10 @@ The reverb fine-tuning training pipeline that produced the checkpoint is vendore
 
 ```bibtex
 @article{amar2026seprobe,
-  title         = {Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation},
-  author        = {Amar, Yair and Ivry, Amir and Cohen, Israel},
-  year          = {2026},
-  eprint        = {2512.00482},
-  archivePrefix = {arXiv},
-  primaryClass  = {eess.AS},
-  url           = {https://arxiv.org/abs/2512.00482}
+  title  = {Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation},
+  author = {Amar, Yair and Ivry, Amir and Cohen, Israel},
+  year   = {2026},
+  url    = {https://amir-ivry.github.io/assets/papers/SE_probing.pdf}
 }
 ```
 
