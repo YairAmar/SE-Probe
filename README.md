@@ -19,7 +19,7 @@ jupyter lab notebooks/
 
 `scripts/setup.py` fetches the upstream MUSE pretrained weights, downloads the epoch-48 reverb fine-tuned checkpoint from HuggingFace (`yairamr/SE-Probe-models`), and probes the local device (CUDA, MPS, or CPU; autodetected). The six notebooks read precomputed CKA tables from `results_demo/` (about 200 KB, shipped in-tree) and run on any laptop in seconds. Add `--full-data` to `setup.py` to also pull the 3.1 GB full precomputed tables from HuggingFace (`yairamr/SE-Probe-data`). Notebooks 01 and 06 optionally re-run model inference if hardware is available.
 
-The reverb fine-tuning training pipeline that produced the checkpoint is vendored under `training/` (originally [muse-dereverb-ft](https://github.com/YairAmar/muse-dereverb-ft)). See `training/README.md` for retraining instructions.
+The reverb fine-tuning training pipeline that produced the checkpoint lives under `training/`; see `training/README.md` for retraining instructions.
 
 ## Citation
 

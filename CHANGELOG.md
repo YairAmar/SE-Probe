@@ -6,7 +6,7 @@ All notable changes to SE-Probe are recorded here. The format follows [Keep a Ch
 
 ### Added
 - Real epoch-48 reverb fine-tuned MUSE checkpoint on HuggingFace (`yairamr/SE-Probe-models/muse_reverb_e48.pt`), replacing the noise-only `g_best` placeholder shipped in v0.1.0/v0.1.1. Notebook 06 inference cells now reproduce paper numbers.
-- Training pipeline that produced the checkpoint, vendored directly under `training/` (originally <https://github.com/YairAmar/muse-dereverb-ft>). The repo is now self-contained: a plain `git clone` gives both probing and training in one tree.
+- Training pipeline that produced the checkpoint, vendored directly under `training/`. The repo is now self-contained: a plain `git clone` gives both probing and training in one tree.
 - Notebook 06 placeholder warning markdown removed; replaced with a one-line pointer to the training repo.
 
 ### Changed
