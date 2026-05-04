@@ -1,6 +1,6 @@
 # SE-Probe
 
-📄 **Paper:** <https://arxiv.org/abs/2512.00482> &nbsp;·&nbsp; 📖 **Book:** <https://yairamar.github.io/SE-Probe/>
+📄 **Paper:** [arXiv](https://arxiv.org/abs/2512.00482) · [PDF](https://amir-ivry.github.io/assets/papers/SE_probing.pdf) &nbsp;·&nbsp; 📖 **Book:** <https://yairamar.github.io/SE-Probe/>
 
 ## Background
 

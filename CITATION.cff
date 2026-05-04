@@ -34,3 +34,6 @@ preferred-citation:
     - type: other
       value: "arXiv:2512.00482"
       description: "arXiv preprint"
+    - type: url
+      value: "https://amir-ivry.github.io/assets/papers/SE_probing.pdf"
+      description: "Author-hosted PDF"

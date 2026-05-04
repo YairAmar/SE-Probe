@@ -70,6 +70,7 @@ docs = [
 [project.urls]
 Homepage = "https://yairamar.github.io/SE-Probe/"
 Paper = "https://arxiv.org/abs/2512.00482"
+"Paper (PDF)" = "https://amir-ivry.github.io/assets/papers/SE_probing.pdf"
 Documentation = "https://yairamar.github.io/SE-Probe/"
 Repository = "https://github.com/YairAmar/SE-Probe"
 Issues = "https://github.com/YairAmar/SE-Probe/issues"
