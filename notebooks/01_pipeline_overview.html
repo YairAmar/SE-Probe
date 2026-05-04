@@ -60,6 +60,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/01_pipeline_overview';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -412,6 +414,8 @@
 <h1>Pipeline overview<a class="headerlink" href="#pipeline-overview" title="Link to this heading">#</a></h1>
 <p>A single utterance walked through the probing pipeline. The same clean signal is paired with a noisy counterpart at one SNR; both are passed through the frozen MUSE model; activations at one probed layer are extracted and time averaged; the resulting representation matrices are compared by linear CKA. The remaining chapters repeat this construction across the SNR sweep, all probed layers, the three architectures, and reverberation, but the geometry of a single comparison is easier to read in isolation.</p>
 <p>Runtime: under 60 seconds on CPU; faster with CUDA or MPS.</p>
+<p><img alt="Probing pipeline" src="../_images/pipeline_flow.png" /></p>
+<p><em>Activation-extraction pipeline (poster, Fig. 1). For each clean utterance <span class="math notranslate nohighlight">\(y\)</span> and its degraded counterpart <span class="math notranslate nohighlight">\(x_s\)</span> at level <span class="math notranslate nohighlight">\(s\)</span>, both signals are passed through the frozen SE model. The activations <span class="math notranslate nohighlight">\(\mathbf{A}^{(\ell)}\)</span> at probed layer <span class="math notranslate nohighlight">\(\ell\)</span> are time-averaged into representation matrices <span class="math notranslate nohighlight">\(\mathbf{H}^{(\ell)}\)</span>, and clean and degraded representations are compared by linear CKA.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>

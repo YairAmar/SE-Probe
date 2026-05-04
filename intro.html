@@ -60,6 +60,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -398,7 +400,7 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="se-probe-where-does-speech-enhancement-adapt">
 <h1>SE-Probe: Where Does Speech Enhancement Adapt?<a class="headerlink" href="#se-probe-where-does-speech-enhancement-adapt" title="Link to this heading">#</a></h1>
-<p>📄 <strong>Paper:</strong> <a class="reference external" href="https://arxiv.org/abs/2512.00482">arXiv:2512.00482</a>  ·  💻 <strong>Code:</strong> <a class="github reference external" href="https://github.com/YairAmar/SE-Probe">YairAmar/SE-Probe</a></p>
+<p>📄 <strong>Paper:</strong> <a class="reference external" href="https://arxiv.org/abs/2512.00482">arXiv:2512.00482</a> · <a class="reference external" href="https://amir-ivry.github.io/assets/papers/SE_probing.pdf">PDF</a>  ·  💻 <strong>Code:</strong> <a class="github reference external" href="https://github.com/YairAmar/SE-Probe">YairAmar/SE-Probe</a></p>
 <p>Public companion code for <em>“Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation”</em> (Amar, Ivry, Cohen, 2026). Speech enhancement networks are treated as black boxes: clean and degraded utterances are pushed through a frozen SE model, activations are extracted layer by layer, clean and degraded representations are compared by linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50) to identify the layers most sensitive to each condition. Diffusion map distances and downstream PESQ correlations cross check the picture from a different angle.</p>
 <p>The book renders the analysis end to end across MUSE, MP-SENet, and Demucs, using the precomputed CKA tables shipped under <code class="docutils literal notranslate"><span class="pre">results_demo/</span></code>. Two chapters (01 and 06) optionally re-run model inference when hardware is available; the published version skips those cells, and every figure is rebuilt from parquet.</p>
 <p>Each chapter opens with a short statement of what it shows. Reading top to bottom traces the same arc as the paper: the pipeline walkthrough in chapter 01 sets up the per-layer CKA heatmap in 02, the reverb probe in 06, the cross-architecture scatter in 03, the within-group correlation with PESQ in 04, and the diffusion view in 05.</p>
