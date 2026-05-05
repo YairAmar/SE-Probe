@@ -26,7 +26,7 @@ The reverb fine-tuning training pipeline that produced the checkpoint lives unde
 ```bibtex
 @article{amar2026seprobe,
   title         = {Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation},
-  author        = {Amar, Yair and Ivry, Amir and Cohen, Israel},
+  author        = {Yair Amar and Amir Ivry and Israel Cohen},
   year          = {2026},
   eprint        = {2512.00482},
   archivePrefix = {arXiv},
