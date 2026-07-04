@@ -450,23 +450,23 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </section>
 <section id="load-reverb-cka-table">
 <h1>Load reverb CKA table<a class="headerlink" href="#load-reverb-cka-table" title="Link to this heading">#</a></h1>
-<p>C50 is the early-to-late energy ratio of the room impulse response (in dB); higher = drier. We restrict to the <code class="docutils literal notranslate"><span class="pre">[-5,</span> <span class="pre">25]</span></code> C50 window where the linear fit makes sense and average across utterances.</p>
+<p>C50 is the early-to-late energy ratio of the room impulse response (in dB); higher = drier. Mixtures are generated at nominal target C50 levels; we restrict to targets in the <code class="docutils literal notranslate"><span class="pre">[-5,</span> <span class="pre">25]</span></code> dB analysis window and fit against the nominal levels (the method used for the paper’s Fig./Table), averaging across utterances per level.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reverb_path</span> <span class="o">=</span> <span class="n">DATA_DIR</span> <span class="o">/</span> <span class="p">(</span><span class="s2">&quot;reverb/cka_reverb_muse_epoch_48.parquet&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">&quot;reverb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cka_reverb_muse_demo.parquet&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reverb_path</span> <span class="o">=</span> <span class="n">DATA_DIR</span> <span class="o">/</span> <span class="p">(</span><span class="s2">&quot;reverb/cka_reverb_muse.parquet&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">&quot;reverb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cka_reverb_muse_demo.parquet&quot;</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">reverb_path</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;layer&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.norm1&quot;</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;c50&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">5</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;c50&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">25</span><span class="p">)]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;target_c50&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">5</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;target_c50&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">25</span><span class="p">)]</span>
 
 <span class="n">block_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;encoder_level1&quot;</span><span class="p">,</span> <span class="s2">&quot;encoder_level2&quot;</span><span class="p">,</span> <span class="s2">&quot;latent&quot;</span><span class="p">,</span> <span class="s2">&quot;decoder_level2&quot;</span><span class="p">,</span> <span class="s2">&quot;decoder_level1&quot;</span><span class="p">,</span> <span class="s2">&quot;mag_refinement&quot;</span><span class="p">]</span>
 <span class="n">norm1_layers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;layer&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">(),</span>
                        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">L</span><span class="p">:</span> <span class="p">(</span><span class="nb">next</span><span class="p">((</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">block_order</span><span class="p">)</span> <span class="k">if</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">L</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_order</span><span class="p">)),</span> <span class="n">L</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;norm1 layers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">norm1_layers</span><span class="p">)</span><span class="si">}</span><span class="s2"> | rows after C50 filter: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;norm1 layers: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">norm1_layers</span><span class="p">)</span><span class="si">}</span><span class="s2"> | rows after target-C50 filter: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>norm1 layers: 24 | rows after C50 filter: 960
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>norm1 layers: 24 | rows after target-C50 filter: 720
 </pre></div>
 </div>
 </div>
@@ -482,8 +482,8 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">norm1_layers</span><span class="p">:</span>
     <span class="n">g</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;layer&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">layer</span><span class="p">]</span>
-    <span class="n">cell</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;c50&quot;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;CKA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;c50&quot;</span><span class="p">)</span>
-    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="s2">&quot;c50&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">cell</span><span class="p">[</span><span class="s2">&quot;CKA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;target_c50&quot;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;CKA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;target_c50&quot;</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="s2">&quot;target_c50&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">cell</span><span class="p">[</span><span class="s2">&quot;CKA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">continue</span>
     <span class="n">reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
@@ -496,7 +496,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>layers fit: 24 | mean R²: 0.895
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>layers fit: 24 | mean R²: 0.875
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -527,37 +527,37 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
     <tr>
       <th>0</th>
       <td>TCFTransformer.encoder_level1.mhca_blks.0.tran...</td>
-      <td>0.000050</td>
-      <td>0.998971</td>
-      <td>0.856385</td>
+      <td>0.000041</td>
+      <td>0.999143</td>
+      <td>0.853461</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TCFTransformer.encoder_level1.mhca_blks.0.tran...</td>
-      <td>0.000193</td>
-      <td>0.995910</td>
-      <td>0.875220</td>
+      <td>0.000166</td>
+      <td>0.996430</td>
+      <td>0.855036</td>
     </tr>
     <tr>
       <th>2</th>
       <td>TCFTransformer.encoder_level1.mhca_blks.0.tran...</td>
-      <td>0.000572</td>
-      <td>0.987685</td>
-      <td>0.884399</td>
+      <td>0.000498</td>
+      <td>0.989136</td>
+      <td>0.865246</td>
     </tr>
     <tr>
       <th>3</th>
       <td>TCFTransformer.encoder_level1.mhca_blks.0.tran...</td>
-      <td>0.000649</td>
-      <td>0.986016</td>
-      <td>0.895472</td>
+      <td>0.000583</td>
+      <td>0.987313</td>
+      <td>0.868406</td>
     </tr>
     <tr>
       <th>4</th>
       <td>TCFTransformer.encoder_level2.mhca_blks.0.tran...</td>
-      <td>0.000619</td>
-      <td>0.986498</td>
-      <td>0.881581</td>
+      <td>0.000517</td>
+      <td>0.988484</td>
+      <td>0.890931</td>
     </tr>
   </tbody>
 </table>
@@ -589,7 +589,7 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/5e26c59b2e442751485e39a8722e5f7369c3307ff9ec58e1b552f1f45d2f3421.png" src="../_images/5e26c59b2e442751485e39a8722e5f7369c3307ff9ec58e1b552f1f45d2f3421.png" />
+<img alt="../_images/ab8028d7e3e9734d2272eea476423dd8938a064905e183c73b93aae6dc44dfbf.png" src="../_images/ab8028d7e3e9734d2272eea476423dd8938a064905e183c73b93aae6dc44dfbf.png" />
 </div>
 </div>
 <hr class="docutils" />
