@@ -207,7 +207,7 @@ Edit the script first if your data paths differ. The launcher requests 1× A100
 | Trainable params | All 513,015 generator + discriminator params | full FT |
 | Optimizer | AdamW(β₁=0.8, β₂=0.99) | config |
 | Learning rate | 1e-4, exp decay γ=0.99/epoch | `--lr` overrides config |
-| Batch size | 8 (~20 GB peak on A100 40 GB) | config |
+| Batch size | 28 | config |
 | Epochs | 50 | `--training_epochs` |
 | Validation | every 850 steps (PESQ/STOI/DNSMOS on 10-sample subset) | `--validation_interval` |
 | Loss | `0.05·L_metric + 0.9·L_mag + 0.3·L_phase + 0.1·L_complex` | `train.py` |
