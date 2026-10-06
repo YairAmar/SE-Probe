@@ -1,0 +1,10 @@
+run,n_epochs_logged,best_epoch,best_pesq,best_stoi
+full_ft__seed1234,50,46,2.789,0.934
+full_ft__seed2345,50,46,2.789,0.932
+full_ft__seed3456,50,46,2.77,0.934
+freeze_encoder__seed1234,50,48,2.693,0.931
+freeze_encoder__seed2345,50,36,2.699,0.929
+freeze_encoder__seed3456,50,48,2.7,0.93
+freeze_decoder__seed1234,50,50,2.701,0.929
+freeze_decoder__seed2345,50,50,2.696,0.93
+freeze_decoder__seed3456,50,50,2.702,0.929

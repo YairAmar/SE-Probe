@@ -1,0 +1,10 @@
+peak_pesq,peak_stoi,peak_epoch,reach95_epoch,final_ep50_pesq,late_avg_pesq_40_50,run,arm,seed
+2.701,0.929,50,13,2.701,2.6706363636363637,freeze_decoder__seed1234,freeze_decoder,1234
+2.696,0.93,50,14,2.696,2.6648181818181818,freeze_decoder__seed2345,freeze_decoder,2345
+2.702,0.929,50,14,2.702,2.6812727272727273,freeze_decoder__seed3456,freeze_decoder,3456
+2.693,0.931,48,15,2.687,2.6692727272727272,freeze_encoder__seed1234,freeze_encoder,1234
+2.699,0.929,36,14,2.697,2.678909090909091,freeze_encoder__seed2345,freeze_encoder,2345
+2.7,0.93,48,13,2.685,2.666909090909091,freeze_encoder__seed3456,freeze_encoder,3456
+2.789,0.934,46,19,2.768,2.765,full_ft__seed1234,full_ft,1234
+2.789,0.932,46,15,2.778,2.7597272727272726,full_ft__seed2345,full_ft,2345
+2.77,0.934,46,15,2.768,2.7534545454545456,full_ft__seed3456,full_ft,3456

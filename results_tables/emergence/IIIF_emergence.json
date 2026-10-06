@@ -1,0 +1,166 @@
+[
+  {
+    "label": "old5",
+    "noises": [
+      "TBUS",
+      "PCAFETER",
+      "DLIVING",
+      "OOFFICE",
+      "SPSQUARE"
+    ],
+    "convergence": [
+      {
+        "epoch": -1,
+        "beta_r_vs_e48": 0.775764334637089,
+        "alpha_r_vs_e48": 0.7761403752025824
+      },
+      {
+        "epoch": 1,
+        "beta_r_vs_e48": 0.7644718967570434,
+        "alpha_r_vs_e48": 0.7903483599558855
+      },
+      {
+        "epoch": 3,
+        "beta_r_vs_e48": 0.771505591463262,
+        "alpha_r_vs_e48": 0.772893036690231
+      },
+      {
+        "epoch": 5,
+        "beta_r_vs_e48": 0.8864949383729619,
+        "alpha_r_vs_e48": 0.867197792839009
+      },
+      {
+        "epoch": 7,
+        "beta_r_vs_e48": 0.8818550003355957,
+        "alpha_r_vs_e48": 0.8716493481331483
+      },
+      {
+        "epoch": 9,
+        "beta_r_vs_e48": 0.9207613441831182,
+        "alpha_r_vs_e48": 0.9010000338838545
+      },
+      {
+        "epoch": 10,
+        "beta_r_vs_e48": 0.9272706124892486,
+        "alpha_r_vs_e48": 0.9121782399591591
+      },
+      {
+        "epoch": 12,
+        "beta_r_vs_e48": 0.9269762329291305,
+        "alpha_r_vs_e48": 0.9071481718378733
+      },
+      {
+        "epoch": 24,
+        "beta_r_vs_e48": 0.9785248373998124,
+        "alpha_r_vs_e48": 0.9686182487873676
+      },
+      {
+        "epoch": 36,
+        "beta_r_vs_e48": 0.9965474558973771,
+        "alpha_r_vs_e48": 0.9940907917142886
+      },
+      {
+        "epoch": 48,
+        "beta_r_vs_e48": 1.0,
+        "alpha_r_vs_e48": 1.0
+      }
+    ],
+    "concentration": {
+      "ratio_dbeta_decref_over_encl1": 3.0594582889708426,
+      "ratio_dalpha_decref_over_encl1": 5.501215613180783,
+      "enc_l1_mean_abs_dbeta": 0.0029025489799597666,
+      "decref_mean_abs_dbeta": 0.008880227535881772,
+      "enc_l1_mean_abs_dalpha": 0.06926507184640851,
+      "decref_mean_abs_dalpha": 0.3810420946895512
+    },
+    "headline": {
+      "e1_beta_r": 0.7644718967570434,
+      "e36_beta_r": 0.9965474558973771,
+      "pretrained_beta_r": 0.775764334637089,
+      "pretrained_alpha_r": 0.7761403752025824,
+      "min_r_epochs_36_48": 0.9965474558973771
+    }
+  },
+  {
+    "label": "new5",
+    "noises": [
+      "TBUS",
+      "SCAFE",
+      "DLIVING",
+      "OOFFICE",
+      "SPSQUARE"
+    ],
+    "convergence": [
+      {
+        "epoch": -1,
+        "beta_r_vs_e48": 0.7552969484057666,
+        "alpha_r_vs_e48": 0.7272593003110754
+      },
+      {
+        "epoch": 1,
+        "beta_r_vs_e48": 0.7595814318771271,
+        "alpha_r_vs_e48": 0.7792826444504962
+      },
+      {
+        "epoch": 3,
+        "beta_r_vs_e48": 0.773923332259938,
+        "alpha_r_vs_e48": 0.777413759768127
+      },
+      {
+        "epoch": 5,
+        "beta_r_vs_e48": 0.8760169397398107,
+        "alpha_r_vs_e48": 0.848889839649714
+      },
+      {
+        "epoch": 7,
+        "beta_r_vs_e48": 0.8785825160129465,
+        "alpha_r_vs_e48": 0.8646945044856529
+      },
+      {
+        "epoch": 9,
+        "beta_r_vs_e48": 0.9118167449008998,
+        "alpha_r_vs_e48": 0.8876035094827274
+      },
+      {
+        "epoch": 10,
+        "beta_r_vs_e48": 0.9211981849541157,
+        "alpha_r_vs_e48": 0.9027617772259781
+      },
+      {
+        "epoch": 12,
+        "beta_r_vs_e48": 0.9201734478462411,
+        "alpha_r_vs_e48": 0.8984585655116333
+      },
+      {
+        "epoch": 24,
+        "beta_r_vs_e48": 0.9747582705614162,
+        "alpha_r_vs_e48": 0.9652413198475862
+      },
+      {
+        "epoch": 36,
+        "beta_r_vs_e48": 0.9951238848530674,
+        "alpha_r_vs_e48": 0.9926421411629633
+      },
+      {
+        "epoch": 48,
+        "beta_r_vs_e48": 0.9999999999999998,
+        "alpha_r_vs_e48": 1.0
+      }
+    ],
+    "concentration": {
+      "ratio_dbeta_decref_over_encl1": 3.401641338907276,
+      "ratio_dalpha_decref_over_encl1": 5.769374666685616,
+      "enc_l1_mean_abs_dbeta": 0.002858882934995037,
+      "decref_mean_abs_dbeta": 0.009724894374775682,
+      "enc_l1_mean_abs_dalpha": 0.06801502750160371,
+      "decref_mean_abs_dalpha": 0.3924041766216779
+    },
+    "headline": {
+      "e1_beta_r": 0.7595814318771271,
+      "e36_beta_r": 0.9951238848530674,
+      "pretrained_beta_r": 0.7552969484057666,
+      "pretrained_alpha_r": 0.7272593003110754,
+      "min_r_epochs_36_48": 0.9951238848530674
+    }
+  }
+]
