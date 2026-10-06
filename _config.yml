@@ -22,6 +22,8 @@ exclude_patterns:
   - "docs"
   - "pretrained_models"
   - "results_demo"
+  - "results_tables"
+  - "training"
   - "**.ipynb_checkpoints"
   - ".DS_Store"
   - "Thumbs.db"
