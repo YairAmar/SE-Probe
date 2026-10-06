@@ -16,13 +16,19 @@ import random as stdlib_random
 import numpy as np
 import torch
 import torch.nn.functional as F
-import wandb
+try:  # experiment tracking is optional at import time (tests import this module)
+    import wandb
+except ImportError:  # pragma: no cover
+    wandb = None
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from pesq import pesq as compute_pesq
 from pystoi import stoi
-from speechmos import dnsmos
+try:
+    from speechmos import dnsmos
+except ImportError:  # pragma: no cover
+    dnsmos = None
 from torch.utils.data import DataLoader
 
 from env import AttrDict, build_env
@@ -33,6 +39,125 @@ from models.discriminator import MetricDiscriminator, batch_pesq
 from utils import scan_checkpoint, load_checkpoint, save_checkpoint
 
 torch.backends.cudnn.benchmark = True
+
+
+# ---------------------------------------------------------------------------
+# Selective freezing (ported from the Muse-Reverb-FN trainer, and the three
+# profile-guided arms of the Job A experiment). All names are matched against
+# `generator.named_parameters()` of models.generator.MUSE.
+# ---------------------------------------------------------------------------
+
+# --unfreeze <block>: every parameter owned by one of MUSE's six stages,
+# including its patch-embedding / down- / up-sampling / output heads.
+BLOCK_TO_PREFIXES = {
+    'encoder_l1': ['patch_embed_encoder_level1.', 'encoder_level1.', 'down1_2.'],
+    'encoder_l2': ['patch_embed_encoder_level2.', 'encoder_level2.', 'down2_3.'],
+    'latent':     ['patch_embed_latent.', 'latent.'],
+    'decoder_l2': ['up3_2.', 'reduce_chan_level2.', 'patch_embed_decoder_level2.', 'decoder_level2.'],
+    'decoder_l1': ['up2_1.', 'reduce_chan_level1.', 'patch_embed_decoder_level1.', 'decoder_level1.'],
+    'refinement': ['mag_patch_embed_refinement.', 'mag_refinement.', 'mag_output.',
+                   'pha_patch_embed_refinement.', 'pha_refinement.', 'pha_output.'],
+}
+
+# --unfreeze <block>.<layer>: a single transformer layer (0-3) inside a stage.
+BLOCK_TO_LAYER_PREFIXES = {
+    'encoder_l1': ['encoder_level1.'],
+    'encoder_l2': ['encoder_level2.'],
+    'latent':     ['latent.'],
+    'decoder_l2': ['decoder_level2.'],
+    'decoder_l1': ['decoder_level1.'],
+    'refinement': ['mag_refinement.', 'pha_refinement.'],
+}
+NUM_LAYERS_PER_BLOCK = 4
+
+# --freeze_arm: the three profile-guided fine-tuning arms of Job A. A parameter
+# is FROZEN when its name contains any of the listed substrings; everything
+# else stays trainable. `full_ft` freezes nothing.
+#   freeze_encoder : the profile-robust encoder stages (76% of parameters trainable)
+#   freeze_decoder : the profile-sensitive decoder stages and the mask/phase heads
+#                    (71% trainable). Note that mag_refinement is NOT frozen by this
+#                    arm and latent is frozen by neither.
+FREEZE_ARM_KEYS = {
+    'full_ft': (),
+    'freeze_encoder': ('dense_encoder', 'TCFTransformer.encoder_level'),
+    'freeze_decoder': ('TCFTransformer.decoder_level', 'mask_decoder', 'phase_decoder'),
+}
+
+
+def validate_unfreeze(spec):
+    """Validate an --unfreeze value; raise ValueError with a helpful message."""
+    valid_blocks = list(BLOCK_TO_PREFIXES.keys()) + ['all']
+    if '.' in spec:
+        block, layer_str = spec.rsplit('.', 1)
+        if block not in BLOCK_TO_LAYER_PREFIXES:
+            raise ValueError(f"--unfreeze: invalid block '{block}'. "
+                             f"Choose from: {list(BLOCK_TO_LAYER_PREFIXES.keys())}")
+        try:
+            layer_idx = int(layer_str)
+        except ValueError:
+            raise ValueError(f"--unfreeze: layer index must be an integer, got '{layer_str}'")
+        if not (0 <= layer_idx < NUM_LAYERS_PER_BLOCK):
+            raise ValueError(f"--unfreeze: layer index must be 0-{NUM_LAYERS_PER_BLOCK - 1}, "
+                             f"got {layer_idx}")
+    elif spec not in valid_blocks:
+        raise ValueError(f"--unfreeze: invalid value '{spec}'. Choose from: {valid_blocks} "
+                         "or use block.layer syntax (e.g. encoder_l1.0)")
+
+
+def apply_unfreeze(generator, unfreeze, unfreeze_boundary=False):
+    """Freeze every generator parameter, then re-enable the selected stage / layer.
+
+    unfreeze: 'all', a block name from BLOCK_TO_PREFIXES, or '<block>.<layer>'.
+    unfreeze_boundary: additionally unfreeze dense_encoder / mask_decoder / phase_decoder.
+    Returns (n_trainable, n_total) parameter counts.
+    """
+    validate_unfreeze(unfreeze)
+    for p in generator.parameters():
+        p.requires_grad = False
+
+    if unfreeze == 'all':
+        for p in generator.parameters():
+            p.requires_grad = True
+    elif '.' in unfreeze:
+        block, layer_str = unfreeze.rsplit('.', 1)
+        layer_idx = int(layer_str)
+        for name, p in generator.named_parameters():
+            for sp in BLOCK_TO_LAYER_PREFIXES[block]:
+                if name.startswith(f'TCFTransformer.{sp}mhca_blks.0.transformer_layers.{layer_idx}.'):
+                    p.requires_grad = True
+    else:
+        prefixes = BLOCK_TO_PREFIXES[unfreeze]
+        for name, p in generator.named_parameters():
+            if any(name.startswith(f'TCFTransformer.{pfx}') for pfx in prefixes):
+                p.requires_grad = True
+
+    if unfreeze_boundary:
+        for name, p in generator.named_parameters():
+            if name.startswith(('dense_encoder.', 'mask_decoder.', 'phase_decoder.')):
+                p.requires_grad = True
+
+    total = sum(p.numel() for p in generator.parameters())
+    trainable = sum(p.numel() for p in generator.parameters() if p.requires_grad)
+    return trainable, total
+
+
+def apply_freeze_arm(generator, arm):
+    """Configure requires_grad per Job A arm (full_ft / freeze_encoder / freeze_decoder).
+
+    Returns (n_trainable, n_frozen) parameter counts.
+    """
+    if arm not in FREEZE_ARM_KEYS:
+        raise ValueError(f"--freeze_arm: invalid value '{arm}'. "
+                         f"Choose from: {list(FREEZE_ARM_KEYS)}")
+    keys = FREEZE_ARM_KEYS[arm]
+    trainable = frozen = 0
+    for name, p in generator.named_parameters():
+        p.requires_grad_(not any(k in name for k in keys))
+        if p.requires_grad:
+            trainable += p.numel()
+        else:
+            frozen += p.numel()
+    return trainable, frozen
 
 
 def process_audio(noisy_audio, generator, device, segment_size, n_fft, hop_size, win_size, compress_factor):
@@ -120,9 +245,30 @@ def train(a, h):
         generator.load_state_dict(state_dict_g['generator'])
         print(f"Loaded pretrained generator from {a.pretrained_checkpoint}")
 
+    # Selective freezing (applied right after the weights are loaded)
+    if a.unfreeze is not None:
+        trainable, total = apply_unfreeze(generator, a.unfreeze, a.unfreeze_boundary)
+        print(f"Parameters: {trainable}/{total} trainable ({100 * trainable / total:.1f}%) "
+              f"[--unfreeze {a.unfreeze}{' --unfreeze_boundary' if a.unfreeze_boundary else ''}]")
+    if a.freeze_arm is not None:
+        trainable, frozen = apply_freeze_arm(generator, a.freeze_arm)
+        print(f"freeze arm={a.freeze_arm}: trainable={trainable / 1e6:.2f}M "
+              f"frozen={frozen / 1e6:.2f}M "
+              f"({100 * trainable / (trainable + frozen):.1f}%)")
+    if a.freeze_discriminator:
+        for p in discriminator.parameters():
+            p.requires_grad = False
+        print("Discriminator frozen")
+
     lr = a.lr if a.lr else h.learning_rate
-    optim_g = torch.optim.AdamW(generator.parameters(), lr, betas=[h.adam_b1, h.adam_b2])
-    optim_d = torch.optim.AdamW(discriminator.parameters(), lr, betas=[h.adam_b1, h.adam_b2])
+    # Only trainable parameters reach the optimizers (identical to the full
+    # fine-tune when nothing is frozen).
+    g_params = [p for p in generator.parameters() if p.requires_grad]
+    d_params = [p for p in discriminator.parameters() if p.requires_grad]
+    optim_g = torch.optim.AdamW(g_params if g_params else [torch.nn.Parameter(torch.empty(0))],
+                                lr, betas=[h.adam_b1, h.adam_b2])
+    optim_d = torch.optim.AdamW(d_params if d_params else [torch.nn.Parameter(torch.empty(0))],
+                                lr, betas=[h.adam_b1, h.adam_b2])
 
     if state_dict_do is not None:
         optim_g.load_state_dict(state_dict_do['optim_g'])
@@ -176,7 +322,11 @@ def train(a, h):
         name=a.run_name or "full-ft",
         config={**dict(h), "lr": lr, "training_epochs": a.training_epochs,
                 "pretrained_checkpoint": a.pretrained_checkpoint,
-                "total_params": total_params},
+                "unfreeze": a.unfreeze, "unfreeze_boundary": a.unfreeze_boundary,
+                "freeze_arm": a.freeze_arm, "freeze_discriminator": a.freeze_discriminator,
+                "seed": h.seed,
+                "total_params": total_params,
+                "trainable_params": sum(p.numel() for p in generator.parameters() if p.requires_grad)},
     )
 
     generator.train()
@@ -203,15 +353,18 @@ def train(a, h):
                                           list(audio_g.detach().cpu().numpy()))
 
             # Discriminator
-            optim_d.zero_grad()
-            metric_r = discriminator(clean_mag, clean_mag)
-            metric_g = discriminator(clean_mag, mag_g.detach())
-            loss_disc_r = F.mse_loss(one_labels, metric_r.flatten())
-            loss_disc_g = F.mse_loss(batch_pesq_score.to(device), metric_g.flatten()) \
-                if batch_pesq_score is not None else 0
-            loss_disc_all = loss_disc_r + loss_disc_g
-            loss_disc_all.backward()
-            optim_d.step()
+            if not a.freeze_discriminator:
+                optim_d.zero_grad()
+                metric_r = discriminator(clean_mag, clean_mag)
+                metric_g = discriminator(clean_mag, mag_g.detach())
+                loss_disc_r = F.mse_loss(one_labels, metric_r.flatten())
+                loss_disc_g = F.mse_loss(batch_pesq_score.to(device), metric_g.flatten()) \
+                    if batch_pesq_score is not None else 0
+                loss_disc_all = loss_disc_r + loss_disc_g
+                loss_disc_all.backward()
+                optim_d.step()
+            else:
+                loss_disc_all = torch.tensor(0.0)
 
             # Generator
             optim_g.zero_grad()
@@ -387,15 +540,43 @@ def main():
     parser.add_argument('--save_every_epoch', default=True,
                         action=argparse.BooleanOptionalAction)
 
+    # Selective freezing (see BLOCK_TO_PREFIXES / FREEZE_ARM_KEYS at the top)
+    parser.add_argument('--unfreeze', default=None, type=str,
+                        help='Train only this part of the generator. Blocks: all|encoder_l1|'
+                             'encoder_l2|latent|decoder_l2|decoder_l1|refinement. '
+                             'Single layers: encoder_l1.0|encoder_l1.1|...|refinement.3')
+    parser.add_argument('--unfreeze_boundary', action='store_true',
+                        help='With --unfreeze: also train dense_encoder/mask_decoder/phase_decoder')
+    parser.add_argument('--freeze_arm', default=None,
+                        choices=['full_ft', 'freeze_encoder', 'freeze_decoder'],
+                        help='Profile-guided fine-tuning arm of the Job A experiment')
+    parser.add_argument('--freeze_discriminator', action='store_true',
+                        help='Freeze the MetricDiscriminator')
+    parser.add_argument('--seed', default=None, type=int,
+                        help='Override the config seed (the arms used 1234, 2345, 3456)')
+
     a = parser.parse_args()
+
+    if a.unfreeze is not None:
+        try:
+            validate_unfreeze(a.unfreeze)
+        except ValueError as e:
+            parser.error(str(e))
+    if a.unfreeze is not None and a.freeze_arm is not None:
+        parser.error('--unfreeze and --freeze_arm are mutually exclusive')
 
     with open(a.config) as f:
         h = AttrDict(json.loads(f.read()))
     build_env(a.config, 'config.json', a.checkpoint_path)
 
+    if a.seed is not None:
+        h.seed = a.seed
+    stdlib_random.seed(h.seed)
+    np.random.seed(h.seed)
     torch.manual_seed(h.seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed(h.seed)
+        torch.cuda.manual_seed_all(h.seed)
         h.num_gpus = 1
     else:
         h.num_gpus = 0

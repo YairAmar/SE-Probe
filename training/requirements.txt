@@ -9,3 +9,14 @@ einops==0.6.0
 joblib==1.1.0
 natsort==8.3.0
 pesq==0.0.4
+
+# --- added for the MP-SENet / Demucs dereverberation fine-tuning and evaluation
+# (train_mpsenet.py, train_demucs.py, evaluate_*_testset.py, scripts/convert_dns_to_trainer.py)
+pystoi
+speechmos
+wandb
+matplotlib
+denoiser          # facebookresearch/denoiser: dns64() pretrained Demucs + MultiResolutionSTFTLoss
+safetensors
+huggingface_hub
+scipy

@@ -8,17 +8,27 @@ on-the-fly with real RIRs.
 
 ---
 
-## Where this lives
+This folder now also carries the **MP-SENet** and **Demucs** dereverberation
+fine-tunes, the held-out test evaluation of all three architectures, and the
+selective-freezing / profile-guided arms used in the TASLP paper. See the
+sections after "Evaluation" below.
 
-| | |
-|---|---|
-| GitHub | https://github.com/YairAmar/muse-dereverb-ft (private) |
-| Local clone (Athena/DGX) | `/rg/iscohen_prj/yairamr/code/muse-dereverb-ft` |
-| Source repo it was carved out of | `/rg/iscohen_prj/yairamr/code/Muse-Reverb-FN` (https://github.com/YairAmar/Muse-Reverb-FN, branch `mpsenet-ft`) |
+## Provenance
+
+This directory is a vendored, self-contained copy of the research trainer
+(`Muse-Reverb-FN`, branches `mpsenet-ft`, `demucs-reverb-ft` and
+`reverb-ft-jul2026`; the MUSE part was first carved out as `muse-dereverb-ft`).
+Those research repositories are private and lived on the Technion clusters; every
+cluster-specific path has been replaced here by a repo-relative one, and every
+launch script is the exact SLURM submission that produced the published
+checkpoints with only its paths made generic.
 
 The fine-tuned checkpoint `checkpoints/g_00051852` is the same file as
 `Muse-Reverb-FN/checkpoints/all/epoch_48/g_00051852` (the "all-block-unfrozen"
 winner of an earlier selective-FT experiment, now repackaged as plain full FT).
+It is also published as `yairamr/SE-Probe-models/muse_reverb_e48.pt` on
+HuggingFace, next to the nine profile-guided arm checkpoints
+`cluster-2026-07/<arm>__seed<S>/g_00040000`.
 
 ---
 
@@ -104,21 +114,19 @@ on reverb at the cost of −1.32 PESQ on noise (catastrophic forgetting; expecte
 
 ## Environment
 
-This repo runs in the project's standard conda env on Athena and DGX:
+All published runs used one conda environment on the Technion clusters
+(Python 3.10, torch 1.12.1+cu113; the launch scripts read its name from
+`$CONDA_ENV`, default `meta-interface-py310`). CUDA-12 stacks did not work on
+the DGX nodes used for training (driver 470 caps at CUDA 11.4); the held-out
+"before" rows were later re-measured under torch 2.11 and reproduce the
+published fine-tuned row to 8.6e-5 PESQ (see "Held-out test evaluation").
 
-```bash
-source ~/miniconda3/etc/profile.d/conda.sh
-conda activate meta-interface-py310           # Python 3.10, torch 1.12.1+cu113
-```
-
-The env is identical on both clusters, so code runs unchanged. CUDA-12 stacks
-will not work on the DGX (driver 470 caps at CUDA 11.4). See
-`~/.claude/CLAUDE.md` for the cluster comparison.
-
-`requirements.txt` lists the original MUSE pins, but the project env is what's
-actually used. Extra packages used by `train.py` / `evaluate.py`:
+`requirements.txt` lists the original MUSE pins plus the packages the added
+trainers need. Extra packages used by `train.py` / `evaluate.py`:
 `wandb`, `pesq`, `pystoi`, `speechmos`, `matplotlib`, `onnx2torch` (for
-GPU-accelerated DNSMOS in `evaluate.py`).
+GPU-accelerated DNSMOS in `evaluate.py`); `train_demucs.py` and
+`evaluate_demucs_testset.py` additionally need `denoiser`, and
+`scripts/convert_dns_to_trainer.py` needs `safetensors` + `huggingface_hub`.
 
 ---
 
@@ -126,25 +134,45 @@ GPU-accelerated DNSMOS in `evaluate.py`).
 
 ```
 .
-├── train.py                       # Fine-tuning loop (full FT, no selective freezing)
+├── train.py                       # MUSE fine-tuning loop (full FT by default; --unfreeze / --freeze_arm for selective freezing)
+├── train_mpsenet.py               # MP-SENet dereverberation fine-tuning (grad accumulation + NaN guard)
+├── train_demucs.py                # Demucs (dns64) dereverberation fine-tuning (L1 + multi-resolution STFT loss)
 ├── inference.py                   # Wav-folder inference (reads config from ckpt dir)
 ├── evaluate.py                    # PESQ/STOI/SI-SDR/DNSMOS, supports reverb + noise sets
-├── config_finetune.json           # Hyperparameters used for the FT run
+├── evaluate_mpsenet_testset.py    # Held-out 4,120-mixture test-set evaluation, MP-SENet
+├── evaluate_demucs_testset.py     # Same harness for Demucs (identical metrics and schema)
+├── config_finetune.json           # Hyperparameters used for the MUSE FT run
+├── config_mpsenet_finetune.json   # MP-SENet FT at batch 28 (single large GPU)
+├── config_mpsenet_finetune_ga.json# MP-SENet FT, batch 4 x grad_accum 7 = 28 (the run used)
+├── config_finetune_demucs.json    # Demucs "parity" FT (lr 1e-4, 50 epochs)
+├── config_finetune_demucs_v2.json # Demucs "v2" FT (lr 3e-4, 60 epochs; epoch 57 probed)
 ├── env.py                         # AttrDict + build_env helpers
 ├── utils.py                       # load/save_checkpoint, scan_checkpoint
 ├── models/
 │   ├── generator.py               # MUSE = U-Net wrapping TCFTransformer (mask + phase head)
 │   ├── discriminator.py           # MetricDiscriminator (PESQ-aligned GAN loss)
-│   └── MUSE_net.py                # Multi-path Enhanced Taylor Transformer
+│   ├── MUSE_net.py                # Multi-path Enhanced Taylor Transformer
+│   ├── mpsenet_generator.py       # MP-SENet generator (MPNet) used by train_mpsenet.py
+│   └── mpsenet_discriminator.py   # MP-SENet MetricDiscriminator + batch_pesq
 ├── datasets/
 │   ├── dataset.py                 # VB+DEMAND denoising dataset, mag_pha_stft/istft, file lists
-│   └── reverb_dataset.py          # ReverbDataset + ReverbValDataset (on-the-fly RIR convolution)
+│   ├── reverb_dataset.py          # ReverbDataset + ReverbValDataset (MUSE) and MPSENetReverb{,Val}Dataset
+│   └── reverb_waveform_dataset.py # DemucsReverb{,Val}Dataset: raw (clean, reverb) waveform pairs
+├── results/                       # Held-out test-set evaluations (see below)
+├── tests/test_freeze_arms.py      # Unit test of the selective-freezing rules
 ├── scripts/
 │   ├── prepare_vb_demand.py       # Download VB-DEMAND 16 kHz from HuggingFace
 │   ├── prepare_rirs.py            # Compute RT60/DRR/C50/C80 metadata + onset-clip RIRs
 │   ├── split_rirs.py              # 80/20 stratified-by-RT60 train/test split
 │   ├── generate_test_sets.py      # Build 824×5-RIR reverb test set + noise test set symlinks
-│   └── launch_finetune.sh         # SLURM launcher (1× A100, ~24 h for 50 epochs)
+│   ├── convert_dns_to_trainer.py  # JacobLinCool/MP-SENet-DNS weights -> trainer key layout (+ round-trip proof)
+│   ├── consolidate_test_eval.py   # Per-epoch MP-SENet eval JSONs -> summary + leakage audit
+│   ├── consolidate_demucs_test_eval.py  # Same for Demucs, plus test-set identity proof
+│   ├── launch_finetune.sh         # SLURM launcher, MUSE (1× A100, ~24 h for 50 epochs)
+│   ├── launch_finetune_arms.sh    # SLURM template for the three freeze arms x three seeds
+│   ├── launch_finetune_mpsenet_ga.sh  # SLURM launcher, MP-SENet (2× A100 40 GB, grad_accum 7)
+│   ├── launch_finetune_demucs.sh      # SLURM launcher, Demucs parity run (1× A100)
+│   └── launch_finetune_demucs_v2.sh   # SLURM launcher, Demucs v2 run (1× A100)
 ├── paper_result/
 │   ├── config.json                # Pretrained-baseline config
 │   └── g_best                     # Pretrained MUSE generator (denoising baseline, FT starting point)
@@ -174,14 +202,14 @@ data/
 └── rir_split.json            ({filename: "train"|"test"}, ~798/202)
 ```
 
-These files already exist in `/rg/iscohen_prj/yairamr/code/Muse-Reverb-FN/data/`
-and `/home/yairamr/work/data/rirs/rirmega/`. To rebuild from scratch:
+To build these from scratch (RIR-Mega is downloaded by `scripts/download_rirmega.sh`
+in the research repo; any local copy of the 1000-RIR `rir_output_small` subset works):
 
 ```bash
 python scripts/prepare_vb_demand.py
-python scripts/prepare_rirs.py --src-dir /home/yairamr/work/data/rirs/rirmega
+python scripts/prepare_rirs.py --src-dir data/rirmega
 python scripts/split_rirs.py
-python scripts/generate_test_sets.py --rir-dir /home/yairamr/work/data/rirs/rirmega
+python scripts/generate_test_sets.py --rir-dir data/rirmega
 ```
 
 `prepare_vb_demand.py` pulls from HuggingFace (`JacobLinCool/VoiceBank-DEMAND-16k`).
@@ -230,6 +258,211 @@ python evaluate.py \
 `test_sets/reverb/{wavs,clean_refs}` and `test_sets/noise/{wavs,clean_refs}`
 (generated by `scripts/generate_test_sets.py`). DNSMOS runs on GPU via
 `onnx2torch` for ~130× speedup over `speechmos`.
+
+---
+
+## MP-SENet dereverberation fine-tuning
+
+`train_mpsenet.py` mirrors `train.py` for MP-SENet, with the model's own loss
+(magnitude, anti-wrapping phase, complex, ISTFT→STFT consistency, time-domain
+L1 and the metric-discriminator term), and matches the MUSE protocol: the same
+11,572 clean VoiceBank utterances convolved on-the-fly with the RIR-Mega
+training RIRs, all parameters unfrozen, AdamW(β₁=0.8, β₂=0.99), lr 1e-4,
+per-epoch exponential decay γ=0.99, effective batch 28, 50 epochs. The
+**epoch-50 checkpoint** is the one probed under reverberation in the paper.
+
+**Base weights.** The starting point is the MP-SENet authors' DNS checkpoint,
+`JacobLinCool/MP-SENet-DNS` on HuggingFace (the same weights `se_probe` probes
+under additive noise). Its `state_dict` keys differ from this trainer's `MPNet`
+only in the container names, so `scripts/convert_dns_to_trainer.py` remaps
+them, loads `strict=True`, proves the round-trip back to the HF layout is
+lossless, and writes `checkpoints_mpsenet/dns_base_converted.pt`:
+
+| HF `MPSENet` prefix | trainer `MPNet` prefix |
+|---|---|
+| `dense_encoder.` | `encoder.` |
+| `TSTransformer.` | `enhancer.` |
+| `mask_decoder.` | `decoder.mask_decoder.` |
+| `phase_decoder.` | `decoder.phase_decoder.` |
+
+The inverse remap lives in `se_probe/mpsenet/model.py` (`_remap_trainer_keys`),
+so a fine-tuned checkpoint reloads into `MPSENet.from_pretrained(...)` for probing.
+
+**STFT config must match DNS**: `n_fft=400, hop_size=100, win_size=400,
+beta=2.0, compress_factor=0.3, dense_channel=64, num_tsblocks=4`
+(`config_mpsenet_finetune*.json`). Any other `n_fft` shape-mismatches the
+per-bin `mask_decoder.lsigmoid.slope` parameter.
+
+**Memory and NaN guard.** On 40 GB A100s MP-SENet fits ~2 segments/GPU under
+DDP, so the effective batch of 28 is reached by gradient accumulation:
+`config_mpsenet_finetune_ga.json` (batch 4 → 2 per GPU on 2 GPUs) ×
+`--grad_accum 7`. The generator accumulates; the discriminator still steps
+per micro-batch. An unguarded first run diverged to NaN in epoch 3 because
+`atan2(0, 0)` in the phase decoder produces a NaN gradient that
+`clip_grad_norm_` then spreads to every weight. Both optimizers therefore skip a
+step whose clipped gradient norm is non-finite (`[nan-guard]` log lines); in
+the published run this fired for 23 generator steps (0.05–0.09 %) and never
+for the discriminator.
+
+```bash
+python scripts/convert_dns_to_trainer.py              # writes checkpoints_mpsenet/dns_base_converted.pt
+sbatch scripts/launch_finetune_mpsenet_ga.sh           # 2x A100 40 GB; auto-resumes on re-submit
+python evaluate_mpsenet_testset.py \
+  --checkpoint checkpoints_mpsenet/all_v2/epoch_50/g_00295909 \
+  --config checkpoints_mpsenet/all_v2/config.json \
+  --output results/mpsenet_ft_test_eval_epoch_50
+```
+
+Validation on a 10-utterance subset plateaued around epoch 42 at PESQ
+3.17–3.19 (reverberant input 1.52); the test-set numbers below are higher
+because the held-out set is slightly easier.
+
+---
+
+## Demucs dereverberation fine-tuning
+
+`train_demucs.py` fine-tunes the pretrained `denoiser` DNS64 Demucs in the
+time domain on the same convolutive mixtures, with Demucs's own loss
+`L1(enhanced, clean) + MultiResolutionSTFTLoss` (spectral convergence +
+log-magnitude over FFT sizes 512/1024/2048, lifted from `denoiser.stft_loss`),
+AdamW(β₁=0.8, β₂=0.99) with per-epoch `ExponentialLR(0.99)`, batch 28, all
+parameters trainable. `datasets/reverb_waveform_dataset.py` reproduces the MUSE
+reverb pair generation (onset-clipped RIRs, `fftconvolve`, energy
+normalisation by the reverberant signal) but returns raw waveforms. Checkpoints
+are `{'generator': state_dict}` and reload into a fresh `dns64()`.
+
+Two runs were trained; the learning rate and epoch count are the only delta:
+
+| run | config / launcher | lr | epochs | best val PESQ | checkpoint probed |
+|---|---|---|---|---|---|
+| parity (MUSE-recipe lr) | `config_finetune_demucs.json`, `launch_finetune_demucs.sh` | 1e-4 | 50 | 2.237 @ ep 45 | `epoch_45/g_00037350` |
+| v2 (Demucs upstream lr) | `config_finetune_demucs_v2.json`, `launch_finetune_demucs_v2.sh` | 3e-4 | 60 | 2.335 @ ep 57 | `epoch_57/g_00047310` |
+
+The paper reports both; the v2 epoch-57 checkpoint is the Demucs arm of the
+reverberation probe.
+
+```bash
+sbatch scripts/launch_finetune_demucs_v2.sh
+python evaluate_demucs_testset.py \
+  --checkpoint checkpoints/dereverb_demucs_v2/epoch_57/g_00047310 \
+  --reverb_dir test_sets/reverb --output results/demucs_ft_test_eval_v2_epoch_57
+```
+
+---
+
+## Held-out test evaluation
+
+`evaluate_mpsenet_testset.py` and `evaluate_demucs_testset.py` score PESQ
+(wide-band), STOI, ESTOI and SI-SDR for both the enhanced output and the
+reverberant input on `test_sets/reverb`: **4,120 mixtures = the 824 VoiceBank
+test utterances × 5 draws from the 202 held-out RIR-Mega impulse responses**
+(`data/rir_split.json`, disjoint from the 798 training RIRs; the leakage audit
+is in `results/*_test_eval.json`). The two harnesses share the metric code and
+the Demucs consolidation script proves the two evaluations consumed the same
+4,120 files (identical input-metric rows). DNSMOS is not reported. The pretrained
+"before" rows were measured with the same harness, unmodified, in
+`PRETRAINED_REVERB_EVAL` (athena job 128960); a rerun of the fine-tuned MP-SENet
+row under that newer software stack reproduces the published value to 8.6e-5
+PESQ, so the rows are comparable.
+
+| system | PESQ | STOI | ESTOI | SI-SDR (dB) |
+|---|---|---|---|---|
+| reverberant input | 1.658 | 0.816 | 0.620 | −10.13 |
+| MUSE pretrained (`paper_result/g_best`) | 1.817 | 0.787 | 0.596 | −10.03 |
+| MP-SENet pretrained (DNS) | 1.693 | 0.802 | 0.595 | −9.69 |
+| Demucs pretrained (DNS64) | 1.729 | 0.800 | 0.624 | −9.23 |
+| MP-SENet fine-tuned, epoch 50 | **3.361** | **0.966** | **0.904** | **+9.44** |
+| Demucs fine-tuned v2, epoch 57 | 2.441 | 0.918 | 0.799 | +3.77 |
+| Demucs fine-tuned parity, epoch 45 | 2.339 | 0.914 | 0.790 | +3.34 |
+
+MP-SENet epochs 48/49/50 lie within 0.014 PESQ of each other
+(`results/mpsenet_ft_test_eval_summary.csv`). None of the pretrained
+denoising checkpoints dereverberates: they gain at most +0.16 PESQ over the
+input, lose STOI, and stay within 1 dB of the input's SI-SDR. The MUSE
+fine-tune (`checkpoints/g_00051852`) was evaluated on a different held-out set
+of the same size (824 utterances × 5 RIRs, mean C50 12.0 dB; PESQ 3.02 / STOI
+0.944 vs 2.17 / 0.834 pretrained, see "Achieved metrics" above), so absolute
+values are not comparable across the two evaluations.
+
+Files under `results/`:
+
+| file | contents |
+|---|---|
+| `mpsenet_ft_test_eval_epoch_{48,49,50}.{csv,json}` | per-mixture metrics and summary, MP-SENet |
+| `mpsenet_ft_test_eval{.json,_summary.csv}` | consolidated MP-SENet results + leakage audit |
+| `demucs_ft_test_eval_{parity_epoch_45,v2_epoch_57}.{csv,json}` | per-mixture metrics and summary, Demucs |
+| `demucs_ft_test_eval{.json,_summary.csv}` | consolidated Demucs results + test-set identity proof |
+| `pretrained_reverb_eval.csv` | the pretrained "before" rows and the control rerun, at full precision |
+
+Checkpoint paths inside the JSONs are written as `<Muse-Reverb-FN>/...`, i.e.
+relative to the research repository they were produced in.
+
+---
+
+## Selective freezing and the profile-guided arms
+
+`train.py` keeps its default behaviour (every generator parameter trainable)
+but exposes the freezing options used in two experiments:
+
+* `--unfreeze {all|encoder_l1|encoder_l2|latent|decoder_l2|decoder_l1|refinement}`
+  trains one MUSE stage (its transformer block plus its patch-embedding,
+  down/up-sampling and output heads, see `BLOCK_TO_PREFIXES`), and
+  `--unfreeze <block>.<layer>` (layer 0–3) a single transformer layer.
+  `--unfreeze_boundary` additionally trains `dense_encoder`, `mask_decoder` and
+  `phase_decoder`; `--freeze_discriminator` freezes the MetricDiscriminator.
+  This is the single-block freeze study whose `all` arm is
+  `checkpoints/g_00051852`.
+* `--freeze_arm {full_ft,freeze_encoder,freeze_decoder}` reproduces the
+  profile-guided arms: `freeze_encoder` freezes every parameter whose name
+  contains `dense_encoder` or `TCFTransformer.encoder_level` (76 % of the
+  generator stays trainable); `freeze_decoder` freezes
+  `TCFTransformer.decoder_level`, `mask_decoder` and `phase_decoder` (71 %
+  trainable; `mag_refinement` and `latent` are frozen by neither arm).
+  `--seed` overrides the config seed; the arms were run with seeds 1234, 2345
+  and 3456 (`scripts/launch_finetune_arms.sh`).
+
+Only `requires_grad` parameters reach the optimizers. The freezing rules are
+pinned by `tests/test_freeze_arms.py`.
+
+Result of the three-arm experiment (50 epochs, lr 1e-4, batch 28, RIR-Mega
+900-RIR training pool, best-epoch PESQ/STOI on the held-out RIR-Mega validation
+subset, mean ± sd over the three seeds):
+
+| arm | PESQ | STOI |
+|---|---|---|
+| `full_ft` | 2.783 ± 0.011 | 0.9333 ± 0.0012 |
+| `freeze_encoder` | 2.697 ± 0.004 | 0.9300 ± 0.0010 |
+| `freeze_decoder` | 2.700 ± 0.003 | 0.9293 ± 0.0006 |
+
+Freezing either the profile-robust or the profile-sensitive stages costs the
+same 0.08–0.09 PESQ relative to full fine-tuning (freeze_encoder minus
+freeze_decoder: −0.002 PESQ, 95 % CI [−0.007, +0.002]); the profile does not
+localise where adaptation happens. Re-probing all ten checkpoints (pre-FT and
+3 arms × 3 seeds) under reverberation shows the frozen stages holding their
+pre-FT normalised AUC while the other stages move. The nine arm checkpoints are
+on HuggingFace (`yairamr/SE-Probe-models/cluster-2026-07/<arm>__seed<S>/g_00040000`).
+
+---
+
+## Probing the fine-tuned checkpoints
+
+The checkpoints written here load directly into the `se_probe` activation
+extractors used for the reverberation axis of the paper:
+
+```python
+from se_probe.activation_extraction import (
+    load_muse_activation_extractor_reverb,
+    load_mpsenet_activation_extractor_reverb,
+    load_demucs_activation_extractor_reverb,
+)
+muse = load_muse_activation_extractor_reverb(checkpoint_path="training/checkpoints/g_00051852")
+mpsenet = load_mpsenet_activation_extractor_reverb(
+    checkpoint_path="checkpoints_mpsenet/all_v2/epoch_50/g_00295909")   # trainer keys are remapped on load
+demucs = load_demucs_activation_extractor_reverb(
+    checkpoint_path="checkpoints/dereverb_demucs_v2/epoch_57/g_00047310")
+```
+
+Pretrained arms (no `checkpoint_path`) give the "before fine-tuning" probes.
 
 ---
 

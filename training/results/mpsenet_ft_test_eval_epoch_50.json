@@ -1,0 +1,125 @@
+{
+  "checkpoint": "<Muse-Reverb-FN>/checkpoints_mpsenet/all_v2/epoch_50/g_00295909",
+  "config": "<Muse-Reverb-FN>/checkpoints_mpsenet/all_v2/config.json",
+  "config_stft": {
+    "n_fft": 400,
+    "hop_size": 100,
+    "win_size": 400,
+    "compress_factor": 0.3,
+    "dense_channel": 64,
+    "num_tsblocks": 4,
+    "beta": 2.0,
+    "segment_size": 32000
+  },
+  "test_set": {
+    "dir": "<Muse-Reverb-FN>/test_sets/reverb",
+    "n_utterances": 4120,
+    "n_unique_clean": 824,
+    "n_unique_rirs": 202,
+    "clean_source": "data/VB_DEMAND_16K/clean_test (VoiceBank+DEMAND/test.txt)",
+    "rir_split": "test split of data/rir_split.json (202 test / 798 train RIRs)"
+  },
+  "summary": {
+    "pesq": {
+      "mean": 3.360793968196054,
+      "std": 0.5626115274926676,
+      "n": 4120
+    },
+    "stoi": {
+      "mean": 0.9655817855868766,
+      "std": 0.02407994697896342,
+      "n": 4120
+    },
+    "estoi": {
+      "mean": 0.9036058962917735,
+      "std": 0.05951573356182209,
+      "n": 4120
+    },
+    "si_sdr": {
+      "mean": 9.44363581397912,
+      "std": 2.862784935198018,
+      "n": 4120
+    },
+    "pesq_input": {
+      "mean": 1.657896239346671,
+      "std": 0.42822089412406,
+      "n": 4120
+    },
+    "stoi_input": {
+      "mean": 0.8156173923055212,
+      "std": 0.07832697124695054,
+      "n": 4120
+    },
+    "estoi_input": {
+      "mean": 0.6200097397653144,
+      "std": 0.13585949519056278,
+      "n": 4120
+    },
+    "si_sdr_input": {
+      "mean": -10.13185199404363,
+      "std": 8.928295685512206,
+      "n": 4120
+    },
+    "delta": {
+      "pesq": 1.7028977288493832,
+      "stoi": 0.14996439328135536,
+      "estoi": 0.2835961565264591,
+      "si_sdr": 19.57548780802275
+    }
+  },
+  "rt60_breakdown": [
+    {
+      "rt60_lo": 0.0,
+      "rt60_hi": 0.3,
+      "n": 1663,
+      "pesq": 3.6664044093598247,
+      "stoi": 0.9764082796317761,
+      "estoi": 0.9328459186129352,
+      "si_sdr": 10.78859588068636,
+      "pesq_input": 1.9133033148868215,
+      "stoi_input": 0.8584623635210413,
+      "estoi_input": 0.7068718683341132,
+      "si_sdr_input": -8.468625564671914
+    },
+    {
+      "rt60_lo": 0.3,
+      "rt60_hi": 0.5,
+      "n": 1348,
+      "pesq": 3.3532508342839136,
+      "stoi": 0.9664430262228497,
+      "estoi": 0.9044624231464579,
+      "si_sdr": 9.380950421161266,
+      "pesq_input": 1.5812066573240637,
+      "stoi_input": 0.8148476204053405,
+      "estoi_input": 0.6140125186433213,
+      "si_sdr_input": -10.539100228348936
+    },
+    {
+      "rt60_lo": 0.5,
+      "rt60_hi": 0.8,
+      "n": 730,
+      "pesq": 3.0507199627079378,
+      "stoi": 0.9565886602902531,
+      "estoi": 0.8769501130905524,
+      "si_sdr": 8.106980781154721,
+      "pesq_input": 1.409386831113737,
+      "stoi_input": 0.775989444574231,
+      "estoi_input": 0.5332189177106903,
+      "si_sdr_input": -11.811705961644645
+    },
+    {
+      "rt60_lo": 0.8,
+      "rt60_hi": 5.0,
+      "n": 379,
+      "pesq": 2.6438863293162123,
+      "stoi": 0.9323352670976288,
+      "estoi": 0.8236005306365878,
+      "si_sdr": 6.3396503061852885,
+      "pesq_input": 1.288628318378982,
+      "stoi_input": 0.7066856435822376,
+      "estoi_input": 0.4273707802993782,
+      "si_sdr_input": -12.745787444842765
+    }
+  ],
+  "notes": "DNSMOS omitted: speechmos.dnsmos is broken in this environment (returns nan)."
+}
