@@ -3,7 +3,7 @@
 The SE-Probe **demo** notebooks (02–05, plus the figure cells of 01 and 06) read precomputed CKA tables from `results_demo/` and **do not need any of the datasets below**. You only need them if you want to:
 
 - recompute CKA from raw audio,
-- run end-to-end inference in notebooks 01 / 06 on new utterances, or
+- run end-to-end inference in chapters 01 / 04 on new utterances, or
 - regenerate `results_df/` from scratch.
 
 Point the env vars below at local copies before running the relevant scripts. `se_probe.consts.set_paths(...)` accepts the same values programmatically (handy for tests / fixtures).
@@ -12,7 +12,7 @@ Point the env vars below at local copies before running the relevant scripts. `s
 |---|---|---|---|
 | `SEPROBE_VCTK_DIR` | VCTK-Corpus (clean speech, test speakers) | Source of clean utterances. Loader downsamples 48 → 16 kHz on the fly. | https://datashare.ed.ac.uk/handle/10283/2950 |
 | `SEPROBE_DEMAND_DIR` | DEMAND multi-channel noise database | Additive noise for SNR sweeps. | https://zenodo.org/records/1227121 |
-| `SEPROBE_AIR_RIR_DIR` | Aachen Impulse Response (AIR) database | Room impulse responses for the reverb experiments (notebook 06). | https://www.iks.rwth-aachen.de/forschung/tools-downloads/databases/aachen-impulse-response-database/ |
+| `SEPROBE_AIR_RIR_DIR` | Aachen Impulse Response (AIR) database | Room impulse responses for the reverb experiments (chapter 04). | https://www.iks.rwth-aachen.de/forschung/tools-downloads/databases/aachen-impulse-response-database/ |
 
 ## Expected layouts
 

@@ -14,7 +14,7 @@ Forward-hook layer used to harvest intermediate activations from each frozen SE 
 Probe-layer constants per architecture, default SNR ladders, sample rate (`16000`), reverb constants (target C50 levels, AIR room splits, RIR counts per utterance), and the dataset path resolvers backed by `SEPROBE_VCTK_DIR`, `SEPROBE_DEMAND_DIR`, `SEPROBE_AIR_RIR_DIR`. Calling `set_paths(...)` programmatically overrides the env vars, tests use this against the smoke fixture.
 
 ### `data_generation.py`
-Audio degradation utilities. `load_demand_noise()` lazily reads and caches DEMAND noise files. `add_noise_at_snr()` mixes a clean utterance with a noise track at a target SNR. `convolve_audio()` applies a room impulse response and `compute_ratio_for_target_c50()` rescales early-vs-late RIR energy to hit a desired C50, together they generate the controlled-reverb conditions behind notebook 06 and `scripts/run_reverb_grid.py`.
+Audio degradation utilities. `load_demand_noise()` lazily reads and caches DEMAND noise files. `add_noise_at_snr()` mixes a clean utterance with a noise track at a target SNR. `convolve_audio()` applies a room impulse response and `compute_ratio_for_target_c50()` rescales early-vs-late RIR energy to hit a desired C50, together they generate the controlled-reverb conditions behind the reverberation chapter and `scripts/run_reverb_grid.py`.
 
 ### `diffusion_maps.py`
 PyTorch implementation of diffusion maps. `diffusion_map_torch()` builds a kernel matrix, applies the alpha-normalisation, and returns the leading eigenvectors / eigenvalues either via a full eigendecomposition or LOBPCG for large `N`. Supports `cutoff` (cumulative-energy stopping criterion) or fixed `k`. Honours `get_device()` for CUDA/MPS acceleration on dense kernels.
@@ -23,7 +23,7 @@ PyTorch implementation of diffusion maps. `diffusion_map_torch()` builds a kerne
 Post-processing for diffusion-map embeddings, including the 824-utterance analyses of the paper (`embed_block()` joint per-block embedding at `t = 0.5`, `block_trajectory_from_psi()`, `block_statistics()`, `arc_length_ratio()`, `architecture_distance_matrices()` at `t = 5` and `group_distances()`): per-layer distances between SNR conditions, Spearman correlations between diffusion distance and SNR ordering, and the layer-grouping constants (`REPRESENTATIVE_LAYERS`, `BLOCK_NAMES`, `BLOCK_ORDER`) that align the per-layer plots with the encoder/latent/decoder/refinement structure of MUSE.
 
 ### `metrics.py`
-Audio quality and acoustic metrics. CPU helpers (`c50`, `drr`, `sisdr`, `compute_audio_metrics`) wrap PESQ, STOI, SI-SDR, and RIR-derived quantities. GPU-accelerated evaluators (`gpu_sisdr`, `GPUSTOIEvaluator`, `GPUDNSMOSEvaluator`, `GPUMetricsEvaluator`) batch many utterances at once for `results_df/` regeneration. `compute_audio_metrics` produced the PESQ/STOI columns that notebooks 04 and 13 align with CKA.
+Audio quality and acoustic metrics. CPU helpers (`c50`, `drr`, `sisdr`, `compute_audio_metrics`) wrap PESQ, STOI, SI-SDR, and RIR-derived quantities. GPU-accelerated evaluators (`gpu_sisdr`, `GPUSTOIEvaluator`, `GPUDNSMOSEvaluator`, `GPUMetricsEvaluator`) batch many utterances at once for `results_df/` regeneration. `compute_audio_metrics` produced the PESQ/STOI columns that the perceptual-quality chapter aligns with CKA.
 
 ### `io.py`
 Disk helpers for the source corpora: `load_clean_wavs()` walks `$SEPROBE_VCTK_DIR` and downsamples test-speaker utterances to 16 kHz; `load_air_rirs()` / `load_air_test_rirs()` read AIR `.mat` files, align them from the first peak, and resample 48 → 16 kHz. Only used by scripts that recompute from raw audio; the demo notebooks bypass it.
@@ -71,10 +71,10 @@ RIR  ───────┘                                                │
                                        ┌─────────────────────┼─────────────────────┐
                                        ▼                     ▼                     ▼
                               regress vs SNR/C50    diffusion_analysis    correlate with PESQ
-                                  (notebook 02)        (notebook 05)        (notebook 04)
+                                  (chapter 02)         (chapter 07)         (chapter 06)
 ```
 
-The expensive step is activation extraction. Once `results_df/` (or `results_demo/`) is on disk, every analysis notebook is a few-second pandas / matplotlib operation. The drivers that produced the 824-utterance sweeps of the TASLP paper live under `scripts/` (`run_*_grid.py`) and their reductions under `scripts/analyze_*.py`; the reduced tables are shipped in `results_tables/`, so chapters 07–16 run without the raw parquets.
+The expensive step is activation extraction. Once `results_df/` (or `results_demo/`) is on disk, every analysis notebook is a few-second pandas / matplotlib operation. The drivers that produced the 824-utterance sweeps of the TASLP paper live under `scripts/` (`run_*_grid.py`) and their reductions under `scripts/analyze_*.py`; the reduced tables are shipped in `results_tables/`, so the chapters run without the raw parquets.
 
 ## Building the book locally
 
@@ -85,4 +85,4 @@ pip install -e .[docs]
 jupyter-book build .
 ```
 
-Output lands in `_build/html/index.html`. The first build executes every notebook end-to-end against `results_demo/` and caches the results under `_build/.jupyter_cache/`; subsequent builds reuse the cache and finish in well under a minute. The CI deploy workflow at `.github/workflows/deploy-book.yml` runs the same command on every push to `main` and publishes `_build/html` to the `gh-pages` branch via `peaceiris/actions-gh-pages`. `SE_PROBE_RUN_INFERENCE` is intentionally left unset during the build, so notebooks 01, 06, 10 and 15 render their figure-from-table branches and skip the model-inference cells.
+Output lands in `_build/html/index.html`. The first build executes every notebook end-to-end against `results_demo/` and caches the results under `_build/.jupyter_cache/`; subsequent builds reuse the cache and finish in well under a minute. The CI deploy workflow at `.github/workflows/deploy-book.yml` runs the same command on every push to `main` and publishes `_build/html` to the `gh-pages` branch via `peaceiris/actions-gh-pages`. `SE_PROBE_RUN_INFERENCE` is intentionally left unset during the build, so chapters 01, 04, 05 and 08 render their figure-from-table branches and skip the model-inference cells.
