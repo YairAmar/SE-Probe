@@ -45,7 +45,7 @@ tradeoff_summary(mean_level_curves(df, "muse"))  # r(alpha, beta), saturation sp
 | | |
 |---|---|
 | `se_probe/` | CKA (biased and unbiased), activation extraction for the three models, per-layer profiles and saturation-spread statistics, hierarchical bootstrap, speaker-level quality association, diffusion maps |
-| `notebooks/` | Part I (01–06): the pipeline on demo data. Part II (07–16): every statistic, table and figure of the paper, recomputed and asserted against the printed value |
+| `notebooks/` | Sixteen chapters that follow the paper in order, with more figures than it has room for; every printed number is recomputed and asserted against the printed value |
 | `results_tables/` | The 86 small tables behind every number, with SHA-256 manifest and provenance |
 | `scripts/` | Resumable drivers that regenerate the sweeps (824 utterances × 41 SNRs × 18 noises, 13 C50 levels × 88 RIRs, six fine-tuning arms) and the analysis CLIs |
 | `training/` | Dereverberation fine-tuning for MUSE, MP-SENet and Demucs, held-out evaluation, selective freezing |

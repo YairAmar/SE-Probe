@@ -1,13 +1,26 @@
 # SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models
 
-📄 **Paper:** *Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models Under Noise and Reverberation* (Amar, Ivry, Cohen; IEEE/ACM TASLP), preprint [arXiv:2512.00482](https://arxiv.org/abs/2512.00482) &nbsp;·&nbsp; 💻 **Code:** <https://github.com/YairAmar/SE-Probe>
+📄 **Paper:** *Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models Under Noise and Reverberation* (Amar, Ivry, Cohen; IEEE/ACM TASLP), preprint [arXiv:2512.00482](https://arxiv.org/abs/2512.00482) &nbsp;·&nbsp; 💻 **Code:** <https://github.com/YairAmar/SE-Probe> &nbsp;·&nbsp; 🎛️ **Interactive demo (ICASSP 2026 Show & Tell):** <https://yairamar.github.io/seint-show-web/>
 
 Public companion code for the paper. Speech enhancement networks are treated as black boxes: clean and degraded utterances are pushed through a frozen SE model, activations are extracted layer by layer, clean and degraded representations are compared by linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50) to give each layer a robustness (intercept) and a sensitivity (slope). Diffusion-map distances and downstream quality correlations cross check the picture from a different angle.
 
-The book has two parts.
+The chapters follow the paper in order, with more figures than the paper has room for. Every number the paper prints is recomputed here next to the printed value, from the small result tables shipped under `results_tables/` (each with its provenance in `results_tables/README.md`); the walkthrough chapters also run on the demo tables under `results_demo/` so that nothing needs a GPU.
 
-**Part I, the pipeline (chapters 01–06),** renders the analysis end to end across MUSE, MP-SENet, and Demucs, using the precomputed demo tables shipped under `results_demo/`. Reading top to bottom traces the arc of the paper: the pipeline walkthrough in chapter 01 sets up the per-layer CKA heatmap in 02, the reverb probe in 06, the cross-architecture scatter in 03, the within-group correlation with PESQ in 04, and the diffusion view in 05. Two chapters (01 and 06) optionally re-run model inference when hardware is available; the published version skips those cells.
+1. **Pipeline overview** sets up one utterance end to end: degrade, extract, compare.
+2. **CKA per layer** builds the (layer, SNR) heatmap and the per-layer linear fit that defines robustness $\alpha$ and sensitivity $\beta$.
+3. **Hierarchical bootstrap confidence intervals** puts utterance × noise-type intervals on that profile and shows why the sampling unit matters.
+4. **Cross-architecture profiles** repeats the probe on MP-SENet and Demucs.
+5. **Reverb probing** swaps additive noise for room impulse responses at controlled C50.
+6. **The saturation spread and Table I** scopes the robustness–sensitivity tradeoff on both axes and all three models.
+7. **Noise-set independence** shows the profile does not depend on which DEMAND recordings are used.
+8. **Random-initialisation control** shows it is absent in an untrained network.
+9. **Emergence during fine-tuning** shows it forming epoch by epoch.
+10. **Dereverberation fine-tuning** re-probes all three architectures after fine-tuning, with their held-out quality.
+11. **CKA to PESQ** and 12. **Quality association with the speaker as the sampling unit** relate representational change to perceptual gain.
+13. **Diffusion** and 14. **Diffusion maps at 824 utterances** give the geometric view of the same activations.
+15. **CKA estimator and sample-convention ablation** checks the biased estimator against the unbiased one.
+16. **Profile-guided freezing** uses the profile to decide which blocks to fine-tune.
 
-**Part II, the TASLP results (chapters 07–16),** reproduces every statistic, table and figure of the journal manuscript from the small result tables shipped under `results_tables/` (each with its cluster provenance in `results_tables/README.md`): the hierarchical bootstrap intervals on the per-layer profile (07), Table I and the saturation spread that scopes the robustness–sensitivity tradeoff (08), the noise-set independence check (09), the random-initialisation control (10), the emergence of the profile over fine-tuning (11), the effect of dereverberation fine-tuning on all three architectures together with their held-out quality (12), the quality association with the speaker as the sampling unit (13), the diffusion-map view at 824 utterances (14), the CKA-estimator and sample-convention ablation (15), and the supplementary profile-guided freezing experiment that is not in the manuscript (16). Every chapter prints the manuscript's number next to the value it recomputes.
+Two chapters (the pipeline overview and reverb probing) optionally re-run model inference when hardware is available; the published version skips those cells.
 
 Source code, issue tracker, and citation metadata at <https://github.com/YairAmar/SE-Probe>.
