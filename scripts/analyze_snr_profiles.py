@@ -15,8 +15,9 @@ clean_idx, layer, CKA``. For each model present:
   contrasts of Sec. III-A;
 * with ``--bootstrap``: ``hierarchical_bootstrap_snr.csv``, the two-way utterance x
   noise percentile intervals (one generator with ``--seed`` threaded through the
-  models in the order muse, mpsenet, demucs and the layers in sorted order, which
-  reproduces the published intervals).
+  models in the order muse, mpsenet, demucs and *every hooked layer* of each model
+  in sorted order, as the cluster script did, so ``--seed 0`` on the full table
+  replays the published intervals; rows are the probed layers in depth order).
 """
 from __future__ import annotations
 
@@ -139,7 +140,8 @@ def main(argv=None) -> int:
                 df = df[df["noise_name"].isin(a.noises)]
             layers = probed_layers(m, df["layer"].unique())
             t = two_way_cluster_bootstrap(df, layers, level_col="snr", cluster_col="noise_name",
-                                          n_boot=a.n_boot, seed=a.seed, rng=rng)
+                                          n_boot=a.n_boot, seed=a.seed, rng=rng,
+                                          stream_layers=list(df["layer"].unique()))
             t.insert(0, "model_name", m)
             boot.append(t)
             print(f"{m}: bootstrap done ({len(t)} layers)")

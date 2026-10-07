@@ -124,10 +124,8 @@ def average_centroids(
         avg_centroid = centroids.mean(axis=0).astype(np.float32)
 
         # Build result row
-        if len(group_by) == 1:
-            result = {group_by[0]: group_key}
-        else:
-            result = dict(zip(group_by, group_key))
+        # pandas >= 2 yields 1-tuples for a single-key groupby
+        result = dict(zip(group_by, np.atleast_1d(group_key)))
 
         result['centroid'] = avg_centroid.tobytes()
         result['n_averaged'] = len(group)

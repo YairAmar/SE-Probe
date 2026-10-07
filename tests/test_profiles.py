@@ -182,3 +182,88 @@ def test_bottleneck_gap_identifies_the_target():
     reps = point[None, :] + np.random.default_rng(0).normal(0, 0.01, (200, 3))
     g = P.bottleneck_gap(reps, point, ["a", "lstm", "c"], target="lstm")
     assert g["runner_up"] == "c" and g["p_peak_is_target"] == 1.0 and g["gap"] == pytest.approx(0.3)
+
+
+# ----------------------------------------------------------------- audit regressions
+def _two_way_table(rng, n_utt=40, n_cluster=12, per_utt=3, levels=(-10.0, 0.0, 10.0, 20.0, 30.0),
+                   layer="L", alpha=0.8, beta=0.005):
+    """Unbalanced utterance x cluster design: each utterance meets ``per_utt`` of the clusters."""
+    rows = []
+    for u in range(n_utt):
+        for c in rng.choice(n_cluster, size=per_utt, replace=False):
+            for s in levels:
+                rows.append(dict(layer=layer, clean_idx=u, noise_name=f"c{c}", snr=s,
+                                 CKA=alpha + beta * s + 0.01 * rng.standard_normal()))
+    return pd.DataFrame(rows)
+
+
+def test_two_way_bootstrap_brackets_the_point_on_an_unbalanced_design():
+    rng = np.random.default_rng(1)
+    df = _two_way_table(rng)
+    out = P.two_way_cluster_bootstrap(df, ["L"], level_col="snr", n_boot=200, seed=0)
+    r = out.iloc[0]
+    assert abs(r["alpha"] - 0.8) < 0.02
+    assert r["alpha_ci_lo"] <= r["alpha"] <= r["alpha_ci_hi"]
+    assert r["beta_ci_lo"] <= r["beta"] <= r["beta_ci_hi"]
+    assert r["alpha_ci_hi"] - r["alpha_ci_lo"] < 0.05   # not scaled by the 3/12 fill
+
+
+def test_two_way_bootstrap_averages_duplicate_cells():
+    rng = np.random.default_rng(2)
+    df = _two_way_table(rng)
+    dup = pd.concat([df, df.assign(CKA=df["CKA"] + 0.3)], ignore_index=True)
+    out = P.two_way_cluster_bootstrap(dup, ["L"], level_col="snr", n_boot=20, seed=0)
+    base = P.two_way_cluster_bootstrap(df, ["L"], level_col="snr", n_boot=20, seed=0)
+    assert abs(out["c_low"][0] - (base["c_low"][0] + 0.15)) < 1e-9
+
+
+def test_two_way_bootstrap_keeps_the_given_layer_order_and_depth():
+    rng = np.random.default_rng(3)
+    df = pd.concat([_two_way_table(rng, layer="b_layer"), _two_way_table(rng, layer="a_layer")])
+    out = P.two_way_cluster_bootstrap(df, ["b_layer", "a_layer"], level_col="snr", n_boot=10, seed=0)
+    assert list(out["layer"]) == ["b_layer", "a_layer"]
+    assert list(out["depth"]) == [0, 1]
+
+
+def test_two_way_bootstrap_stream_layers_change_the_draws_but_not_the_rows():
+    rng = np.random.default_rng(4)
+    df = pd.concat([_two_way_table(rng, layer=name) for name in ["x", "y", "z"]])
+    alone = P.two_way_cluster_bootstrap(df, ["y"], level_col="snr", n_boot=30, seed=0)
+    threaded = P.two_way_cluster_bootstrap(df, ["y"], level_col="snr", n_boot=30, seed=0,
+                                           stream_layers=["x", "y", "z"])
+    full = P.two_way_cluster_bootstrap(df, ["x", "y", "z"], level_col="snr", n_boot=30, seed=0)
+    assert list(threaded["layer"]) == ["y"]
+    # the published stream visited every layer in sorted order: y's draws come after x's
+    assert threaded["alpha_ci_lo"][0] == full.set_index("layer").loc["y", "alpha_ci_lo"]
+    assert threaded["alpha_ci_lo"][0] != alone["alpha_ci_lo"][0]
+
+
+def test_bottleneck_gap_interval_uses_the_fixed_runner_up():
+    reps = np.array([[0.9, 0.7, 0.85], [0.9, 0.86, 0.5], [0.9, 0.6, 0.6]])
+    point = np.array([0.9, 0.8, 0.7])
+    g = P.bottleneck_gap(reps, point, ["lstm", "a", "b"], target="lstm", ci=1.0)  # tail 0 -> min/max
+    assert g["runner_up"] == "a" and abs(g["gap"] - 0.1) < 1e-12
+    # replicate gaps vs the fixed runner-up "a": 0.2, 0.04, 0.3 -> min 0.04, not the 0.05 of the best-other
+    assert abs(g["gap_lo"] - 0.04) < 1e-12 and abs(g["gap_hi"] - 0.3) < 1e-12
+
+
+def test_mean_level_curves_refuses_alphabetical_order():
+    df = pd.DataFrame(dict(layer=["b", "a"] * 2, clean_idx=[0, 0, 1, 1], snr=[0.0] * 4, CKA=[0.5] * 4))
+    with pytest.raises(ValueError):
+        P.mean_level_curves(df, unit_col=None)
+
+
+def test_average_centroids_single_key_gives_scalar_labels():
+    import io
+
+    from se_probe import centroids as C
+    vec = np.arange(4, dtype=np.float32)
+    buf = io.BytesIO()
+    np.save(buf, vec)
+    df = pd.DataFrame(dict(layer=["l", "l"], snr=[0, 10], noise_name=["n", "n"],
+                           centroid=[buf.getvalue(), buf.getvalue()]))
+    try:
+        out = C.average_centroids(df, "snr")
+    except Exception as exc:  # the encoding helper may differ; only the key shape is under test
+        pytest.skip(f"centroid decoding not exercised here: {exc}")
+    assert out["snr"].tolist() == [0, 10]

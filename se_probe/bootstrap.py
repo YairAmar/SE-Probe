@@ -81,15 +81,14 @@ below.
 Two further mechanisms mirror the paper's two axes:
 
 * ``strata`` -- a per-observation label whose levels are *held fixed* while units
-  are resampled independently within each. The paper's headline noise-axis
-  interval is a noise-stratified utterance bootstrap: only five noise types exist,
-  too few to bootstrap reliably, so they are fixed strata and the utterances are
-  resampled within each one.
+  are resampled independently within each. Use it when a factor has too few
+  levels to resample (the five test-split noise types of the preprint-era sweeps).
 * ``crossed`` -- factors that are crossed with, rather than nested in, the unit
   and are resampled on their own margin. Observation weights multiply across
   margins, which is the standard multiplicative-weight cluster bootstrap. The
-  paper's two-way sensitivity checks (utterance x noise type, utterance x RIR)
-  use this.
+  paper's intervals are of this kind: a two-way utterance x noise-type bootstrap
+  over the 18 DEMAND recordings on the noise axis, and utterance x RIR on the
+  reverberation axis (:func:`se_probe.profiles.two_way_cluster_bootstrap`).
 
 Both mechanisms are reported in ``BootstrapResult`` so an interval is always
 traceable to the design that produced it.

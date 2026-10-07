@@ -18,9 +18,11 @@ This module is the reference implementation of the paper's per-layer analysis:
    ``sqrt(1 - f**2)`` on ``|r|`` that the identity permits.
 5. **Bootstrap intervals.** Utterance-cluster (:func:`utterance_bootstrap`) and
    two-way utterance x noise/RIR (:func:`two_way_cluster_bootstrap`) percentile
-   intervals on every per-layer statistic. The two-way variant reproduces the RNG
-   stream of the cluster script that produced the published intervals when run with
-   ``seed=0`` over the layers in sorted order.
+   intervals on every per-layer statistic. The two-way variant draws exactly as the
+   cluster script behind the published intervals did (one generator, ``seed=0``,
+   utterances then clusters, layers in sorted order); a bit-identical replay needs
+   the full 824-utterance table and every hooked layer threaded through the stream
+   (``stream_layers``), as ``scripts/analyze_snr_profiles.py --bootstrap`` does.
 
 All functions are NumPy/pandas only and operate on the long-format result tables
 (columns ``layer``, ``clean_idx``, ``snr`` or ``target_c50``, ``CKA``, ...).
@@ -111,7 +113,10 @@ def mean_level_curves(
     """
     level_col = _level_col(df, level_col)
     if layers is None:
-        layers = probed_layers(model, df["layer"].unique()) if model else sorted(df["layer"].unique())
+        if model is None:
+            raise ValueError("mean_level_curves needs `model` (probed layers in depth order) "
+                             "or an explicit `layers` list; alphabetical order is not depth order")
+        layers = probed_layers(model, df["layer"].unique())
     sub = df[df["layer"].isin(list(layers))]
     if utterance_first and unit_col is not None and unit_col in sub.columns:
         per_unit = sub.groupby(["layer", unit_col, level_col], observed=True)["CKA"].mean()
@@ -243,34 +248,50 @@ def two_way_cluster_bootstrap(
     seed: int = PAPER_SEED_HIERARCHICAL,
     rng: Optional[np.random.Generator] = None,
     ci: float = 0.95,
+    stream_layers: Optional[Sequence[str]] = None,
 ) -> pd.DataFrame:
     """Hierarchical utterance x cluster bootstrap of ``(alpha, beta)`` per layer.
 
     Each replicate draws the utterances and the clusters (noise types on the noise
     axis, RIRs on the reverberation axis) with replacement, forms the mean level
-    curve of the resampled ``utterance x cluster`` grid and refits the line. This is
-    the procedure of the cluster script behind the paper's intervals; with
-    ``seed=0`` and the layers in ``sorted()`` order it replays that script's random
-    stream exactly (one generator threaded through all layers, utterances drawn
-    with ``rng.choice`` before clusters). Pass ``rng`` to continue a stream across
-    models.
+    curve of the resampled ``utterance x cluster`` grid and refits the line. Cells
+    of the grid that the design does not contain (an utterance meets 5 of the 88
+    RIRs) are simply absent from the weighted mean, in the replicates exactly as in
+    the point estimate; cells with several rows (duplicate shards, a cluster column
+    coarser than the row grain) are averaged first.
+
+    The draws follow the cluster script behind the paper's intervals: one generator
+    (``seed=0``, or ``rng`` to continue a stream across models), utterances drawn
+    with ``rng.choice`` before clusters, layers visited in ``sorted()`` order. That
+    script threaded *every hooked layer* through the stream, so a bit-identical
+    replay of a published interval needs ``stream_layers`` = all hooked layers of
+    the model (``df["layer"].unique()``); the rows returned are still only
+    ``layers``, in the order given (pass them in depth order), with a ``depth``
+    column. Without ``stream_layers`` the intervals are statistically equivalent
+    but not bit-identical to the published ones.
     """
     level_col = _level_col(df, level_col)
     rng = np.random.default_rng(seed) if rng is None else rng
-    sub = df[df["layer"].isin(list(layers))]
+    keep = list(layers)
+    visit = sorted(set(keep) | set(stream_layers or []))
+    sub = df[df["layer"].isin(visit)]
     utts = np.asarray(sorted(sub[unit_col].unique()))
     clusters = np.asarray(sorted(sub[cluster_col].unique()))
     levels = np.sort(sub[level_col].unique().astype(float))
     ui = {u: i for i, u in enumerate(utts)}
     ci_ = {c: i for i, c in enumerate(clusters)}
     vi = {v: i for i, v in enumerate(levels)}
-    rows = []
+    out: Dict[str, dict] = {}
     tail = 100.0 * (1.0 - ci) / 2.0
-    for layer in sorted(layers):
-        d = sub[sub["layer"] == layer]
+    for layer in visit:
+        d = (sub[sub["layer"] == layer]
+             .assign(_lvl=lambda t: t[level_col].astype(float))
+             .groupby([cluster_col, unit_col, "_lvl"], observed=True)["CKA"].mean().reset_index())
         cube = np.full((len(clusters), len(utts), len(levels)), np.nan)
         cube[d[cluster_col].map(ci_).to_numpy(), d[unit_col].map(ui).to_numpy(),
-             d[level_col].astype(float).map(vi).to_numpy()] = d["CKA"].to_numpy()
+             d["_lvl"].map(vi).to_numpy()] = d["CKA"].to_numpy()
+        present = np.isfinite(cube)
+        filled = np.where(present, cube, 0.0)
         obs = np.nanmean(cube, axis=(0, 1))
         pt = fit_curves(obs[None, :], levels)
         A = np.empty(n_boot)
@@ -280,15 +301,20 @@ def two_way_cluster_bootstrap(
             n_samp = rng.choice(clusters, size=len(clusters), replace=True)
             wu = np.bincount(np.searchsorted(utts, u_samp), minlength=len(utts)) / len(utts)
             wn = np.bincount(np.searchsorted(clusters, n_samp), minlength=len(clusters)) / len(clusters)
-            mc = np.tensordot(wn, np.tensordot(wu, np.nan_to_num(cube), axes=([0], [1])), axes=([0], [0]))
+            num = np.einsum("c,u,cul->l", wn, wu, filled)
+            den = np.einsum("c,u,cul->l", wn, wu, present)
+            mc = num / den
             f = fit_curves(mc[None, :], levels)
             A[r], B[r] = f["alpha"][0], f["beta"][0]
+        if layer not in keep:
+            continue
         alo, ahi = np.percentile(A, [tail, 100 - tail])
         blo, bhi = np.percentile(B, [tail, 100 - tail])
-        rows.append(dict(layer=layer, alpha=float(pt["alpha"][0]), beta=float(pt["beta"][0]),
-                         alpha_ci_lo=alo, alpha_ci_hi=ahi, beta_ci_lo=blo, beta_ci_hi=bhi,
-                         c_low=float(obs[0]), c_high=float(obs[-1]), n_boot=n_boot, seed=seed))
-    return pd.DataFrame(rows)
+        out[layer] = dict(layer=layer, depth=keep.index(layer), alpha=float(pt["alpha"][0]),
+                          beta=float(pt["beta"][0]), alpha_ci_lo=alo, alpha_ci_hi=ahi,
+                          beta_ci_lo=blo, beta_ci_hi=bhi, c_low=float(obs[0]),
+                          c_high=float(obs[-1]), n_boot=n_boot, seed=seed)
+    return pd.DataFrame([out[layer] for layer in keep])
 
 
 # --------------------------------------------------------------------- summaries
@@ -511,9 +537,9 @@ def bottleneck_gap(replicates: np.ndarray, point: np.ndarray, layers: Sequence[s
     (``[n_boot, n_layer]``, e.g. ``utterance_bootstrap(...)['replicates']['auc']``)."""
     li = list(layers).index(target)
     others = [i for i in range(len(layers)) if i != li]
-    gap = replicates[:, li] - replicates[:, others].max(axis=1)
-    tail = 100.0 * (1.0 - ci) / 2.0
     runner = others[int(np.argmax(np.asarray(point)[others]))]
+    gap = replicates[:, li] - replicates[:, runner]   # same estimand as the point gap
+    tail = 100.0 * (1.0 - ci) / 2.0
     return dict(
         target=target, target_value=float(point[li]), runner_up=str(layers[runner]),
         runner_value=float(point[runner]), gap=float(point[li] - point[runner]),
