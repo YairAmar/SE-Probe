@@ -285,7 +285,7 @@ lossless, and writes `checkpoints_mpsenet/dns_base_converted.pt`:
 | `mask_decoder.` | `decoder.mask_decoder.` |
 | `phase_decoder.` | `decoder.phase_decoder.` |
 
-The inverse remap lives in `se_probe/mpsenet/model.py` (`_remap_trainer_keys`),
+The inverse remap lives in `se_probe/mpsenet/model.py` (`remap_trainer_keys`),
 so a fine-tuned checkpoint reloads into `MPSENet.from_pretrained(...)` for probing.
 
 **STFT config must match DNS**: `n_fft=400, hop_size=100, win_size=400,
@@ -425,7 +425,7 @@ Only `requires_grad` parameters reach the optimizers. The freezing rules are
 pinned by `tests/test_freeze_arms.py`.
 
 Result of the three-arm experiment (50 epochs, lr 1e-4, batch 28, RIR-Mega
-900-RIR training pool, best-epoch PESQ/STOI on the held-out RIR-Mega validation
+798-RIR training split, best-epoch PESQ/STOI on the held-out RIR-Mega validation
 subset, mean ± sd over the three seeds):
 
 | arm | PESQ | STOI |

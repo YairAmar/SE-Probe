@@ -120,5 +120,6 @@ ignore = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["slow: long-running test, deselect with -m 'not slow'"]
 python_files = "test_*.py"
 addopts = "-v --tb=short"

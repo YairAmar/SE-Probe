@@ -1,7 +1,7 @@
 # results_tables: the small tables behind every number in the TASLP manuscript
 
 Every file here is a byte-for-byte copy of an analysis output produced on the Technion
-cluster (athena, `/rg/iscohen_prj/yairamr/cluster-2026-07/` and `~/tmp/`) or in the closed
+cluster (athena, `/rg/iscohen_prj/yairamr/cluster-2026-07/` and `home_offload/home_tmp/`) or in the closed
 analysis repo (`SE-probing-TASLP`). `MANIFEST.csv` lists each file with its size, SHA-256
 and the exact source path it was copied from. Nothing was edited or re-derived; the raw
 per-utterance parquets these summarise are several GB and are not shipped in-tree.
@@ -82,7 +82,7 @@ reproduced the earlier shipped fits to 1e-15).
 | `profile_correlations.csv` | `pearson_r, pearson_p, spearman_r, spearman_p, n, label` | early cross-axis / cross-model profile correlations on the 17-noise aggregate (`scripts/profile_correlations.py`); superseded by `cross_task/` for the paper's numbers |
 | `refit_5noise_824/` | `fits_snr_5noise_824.csv` (`model_name, layer, alpha, beta, r2, n_levels`), `hierarchical_bootstrap_snr_5noise_824.csv` (+ CIs, `c_low, c_high, n_boot, seed`), `endpoints_snr_5noise_824.csv` | the same sweep restricted to the old held-out five (PCAFETER), all hooked layers; `migration_824/refit_5noise.py`, 1000 reps, seed 0. Kept for provenance of the 5-noise analyses (random init, emergence, diffusion) |
 
-## c50/ : reverberation axis (Sec. III-C, III-E, Fig. `fig:c50_regression`, `fig:scatter`(b), Table `tab:tradeoff` C50 rows)
+## c50/ : reverberation axis (Sec. III-C, III-F, Fig. `fig:c50_regression`, `fig:scatter`(b), Table `tab:tradeoff` C50 rows)
 
 Source sweep: job 128939, 824 utterances x 13 target C50 x 5-of-88 AIR RIRs per utterance,
 six arms (`{muse,mpsenet,demucs}_{pre,ft}`) all probed under one software stack. Table
@@ -90,7 +90,7 @@ six arms (`{muse,mpsenet,demucs}_{pre,ft}`) all probed under one software stack.
 
 | file | columns | backs |
 |---|---|---|
-| `c50_824_per_layer_supp.csv` | `arm, model, depth, label, layer, A, A_lo, A_hi, c_low, c_low_lo/hi, c_high, alpha, beta, r2, spk_abs_delta_A` (bootstrap over 824 utterances, 1000 reps, seed 20260802) | Table `tab:tradeoff` C50 rows (recomputing `r(alpha,beta)`, `rho`, `f`, `r_c` from the `*_ft` rows gives `-0.993/-0.996/0.037/+0.860`, `-0.999/-0.905/0.025/+0.918`, `-0.918/-0.927/0.167/+0.584`); Sec. III-E before/after correlations (`beta`: 0.91 / 0.81 / 0.98, `alpha`: 0.85 / 0.84 / 0.90; mean abs change in `beta` 0.0020 / 0.0029 / 0.0015); Demucs LSTM `alpha = 0.8986` vs runner-up `encoder.4` `0.7444`; `spk_abs_delta_A` = |A(p232) - A(p257)| per layer |
+| `c50_824_per_layer_supp.csv` | `arm, model, depth, label, layer, A, A_lo, A_hi, c_low, c_low_lo/hi, c_high, alpha, beta, r2, spk_abs_delta_A` (bootstrap over 824 utterances, 1000 reps, seed 20260802) | Table `tab:tradeoff` C50 rows (recomputing `r(alpha,beta)`, `rho`, `f`, `r_c` from the `*_ft` rows gives `-0.993/-0.996/0.037/+0.860`, `-0.999/-0.905/0.025/+0.918`, `-0.918/-0.927/0.167/+0.584`); Sec. III-F before/after correlations (`beta`: 0.91 / 0.81 / 0.98, `alpha`: 0.85 / 0.84 / 0.90; mean abs change in `beta` 0.0020 / 0.0029 / 0.0015); Demucs LSTM `alpha = 0.8986` vs runner-up `encoder.4` `0.7444`; `spk_abs_delta_A` = |A(p232) - A(p257)| per layer |
 | `fig_v5_c50_824_ft_profiles_values.csv` | `model, layer, depth, alpha, alpha_lo/hi, beta, beta_lo/hi, n_utts, n_levels, n_boot, seed` (seed 20260806) | Fig. `fig:c50_regression` (MUSE FT arm with CI bands), Fig. `fig:scatter`(b), the MP-SENet/Demucs C50 panels of `snr/depth_profiles_two_models_values.csv` |
 | `fig_v5_c50_824_profiles_values.csv` | same columns (seed 20260802) | the **pretrained** arms of job 128105 (MUSE `g_best`, MP-SENet DNS; its Demucs arm is the FT v2 checkpoint) |
 | `per_layer_c50.csv` | `scale, model, layer, depth, auc, auc_lo/hi, auc_se, c_low, c_low_lo/hi, c_low_se, n_utts, n_levels, n_boot, seed` | AUC and `c_low` with utterance-bootstrap CIs at 824 and at 780 (`analyze_c50_824.py`, job 128105 arms) |
@@ -104,7 +104,7 @@ six arms (`{muse,mpsenet,demucs}_{pre,ft}`) all probed under one software stack.
 | `auc_bootstrap_ci.csv` | `dataset, layer, depth, auc, auc_fits, lo, hi, se, n_units, n_levels, n_boot, seed, auc_ref_maxdev` | 780-scale AUC CIs (300 reps, seed 20260802) for Demucs C50 v2/pretrained, Demucs SNR, MP-SENet C50 pre/FT (`tools/bootstrap_auc_ci.py`) |
 | `refit_5rir_824/` | `fits_reverb_5rir_824.csv` (`model_name, layer, alpha, beta, r2, n_levels`), `hierarchical_bootstrap_reverb_5rir_824.csv` (+ CIs) | **superseded.** Job B2 probed `MUSE_reverbFT_e48` and `MP-SENet` on five RIRs that all came from `aula_carolina`, a training-split room, and the "MUSE_reverbFT_e48" arm was later found (md5) to be the pretrained `g_best`. Kept only so the earlier numbers can be traced; use `c50_824_per_layer_supp.csv` |
 
-## random_init/ : untrained-MUSE control (Sec. III-D, Fig. `fig:random_init`)
+## random_init/ : untrained-MUSE control (Sec. III-E, Fig. `fig:random_init`)
 
 Source: `migration_824/random_init_grid_824.py`, 824 utterances x 41 SNR x 5 held-out noises
 x 3 seeds, MUSE instantiated from the paper config with `torch.manual_seed(seed)` and no
@@ -115,7 +115,7 @@ checkpoint; refit by `scripts/scafe/refit_IIIE.py`.
 | `fig_v6_random_init_824_values.csv` | `depth, beta_s0, beta_s1, beta_s2, beta_mean, beta_sd, cka_min, cka_mean` (SCAFE five; fingerprint `max |beta_s0| = 0.000284817601`) | Fig. `fig:random_init`; per-seed maxima `0.00028, 0.00105, 0.00045` |
 | `IIIE_random_init.json` | per noise set (`OLD five (PCAFETER)`, `NEW five (SCAFE)`): `min_cka`, per-seed max `beta` and peak layer, `rho_depth_beta` per seed (Spearman and Pearson with p), `trained_peak_beta`, `factor_trained_over_largest_seed`, profile correlation untrained vs trained | min CKA `0.9802`, trained peak `0.02261` at Dec-L2.0, factor `21.5`, `rho(depth, beta) = +0.43, +0.86, -0.07` (the `NEW five` entry) |
 
-## emergence/ : profile along the MUSE dereverberation fine-tune (Sec. III-D)
+## emergence/ : profile along the MUSE dereverberation fine-tune (Sec. III-E)
 
 Source: `migration_824/emergence_ckpt_grid.py`, epochs 1, 3, 5, 7, 9, 10, 12, 24, 36, 48 of
 the MUSE reverb fine-tune probed on the noise axis (824 x 41 x 5 noises); the epoch-48 arm
@@ -148,7 +148,7 @@ speaker-level t-interval on n_spk - 1 degrees of freedom).
 | `perceptual_4metric_perlayer.csv` | `metric, layer_idx, layer, block, pearson, spearman, n` (n = 159,900) | the 780-sweep per-layer correlations (`revision_workspace/scripts/perceptual_multimetric.py`) |
 | `fig_v5_pesq_corr_values.csv` | `layer_idx, layer, block, pearson, spearman, n` | Fig. `fig:pesq_corr` (the PESQ rows of the file above, 780 sweep) |
 
-## diffusion/ : diffusion-map view (Sec. III-F, Fig. `fig:diffusion`, `fig:layer_distance_matrices`)
+## diffusion/ : diffusion-map view (Sec. III-G, Fig. `fig:diffusion`, `fig:layer_distance_matrices`)
 
 Source: `scripts/confine_780/diffusion_centroids24.py` (824-utterance centroids of all 24
 `.norm1` layers per (noise, SNR)), embedded by `results_cluster_2026_08/diffusion_824/build_psi.py`

@@ -5,7 +5,7 @@ SE-Probe is a small library plus three frozen-model adapters. The library is pla
 ## Top-level modules, `se_probe/`
 
 ### `cka.py`
-Linear CKA between two batches of activations. Also `linear_cka_unbiased()` (the unbiased HSIC estimator of Song et al.), `representations_from_activation()` (pooled `[C, F]`, frames `[T, C*F]`, Demucs-style `[T, C]`) and `cka_variants()` for the estimator / sample-convention ablation. The implementation centers features (columns), forms the per-batch cross-covariance `XᵀY` and self-covariances `XᵀX`, `YᵀY`, and combines them into `‖XᵀY‖_F² / (‖XᵀX‖_F · ‖YᵀY‖_F)` averaged across the batch. Inputs may be raw `(B, T, F, H)` or already time-averaged `(B, F, H)`; the function handles both. This is the only similarity metric used in notebooks 02–04.
+Linear CKA between two batches of activations. Also `linear_cka_unbiased()` (the unbiased HSIC estimator of Song et al.), `representations_from_activation()` (pooled `[C, F]`, frames `[T, C*F]`, Demucs-style `[T, C]`) and `cka_variants()` for the estimator / sample-convention ablation. The implementation centers features (columns), forms the per-batch cross-covariance `XᵀY` and self-covariances `XᵀX`, `YᵀY`, and combines them into `‖XᵀY‖_F² / (‖XᵀX‖_F · ‖YᵀY‖_F)` averaged across the batch. Inputs may be raw `(B, T, F, H)` or already time-averaged `(B, F, H)`; the function handles both. It is the similarity metric behind every table the analysis notebooks read.
 
 ### `activation_extraction.py`
 Forward-hook layer used to harvest intermediate activations from each frozen SE model. Exports `ActivationsExtractor`, `get_activations()`, `extract_activations_on_audios()`, plus model-specific loaders: `load_muse_activation_extractor`, `load_mpsenet_activation_extractor`, `load_demucs_activation_extractor`, and reverb-tuned variants. Loaders return a model wrapped with hooks already registered on every `target_layer`. All loaders accept a `device` argument; pass `get_device()` to stay device-agnostic.
@@ -14,7 +14,7 @@ Forward-hook layer used to harvest intermediate activations from each frozen SE 
 Probe-layer constants per architecture, default SNR ladders, sample rate (`16000`), reverb constants (target C50 levels, AIR room splits, RIR counts per utterance), and the dataset path resolvers backed by `SEPROBE_VCTK_DIR`, `SEPROBE_DEMAND_DIR`, `SEPROBE_AIR_RIR_DIR`. Calling `set_paths(...)` programmatically overrides the env vars, tests use this against the smoke fixture.
 
 ### `data_generation.py`
-Audio degradation utilities. `load_demand_noise()` lazily reads and caches DEMAND noise files. `add_noise_at_snr()` mixes a clean utterance with a noise track at a target SNR. `convolve_audio()` applies a room impulse response and `compute_ratio_for_target_c50()` rescales early-vs-late RIR energy to hit a desired C50, together they generate the controlled-reverb conditions used in notebook 06.
+Audio degradation utilities. `load_demand_noise()` lazily reads and caches DEMAND noise files. `add_noise_at_snr()` mixes a clean utterance with a noise track at a target SNR. `convolve_audio()` applies a room impulse response and `compute_ratio_for_target_c50()` rescales early-vs-late RIR energy to hit a desired C50, together they generate the controlled-reverb conditions behind notebook 06 and `scripts/run_reverb_grid.py`.
 
 ### `diffusion_maps.py`
 PyTorch implementation of diffusion maps. `diffusion_map_torch()` builds a kernel matrix, applies the alpha-normalisation, and returns the leading eigenvectors / eigenvalues either via a full eigendecomposition or LOBPCG for large `N`. Supports `cutoff` (cumulative-energy stopping criterion) or fixed `k`. Honours `get_device()` for CUDA/MPS acceleration on dense kernels.
@@ -23,7 +23,7 @@ PyTorch implementation of diffusion maps. `diffusion_map_torch()` builds a kerne
 Post-processing for diffusion-map embeddings, including the 824-utterance analyses of the paper (`embed_block()` joint per-block embedding at `t = 0.5`, `block_trajectory_from_psi()`, `block_statistics()`, `arc_length_ratio()`, `architecture_distance_matrices()` at `t = 5` and `group_distances()`): per-layer distances between SNR conditions, Spearman correlations between diffusion distance and SNR ordering, and the layer-grouping constants (`REPRESENTATIVE_LAYERS`, `BLOCK_NAMES`, `BLOCK_ORDER`) that align the per-layer plots with the encoder/latent/decoder/refinement structure of MUSE.
 
 ### `metrics.py`
-Audio quality and acoustic metrics. CPU helpers (`c50`, `drr`, `sisdr`, `compute_audio_metrics`) wrap PESQ, STOI, SI-SDR, and RIR-derived quantities. GPU-accelerated evaluators (`gpu_sisdr`, `GPUSTOIEvaluator`, `GPUDNSMOSEvaluator`, `GPUMetricsEvaluator`) batch many utterances at once for `results_df/` regeneration. Notebook 04 uses `compute_audio_metrics` to align CKA with PESQ/STOI.
+Audio quality and acoustic metrics. CPU helpers (`c50`, `drr`, `sisdr`, `compute_audio_metrics`) wrap PESQ, STOI, SI-SDR, and RIR-derived quantities. GPU-accelerated evaluators (`gpu_sisdr`, `GPUSTOIEvaluator`, `GPUDNSMOSEvaluator`, `GPUMetricsEvaluator`) batch many utterances at once for `results_df/` regeneration. `compute_audio_metrics` produced the PESQ/STOI columns that notebooks 04 and 13 align with CKA.
 
 ### `io.py`
 Disk helpers for the source corpora: `load_clean_wavs()` walks `$SEPROBE_VCTK_DIR` and downsamples test-speaker utterances to 16 kHz; `load_air_rirs()` / `load_air_test_rirs()` read AIR `.mat` files, align them from the first peak, and resample 48 → 16 kHz. Only used by scripts that recompute from raw audio; the demo notebooks bypass it.
@@ -44,7 +44,7 @@ Quality association: `add_improvements()`, `center_within()`, `per_layer_correla
 Loading, decoding and averaging the per-(layer, noise, SNR) activation centroids that feed the diffusion maps, in both on-disk schemas.
 
 ### `plotting.py`
-`apply_paper_rcparams()` sets matplotlib to the poster style (serif fonts, CM mathtext, 10 / 12 / 14-pt size hierarchy, 300 dpi savefig, type-42 PDF fonts so figures embed in LaTeX). `MODEL_COLORS` and `MODEL_LABELS` give a single source of truth for the MUSE / MP-SENet / Demucs colour palette across all six notebooks.
+`apply_paper_rcparams()` sets matplotlib to the poster style (serif fonts, CM mathtext, 10 / 12 / 14-pt size hierarchy, 300 dpi savefig, type-42 PDF fonts so figures embed in LaTeX). `MODEL_COLORS` and `MODEL_LABELS` give a single source of truth for the MUSE / MP-SENet / Demucs colour palette across the notebooks.
 
 ### `device.py`
 `get_device(prefer=None)` autodetects CUDA → MPS → CPU and sets `PYTORCH_ENABLE_MPS_FALLBACK=1` automatically when MPS is selected, so unsupported ops fall back to CPU silently. `device_info(device)` returns a one-line human-readable summary used in notebook bootstraps. This module is the only place CUDA/MPS strings should appear; everything downstream takes a `torch.device` argument.
@@ -85,4 +85,4 @@ pip install -e .[docs]
 jupyter-book build .
 ```
 
-Output lands in `_build/html/index.html`. The first build executes every notebook end-to-end against `results_demo/` and caches the results under `_build/.jupyter_cache/`; subsequent builds reuse the cache and finish in well under a minute. The CI deploy workflow at `.github/workflows/deploy-book.yml` runs the same command on every push to `main` and publishes `_build/html` to the `gh-pages` branch via `peaceiris/actions-gh-pages`. `SE_PROBE_RUN_INFERENCE` is intentionally left unset during the build, so notebooks 01 and 06 render their figure-from-parquet branches and skip the model-inference cells.
+Output lands in `_build/html/index.html`. The first build executes every notebook end-to-end against `results_demo/` and caches the results under `_build/.jupyter_cache/`; subsequent builds reuse the cache and finish in well under a minute. The CI deploy workflow at `.github/workflows/deploy-book.yml` runs the same command on every push to `main` and publishes `_build/html` to the `gh-pages` branch via `peaceiris/actions-gh-pages`. `SE_PROBE_RUN_INFERENCE` is intentionally left unset during the build, so notebooks 01, 06, 10 and 15 render their figure-from-table branches and skip the model-inference cells.

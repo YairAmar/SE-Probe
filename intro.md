@@ -21,6 +21,6 @@ The chapters follow the paper in order, with more figures than the paper has roo
 15. **CKA estimator and sample-convention ablation** checks the biased estimator against the unbiased one.
 16. **Profile-guided freezing** uses the profile to decide which blocks to fine-tune.
 
-Two chapters (the pipeline overview and reverb probing) optionally re-run model inference when hardware is available; the published version skips those cells.
+Four chapters (the pipeline overview, reverb probing, the random-initialisation control and the estimator ablation) optionally re-run model inference when `SE_PROBE_RUN_INFERENCE` is set and hardware is available; the published version skips those cells and reads the shipped tables.
 
 Source code, issue tracker, and citation metadata at <https://github.com/YairAmar/SE-Probe>.
