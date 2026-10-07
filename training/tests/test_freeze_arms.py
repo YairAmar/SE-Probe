@@ -12,12 +12,12 @@ import torch
 from torch import nn
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import train as train_module  # noqa: E402
-from train import (  # noqa: E402
-    apply_freeze_arm,
-    apply_unfreeze,
-    validate_unfreeze,
-)
+# train.py pulls in the vendored MUSE model (einops, joblib, pesq); skip rather than
+# error when those extras are not installed.
+train_module = pytest.importorskip("train")
+apply_freeze_arm = train_module.apply_freeze_arm
+apply_unfreeze = train_module.apply_unfreeze
+validate_unfreeze = train_module.validate_unfreeze
 
 STAGES = ["encoder_level1", "encoder_level2", "latent",
           "decoder_level2", "decoder_level1", "mag_refinement", "pha_refinement"]
