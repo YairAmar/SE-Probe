@@ -267,3 +267,42 @@ def test_average_centroids_single_key_gives_scalar_labels():
     except Exception as exc:  # the encoding helper may differ; only the key shape is under test
         pytest.skip(f"centroid decoding not exercised here: {exc}")
     assert out["snr"].tolist() == [0, 10]
+
+
+@needs_tables
+def test_depth_statistics_and_worst_fit_reproduce_sections_iiic_and_iiid():
+    from scipy import stats
+
+    fits = {m: pd.read_csv(TABLES / "snr" / f"fits_{m}_snr_jobB.csv") for m in ("mpsenet", "demucs")}
+    for m, f in fits.items():
+        assert list(f["layer"]) == L.probed_layers(m, f["layer"])
+    rho_mp = stats.spearmanr(fits["mpsenet"]["depth"], fits["mpsenet"]["beta"]).statistic
+    rho_dm = stats.spearmanr(fits["demucs"]["depth"], fits["demucs"]["beta"]).statistic
+    assert round(rho_mp, 3) == 0.833 and round(rho_dm, 3) == -0.727
+    assert fits["mpsenet"].loc[fits["mpsenet"]["beta"].idxmax(), "layer"] == "TSTransformer.3.freq_transformer.norm1"
+    worst = fits["demucs"].loc[fits["demucs"]["r2"].idxmin()]
+    assert worst["layer"] == "decoder.3"
+    assert round(worst["r2"], 3) == 0.441 and round(worst["rng"], 3) == 0.094
+
+
+@needs_tables
+def test_seventeen_noise_mean_curves_agree_with_the_heatmap_and_show_the_demucs_peaks():
+    c = pd.read_csv(TABLES / "snr" / "mean_curves_snr_17noise_three_models.csv")
+    assert (c["n_noises"] == 17).all() and (c["n_utts"] == 824).all()
+    assert c.groupby("model")["snr"].nunique().eq(41).all()
+    for m, n in L.N_PROBED_LAYERS.items():
+        t = c[c["model"] == m]
+        order = t.drop_duplicates("layer").sort_values("depth")["layer"].tolist()
+        assert order == L.probed_layers(m, order) and len(order) == n
+    # the MUSE export differs from the shipped 18-noise heatmap only by the SCAFE re-aggregation
+    muse17 = c[c["model"] == "muse"].set_index(["layer", "snr"])["cka"]
+    muse18 = _muse_snr_curves().stack()
+    muse18.index.names = ["layer", "snr"]
+    assert (muse17 - muse18.reindex(muse17.index)).abs().max() < 0.01
+    # the three deepest Demucs decoder outputs peak inside the sweep; decoder.3 at +17 dB
+    dm = c[c["model"] == "demucs"]
+    peak_snr = dm.loc[dm.groupby("layer")["cka"].idxmax()].set_index("layer")["snr"]
+    assert sorted(peak_snr.index[peak_snr < 30]) == ["decoder.1", "decoder.2", "decoder.3"]
+    d3 = dm[dm["layer"] == "decoder.3"].sort_values("snr")["cka"].to_numpy()
+    assert peak_snr["decoder.3"] == 17
+    assert abs((d3[-1] - d3[0]) - 0.108) < 1e-3 and abs((d3.max() - d3.min()) - 0.268) < 1e-3

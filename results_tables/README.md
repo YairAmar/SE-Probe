@@ -3,8 +3,11 @@
 Every file here is a byte-for-byte copy of an analysis output produced on the Technion
 cluster (athena, `/rg/iscohen_prj/yairamr/cluster-2026-07/` and `home_offload/home_tmp/`) or in the closed
 analysis repo (`SE-probing-TASLP`). `MANIFEST.csv` lists each file with its size, SHA-256
-and the exact source path it was copied from. Nothing was edited or re-derived; the raw
-per-utterance parquets these summarise are several GB and are not shipped in-tree.
+and the exact source path it was copied from. Nothing was edited or re-derived, with one
+declared exception: `snr/mean_curves_snr_17noise_three_models.csv` concatenates the three
+per-model exports named in its manifest row and adds the `model`, `depth`, `n_utts` and
+`n_noises` columns. The raw per-utterance parquets these summarise are several GB and are
+not shipped in-tree.
 
 The manuscript is *Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement
 Models Under Noise and Reverberation* (Amar, Ivry, Cohen; IEEE TASLP). Section and figure
@@ -74,6 +77,7 @@ reproduced the earlier shipped fits to 1e-15).
 | `muse_profile_values_18_cluster.csv` | `layer, alpha, alpha_ci_lo/hi, beta, beta_ci_lo/hi, r2` | the 24 MUSE values plotted in Fig. `fig:regression` with their CI bands |
 | `depth_profiles_two_models_values.csv` | `model, axis, depth, layer, alpha, alpha_lo/hi, beta, beta_lo/hi` | MP-SENet and Demucs profiles on both axes (`rho(depth, beta) = +0.833` MP-SENet noise, `-0.727` Demucs noise) |
 | `cka_heatmap_values_raw_jobB18.csv` | `layer, snr, mean, count` (72 layers x 41 SNR, count 14,832 = 824 x 18) | Fig. `fig:cka_heatmap` (the 24 `.norm1` rows) |
+| `mean_curves_snr_17noise_three_models.csv` | `model, layer, depth, snr, cka, n_utts, n_noises` (24 + 8 + 11 probed layers x 41 SNR) | the per-layer mean level curves of the three pretrained models, exported from the same Job B sweep over the 17 DEMAND noises used before SCAFE was staged (athena job 128990, `SE-probing-hinge/data/mean_<model>_snr.csv`). The only in-tree per-SNR curves for MP-SENet and Demucs; the MUSE rows differ from the 18-noise heatmap by at most 0.007. Shows that Demucs `decoder.1-3` are non-monotone (maxima at +22, +19, +17 dB): `decoder.3` spans 0.108 between its endpoints but travels 0.268, so its low `R^2` is the signature of a peaked curve, not a flat one |
 | `per_noise_beta_muse.csv` | index = 24 MUSE layers; one `beta` column per DEMAND noise | the noise-set independence paragraph: averaging the five test-split columns against the eight training-split columns reproduces `r = 0.9812`, `rho = 0.9757`, same peak layer Dec-L2.0, and mean `beta` `0.0145 / 0.0136 / 0.0135` (test / train / neither) exactly |
 | `IIIA_independence_18.csv` | `contrast, n_held, n_indist, pearson_r, spearman_rho, mean_beta_held, mean_beta_indist` | the two 5-vs-rest contrasts (`old5_vs_12`: 0.9904; `new5_vs_13`: 0.9880); the manuscript's 5-vs-8 contrast is derived from `per_noise_beta_muse.csv` as above |
 | `IIIA_noise_set_independence.json`, `IIIA_repro_5old_vs_12_muse.csv`, `IIIA_swap.json` | cluster-side reproduction of the old 5-vs-12 contrast (72-layer and 24-layer variants) and the SCAFE-swap check on Demucs (`refit_IIIA.py`, `refit_IIIA_swap.py`) | provenance of the independence numbers; run before SCAFE was staged, so they carry no 5-vs-8 row |
@@ -212,6 +216,9 @@ temporary and no longer exist; the two inputs it reads are the two files above, 
   emergence grids, the perceptual join) and the 24-layer centroids. They live on the cluster
   under `cluster-2026-07/` and are the intended contents of the HuggingFace dataset
   `yairamr/SE-Probe-data` under `cluster-2026-07/`.
+* The 18-noise per-SNR mean curves of MP-SENet and Demucs (the fits in `fits_*_snr_jobB.csv` were
+  computed from them on the cluster and the curves were not kept); the 17-noise export above is the
+  closest table in-tree.
 * The mean level curves of the MUSE and MP-SENet **fine-tuned** C50 arms (only their fitted
   `alpha, beta, A, c_low, c_high` per layer are shipped), so the C50-row PC1 values of Table
   `tab:tradeoff` for those two arms (`96.52`, `99.23`) cannot be recomputed from this
