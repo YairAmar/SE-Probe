@@ -20,10 +20,15 @@ from se_probe.activation_extraction import (
     extract_activations_on_audios,
     get_activations,
     load_demucs_activation_extractor,
+    load_demucs_activation_extractor_reverb,
     load_mpsenet_activation_extractor,
+    load_mpsenet_activation_extractor_reverb,
     load_muse_activation_extractor,
+    load_muse_activation_extractor_reverb,
 )
-from se_probe.cka import cka
+from se_probe.bootstrap import hierarchical_bootstrap, t_interval
+from se_probe.centroids import average_centroids, decode_centroids, load_centroids
+from se_probe.cka import cka, linear_cka_unbiased
 from se_probe.consts import (
     DEFAULT_SNRS,
     SAMPLE_RATE,
@@ -42,8 +47,18 @@ from se_probe.diffusion_analysis import (
 )
 from se_probe.diffusion_maps import diffusion_map_torch
 from se_probe.io import load_clean_wavs
+from se_probe.layers import depth_order, probed_layers, short_labels
+from se_probe.perceptual import per_layer_correlations, speaker_level_analysis
+from se_probe.profiles import (
+    fit_curves,
+    fit_profile,
+    mean_level_curves,
+    tradeoff_summary,
+    two_way_cluster_bootstrap,
+    utterance_bootstrap,
+)
 
-__version__ = "0.1.2"
+__version__ = "0.2.0"
 
 __all__ = [
     # CKA
@@ -57,6 +72,27 @@ __all__ = [
     "load_muse_activation_extractor",
     "load_mpsenet_activation_extractor",
     "load_demucs_activation_extractor",
+    "load_muse_activation_extractor_reverb",
+    "load_mpsenet_activation_extractor_reverb",
+    "load_demucs_activation_extractor_reverb",
+    # Per-layer profiles (TASLP)
+    "probed_layers",
+    "depth_order",
+    "short_labels",
+    "mean_level_curves",
+    "fit_curves",
+    "fit_profile",
+    "tradeoff_summary",
+    "utterance_bootstrap",
+    "two_way_cluster_bootstrap",
+    "hierarchical_bootstrap",
+    "t_interval",
+    "per_layer_correlations",
+    "speaker_level_analysis",
+    "linear_cka_unbiased",
+    "load_centroids",
+    "decode_centroids",
+    "average_centroids",
     # Data generation
     "add_noise_at_snr",
     "load_demand_noise",

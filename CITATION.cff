@@ -8,8 +8,8 @@ authors:
     given-names: "Amir"
   - family-names: "Cohen"
     given-names: "Israel"
-version: "0.1.2"
-date-released: "2026-05-03"
+version: "0.2.0"
+date-released: "2026-10-06"
 license: MIT
 repository-code: "https://github.com/YairAmar/SE-Probe"
 keywords:
@@ -20,7 +20,8 @@ keywords:
   - diffusion-maps
 preferred-citation:
   type: article
-  title: "Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation"
+  title: "Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models Under Noise and Reverberation"
+  journal: "IEEE/ACM Transactions on Audio, Speech, and Language Processing"
   authors:
     - family-names: "Amar"
       given-names: "Yair"
@@ -33,4 +34,4 @@ preferred-citation:
   identifiers:
     - type: other
       value: "arXiv:2512.00482"
-      description: "arXiv preprint"
+      description: "Preprint (earlier title: Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation)"

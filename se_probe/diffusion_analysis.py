@@ -4,7 +4,7 @@ This module provides functions for analyzing diffusion map embeddings,
 computing distances, and organizing layer information for visualization.
 """
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -179,3 +179,128 @@ def get_layer_order_key(layer_name: str) -> Tuple[int, str]:
         return (3, layer_name)  # dec1
     else:
         return (4, layer_name)  # other layers
+
+
+# =============================================================================
+# 824-scale diffusion analysis (paper Sec. "A Geometric View")
+# =============================================================================
+
+#: Diffusion time of the per-block view (distances across SNR within a block).
+T_PER_LAYER = 0.5
+#: Diffusion time of the architecture view (distances across layers at one SNR).
+T_ARCHITECTURE = 5
+#: Cumulative eigenvalue-energy cutoff that sets the embedding dimension.
+CUTOFF = 0.99
+
+#: The encoder and decoder blocks whose arc lengths the paper compares.
+ENCODER_BLOCKS = ["Enc-L1", "Enc-L2"]
+DECODER_BLOCKS = ["Dec-L2", "Dec-L1"]
+
+
+def psi_matrix(df: pd.DataFrame) -> np.ndarray:
+    """Stack the ``psi_*`` columns of ``df`` into a ``(n_rows, n_components)`` array,
+    with NaN (absent higher components) replaced by 0."""
+    cols = sorted((c for c in df.columns if c.startswith("psi_")),
+                  key=lambda c: int(c.split("_")[1]))
+    return np.nan_to_num(df[cols].to_numpy(dtype=float), nan=0.0)
+
+
+def embed_block(centroids: pd.DataFrame, layer: str, diffusion_time: float = T_PER_LAYER,
+                cutoff: float = CUTOFF, device: str = "cpu") -> pd.DataFrame:
+    """Per-block (per-layer) view: embed **all** ``(noise, snr)`` centroids of one
+    layer jointly, then average the diffusion coordinates over noises per SNR.
+
+    The order matters: averaging the centroids over noises *before* embedding is a
+    different estimator and does not reproduce the published figures. Returns a
+    DataFrame indexed by SNR with ``psi_*`` columns.
+    """
+    from se_probe.centroids import decode_centroids
+    from se_probe.diffusion_maps import diffusion_map_torch
+
+    ld = centroids[centroids["layer"] == layer].sort_values(["noise_name", "snr"]).reset_index(drop=True)
+    if ld.empty:
+        raise KeyError(f"layer {layer!r} absent from the centroid table")
+    X = decode_centroids(ld["centroid"])
+    psi = diffusion_map_torch(X, cutoff=cutoff, diffusion_time=diffusion_time, device=device)
+    ld = ld.assign(**{f"psi_{i}": psi[:, i] for i in range(psi.shape[1])})
+    pc = [f"psi_{i}" for i in range(psi.shape[1])]
+    return ld.groupby("snr")[pc].mean().sort_index()
+
+
+def block_trajectory_from_psi(psi_df: pd.DataFrame, layer: str) -> Tuple[np.ndarray, np.ndarray]:
+    """``(snrs, M)`` for one layer of a stored per-layer psi table: ``M[i]`` is the
+    diffusion-coordinate vector at ``snrs[i]``, averaged over the noise environments."""
+    d = psi_df[psi_df["layer"] == layer]
+    if d.empty:
+        raise KeyError(f"layer {layer!r} absent from the psi table")
+    snrs = np.sort(d["snr"].unique())
+    rows = [psi_matrix(d[d["snr"] == s]).mean(axis=0) for s in snrs]
+    return snrs, np.vstack(rows)
+
+
+def arc_length(points: np.ndarray, n_dims: int = 2) -> float:
+    """Length of the polyline through ``points`` in their first ``n_dims`` coordinates."""
+    P = np.asarray(points, float)[:, :n_dims]
+    return float(np.sum(np.linalg.norm(np.diff(P, axis=0), axis=1)))
+
+
+def distances_from_reference(points: np.ndarray, ref_index: int) -> np.ndarray:
+    """Euclidean distance of every row of ``points`` from the row ``ref_index``."""
+    P = np.asarray(points, float)
+    return np.linalg.norm(P - P[ref_index], axis=1)
+
+
+def block_statistics(snrs: np.ndarray, M: np.ndarray, ref_snr: Optional[float] = None) -> Dict[str, float]:
+    """Spearman ordering of the distance from the reference SNR, its monotonicity,
+    the arc length in the first two coordinates and the maximum distance."""
+    from scipy import stats
+
+    snrs = np.asarray(snrs, float)
+    ref = int(np.argmax(snrs)) if ref_snr is None else int(np.where(snrs == ref_snr)[0][0])
+    dist = distances_from_reference(M, ref)
+    rho = stats.spearmanr(snrs, dist).statistic
+    order = np.argsort(snrs)
+    return dict(n_components=int(M.shape[1]), spearman_rho=float(rho), abs_rho=float(abs(rho)),
+                monotone_strict=bool(np.all(np.diff(dist[order]) < 0)),
+                arc_len_2d=arc_length(M), max_dist_from_ref=float(dist.max()))
+
+
+def arc_length_ratio(per_block: pd.DataFrame, encoder=ENCODER_BLOCKS, decoder=DECODER_BLOCKS,
+                     col: str = "arc_len_2d") -> Dict[str, float]:
+    """Mean decoder-block over mean encoder-block arc length (the paper's ``3.03x``)."""
+    t = per_block.set_index("block")
+    e = float(t.loc[list(encoder), col].mean())
+    d = float(t.loc[list(decoder), col].mean())
+    return dict(encoder_mean=e, decoder_mean=d, ratio=d / e)
+
+
+def group_distances(D: np.ndarray, group_a: Sequence[int], group_b: Sequence[int],
+                    normalize: bool = True) -> Dict[str, float]:
+    """Between-group and within-group mean distances of a pairwise matrix ``D``.
+
+    With ``normalize`` the matrix is first min-max scaled to ``[0, 1]`` (the way each
+    panel of the layer-distance figure is rendered; with a zero diagonal this is
+    ``D / D.max()``), so values are comparable *within* a panel only.
+    """
+    D = np.asarray(D, float)
+    M = (D - D.min()) / (D.max() - D.min()) if normalize else D
+    a, b = list(group_a), list(group_b)
+    between = M[np.ix_(a, b)].mean()
+    within_a = M[np.ix_(a, a)][np.triu_indices(len(a), 1)].mean()
+    within_b = M[np.ix_(b, b)][np.triu_indices(len(b), 1)].mean()
+    return dict(between=float(between), within_a=float(within_a), within_b=float(within_b),
+                between_over_within=float(between / (0.5 * (within_a + within_b))))
+
+
+def architecture_distance_matrices(arch_psi: pd.DataFrame, layers: Sequence[str]) -> Dict[float, np.ndarray]:
+    """``{snr: (n_layers, n_layers)}`` raw Euclidean distance matrices between the
+    embedded layers of a stored architecture-view psi table, in ``layers`` order."""
+    out = {}
+    for snr in sorted(arch_psi["snr"].unique()):
+        d = arch_psi[arch_psi["snr"] == snr].set_index("layer").loc[list(layers)]
+        P = psi_matrix(d)
+        out[float(snr)] = np.linalg.norm(P[:, None, :] - P[None, :, :], axis=-1)
+    return out
+
+
+__all__ = [n for n in dir() if not n.startswith("_")]

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "se-probe"
-version = "0.1.2"
+version = "0.2.0"
 description = "SE-Probe: Probing representations of deep speech enhancement models"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
@@ -38,6 +38,7 @@ classifiers = [
 dependencies = [
     "torch>=2.0.0",
     "torchaudio>=2.0.0",
+    "torchvision>=0.15.0",
     "numpy>=1.24.0",
     "pandas>=2.0.0",
     "scipy>=1.10.0",
@@ -65,6 +66,17 @@ docs = [
     "jupyter-book>=1.0,<2",
     "sphinx-copybutton",
     "sphinx-design",
+]
+# The two non-MUSE adapters import these upstream packages at load time.
+models = [
+    "MPSENet",
+    "denoiser",
+]
+# Optional GPU metric evaluators in se_probe.metrics (DNSMOS / batched STOI).
+metrics = [
+    "torch_stoi",
+    "onnx2torch",
+    "speechmos",
 ]
 
 [project.urls]
@@ -108,5 +120,6 @@ ignore = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["slow: long-running test, deselect with -m 'not slow'"]
 python_files = "test_*.py"
 addopts = "-v --tb=short"
