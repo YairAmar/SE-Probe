@@ -464,6 +464,16 @@ demucs = load_demucs_activation_extractor_reverb(
 
 Pretrained arms (no `checkpoint_path`) give the "before fine-tuning" probes.
 
+The fine-tuned checkpoints are on HuggingFace in `yairamr/SE-Probe-models`:
+`muse_reverb_e48.pt`, `cluster-2026-07/mpsenet_dereverb_e50/g_00295909` (with its `config.json`),
+`cluster-2026-07/demucs_dereverb_v2_e57/g_00047310` and `cluster-2026-07/demucs_dereverb_e45/g_00037350`.
+
+```python
+from huggingface_hub import hf_hub_download
+ckpt = hf_hub_download("yairamr/SE-Probe-models", "cluster-2026-07/demucs_dereverb_v2_e57/g_00047310")
+demucs = load_demucs_activation_extractor_reverb(checkpoint_path=ckpt)
+```
+
 ---
 
 ## Known caveats / gotchas

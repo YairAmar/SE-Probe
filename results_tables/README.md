@@ -216,10 +216,10 @@ neither (`beta` `+0.482` ft, `+0.545` pre), but the LSTM is the most robust laye
 
 ## What is not here
 
-* The raw per-utterance CKA parquets (Job B 96M rows, the C50 shards, the random-init and
-  emergence grids, the perceptual join) and the 24-layer centroids. They live on the cluster
-  under `cluster-2026-07/` and are the intended contents of the HuggingFace dataset
-  `yairamr/SE-Probe-data` under `cluster-2026-07/`.
+* The raw per-utterance CKA parquets (the noise sweep, the C50 shards of the six arms, the
+  random-init and emergence grids, the perceptual join) and the 24-layer centroids. They are in
+  the HuggingFace dataset `yairamr/SE-Probe-data` under `cluster-2026-07/`, together with a copy
+  of this directory.
 * The 18-noise per-SNR mean curves of MP-SENet and Demucs (the fits in `fits_*_snr_jobB.csv` were
   computed from them on the cluster and the curves were not kept); the 17-noise export above is the
   closest table in-tree.
