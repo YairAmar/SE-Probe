@@ -19,12 +19,9 @@ import torch
 
 from se_probe.cka import cka
 
-__all__ = ["Heartbeat", "extract_stack", "cka_rows", "pad_or_trim", "chunk_loop",
-           "DEMUCS_LEN", "MODEL_NAMES", "load_extractor"]
+__all__ = ["Heartbeat", "extract_stack", "cka_rows", "chunk_loop",
+           "MODEL_NAMES", "load_extractor"]
 
-#: Demucs activations are time-dependent, so utterances are padded/truncated to a
-#: fixed 4 s window (covers >95% of VoiceBank-DEMAND test utterances).
-DEMUCS_LEN = 64000
 MODEL_NAMES = {"muse": "MUSE", "mpsenet": "MP-SENet", "demucs": "Demucs"}
 
 
@@ -46,15 +43,6 @@ class Heartbeat:
         print(line, flush=True)
 
 
-def pad_or_trim(audio: np.ndarray, target_len: int) -> np.ndarray:
-    """Zero-pad or truncate a waveform to exactly ``target_len`` samples."""
-    if len(audio) >= target_len:
-        return np.asarray(audio[:target_len], dtype="float32")
-    out = np.zeros(target_len, dtype="float32")
-    out[:len(audio)] = audio
-    return out
-
-
 def extract_stack(extractor, audios: Sequence[np.ndarray],
                   layers: Optional[Sequence[str]] = None) -> Dict[str, torch.Tensor]:
     """``{layer: (n_utts, ...)}`` CPU tensors of pooled activations.
@@ -72,7 +60,8 @@ def extract_stack(extractor, audios: Sequence[np.ndarray],
             per.setdefault(L, []).append(v.detach().cpu().unsqueeze(0))
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-    return {L: torch.cat(vs, 0) for L, vs in per.items()}
+    # Demucs runs at native length, so its activations differ in T across utterances: keep a list
+    return {L: (torch.cat(vs, 0) if len({tuple(v.shape) for v in vs}) == 1 else vs) for L, vs in per.items()}
 
 
 def cka_rows(clean_stack: Dict[str, torch.Tensor], deg_stack: Dict[str, torch.Tensor],
@@ -81,9 +70,13 @@ def cka_rows(clean_stack: Dict[str, torch.Tensor], deg_stack: Dict[str, torch.Te
     constant columns of the chunk (snr/noise/model...)."""
     rows = []
     for L in clean_stack:
-        a = clean_stack[L].to(device)
-        b = deg_stack[L].to(device)
-        vals = cka(a, b)
+        if isinstance(clean_stack[L], list):  # per-utterance CKA at native length (Demucs)
+            vals = [cka(x.to(device), y.to(device))[0] for x, y in zip(clean_stack[L], deg_stack[L])]
+            a = b = None
+        else:
+            a = clean_stack[L].to(device)
+            b = deg_stack[L].to(device)
+            vals = cka(a, b)
         del a, b
         if device.type == "cuda":
             torch.cuda.empty_cache()
@@ -140,15 +133,16 @@ def load_extractor(model: str, device, checkpoint: Optional[str] = None, reverb:
             load_mpsenet_activation_extractor,
             load_mpsenet_activation_extractor_reverb,
         )
-        if reverb or checkpoint:
+        # a checkpoint alone must not switch the SNR axis to the reverb (drop-last-window) pooling
+        if reverb:
             return load_mpsenet_activation_extractor_reverb(device=device, checkpoint_path=checkpoint)
-        return load_mpsenet_activation_extractor(device=device)
+        return load_mpsenet_activation_extractor(device=device, checkpoint_path=checkpoint)
     if model == "demucs":
         from se_probe.demucs.model import (
             load_demucs_activation_extractor,
             load_demucs_activation_extractor_reverb,
         )
-        if reverb or checkpoint:
+        if reverb:
             return load_demucs_activation_extractor_reverb(device=device, checkpoint_path=checkpoint)
-        return load_demucs_activation_extractor(device=device)
+        return load_demucs_activation_extractor(device=device, checkpoint_path=checkpoint)
     raise ValueError(model)

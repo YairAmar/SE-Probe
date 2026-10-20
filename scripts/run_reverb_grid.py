@@ -26,12 +26,10 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from _clean_sources import load_voicebank_test, resolve_clean_source  # noqa: E402
 from _grid import (  # noqa: E402
-    DEMUCS_LEN,
     Heartbeat,
     cka_rows,
     extract_stack,
     load_extractor,
-    pad_or_trim,
 )
 
 from se_probe.consts import AIR_TRAIN_ROOMS, DEFAULT_TARGET_C50S, REFERENCE_C50  # noqa: E402
@@ -99,7 +97,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--utt-start", type=int, default=0)
     p.add_argument("--utt-stop", type=int, default=None)
     p.add_argument("--rir-seed", type=int, default=RIR_SEED)
-    p.add_argument("--demucs-len", type=int, default=DEMUCS_LEN)
     p.add_argument("--verify", action="store_true", help="run verify_pool on the written shard (needs all 824 utterances)")
     p.add_argument("--log", type=Path, default=None)
     return p
@@ -129,8 +126,7 @@ def main(argv=None) -> int:
     rows = []
     for u in range(a.utt_start, stop):
         clean = clean_all[u]
-        if model == "demucs":
-            clean = pad_or_trim(clean, a.demucs_len)
+        # Demucs is probed at native length: zero padding before convolution leaves exact-zero tails
         for ri in draws[u]:
             rir = rirs[ri]
             ref_audio, _ = convolve_audio(clean, rir, a.reference_c50)

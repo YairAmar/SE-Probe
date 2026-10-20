@@ -67,6 +67,7 @@ def load_demucs_model(
 def load_demucs_activation_extractor(
     device: Optional[Union[torch.device, str]] = None,
     with_pooling: bool = True,
+    checkpoint_path: Optional[str] = None,
 ) -> ActivationsExtractor:
     """
     Load the Demucs activation extractor.
@@ -77,7 +78,7 @@ def load_demucs_activation_extractor(
                      If False, return raw activations.
     """
     device = get_device(device) if not isinstance(device, torch.device) else device
-    model = load_demucs_model(device=device)
+    model = load_demucs_model(device=device, checkpoint_path=checkpoint_path)
     pooling_fn = pool_demucs_activations if with_pooling else None
     return ActivationsExtractor(
         model=model,

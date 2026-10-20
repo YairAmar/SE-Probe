@@ -100,6 +100,7 @@ def load_mpsenet_model(
 def load_mpsenet_activation_extractor(
     device: Optional[Union[torch.device, str]] = None,
     with_pooling: bool = True,
+    checkpoint_path: Optional[str] = None,
 ) -> ActivationsExtractor:
     """
     Load the MPSENet activation extractor.
@@ -110,7 +111,7 @@ def load_mpsenet_activation_extractor(
                      If False, return raw activations for visualization.
     """
     device = get_device(device) if not isinstance(device, torch.device) else device
-    model = load_mpsenet_model(device=device)
+    model = load_mpsenet_model(device=device, checkpoint_path=checkpoint_path)
     pooling_fn = pool_mpsenet_activations if with_pooling else select_first_segment
     return ActivationsExtractor(
         model=model,

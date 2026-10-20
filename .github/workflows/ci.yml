@@ -51,6 +51,6 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install package
-        run: pip install -e .[dev] einops joblib
+        run: pip install -e .[dev]
       - name: Run tests
         run: pytest tests/ training/tests/

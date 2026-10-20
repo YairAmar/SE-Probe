@@ -53,6 +53,8 @@ dependencies = [
     "pesq>=0.0.4",
     "pystoi>=0.3.3",
     "huggingface_hub>=0.20.0",
+    "einops>=0.6.0",
+    "joblib>=1.2.0",
 ]
 
 [project.optional-dependencies]

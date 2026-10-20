@@ -79,7 +79,7 @@ def test_tradeoff_summary_reproduces_table_i_c50_rows():
 def test_identity_forces_minus_one_as_spread_vanishes():
     assert P.identity_r(0.8, 0.0) == pytest.approx(-1.0)
     # the identity's floor on |r| at a given spread is reached at r_c = f
-    f = 0.956
+    f = 0.485
     assert abs(P.identity_r(f, f)) == pytest.approx(np.sqrt(1 - f * f), abs=1e-12)
 
 
@@ -278,15 +278,23 @@ def test_depth_statistics_and_worst_fit_reproduce_sections_iiic_and_iiid():
         assert list(f["layer"]) == L.probed_layers(m, f["layer"])
     rho_mp = stats.spearmanr(fits["mpsenet"]["depth"], fits["mpsenet"]["beta"]).statistic
     rho_dm = stats.spearmanr(fits["demucs"]["depth"], fits["demucs"]["beta"]).statistic
-    assert round(rho_mp, 3) == 0.833 and round(rho_dm, 3) == -0.727
+    assert round(rho_mp, 3) == 0.833 and round(rho_dm, 3) == -0.600
     assert fits["mpsenet"].loc[fits["mpsenet"]["beta"].idxmax(), "layer"] == "TSTransformer.3.freq_transformer.norm1"
     worst = fits["demucs"].loc[fits["demucs"]["r2"].idxmin()]
-    assert worst["layer"] == "decoder.3"
-    assert round(worst["r2"], 3) == 0.441 and round(worst["rng"], 3) == 0.094
+    assert worst["layer"] == "encoder.0"
+    assert round(worst["r2"], 3) == 0.828 and round(worst["rng"], 3) == 0.911
 
 
 @needs_tables
-def test_seventeen_noise_mean_curves_agree_with_the_heatmap_and_show_the_demucs_peaks():
+def test_table_i_demucs_snr_row():
+    s = pd.read_csv(TABLES / "snr" / "summary_jobB.csv").set_index("model").loc["demucs"]
+    assert round(s["r_alpha_beta"], 3) == -0.752 and round(s["rho_alpha_beta"], 3) == -0.791
+    assert round(s["sat_freedom"], 3) == 0.485 and round(s["pc1"], 2) == 61.40
+    assert round(s["r_alpha_chigh"], 3) == 0.242 and s["peak_auc_layer"] == "lstm"
+
+
+@needs_tables
+def test_seventeen_noise_mean_curves_agree_with_the_heatmap_and_rise_monotonically_for_demucs():
     c = pd.read_csv(TABLES / "snr" / "mean_curves_snr_17noise_three_models.csv")
     assert (c["n_noises"] == 17).all() and (c["n_utts"] == 824).all()
     assert c.groupby("model")["snr"].nunique().eq(41).all()
@@ -299,10 +307,7 @@ def test_seventeen_noise_mean_curves_agree_with_the_heatmap_and_show_the_demucs_
     muse18 = _muse_snr_curves().stack()
     muse18.index.names = ["layer", "snr"]
     assert (muse17 - muse18.reindex(muse17.index)).abs().max() < 0.01
-    # the three deepest Demucs decoder outputs peak inside the sweep; decoder.3 at +17 dB
+    # with Demucs probed at native length, every Demucs curve rises with SNR and peaks at +30 dB
     dm = c[c["model"] == "demucs"]
-    peak_snr = dm.loc[dm.groupby("layer")["cka"].idxmax()].set_index("layer")["snr"]
-    assert sorted(peak_snr.index[peak_snr < 30]) == ["decoder.1", "decoder.2", "decoder.3"]
-    d3 = dm[dm["layer"] == "decoder.3"].sort_values("snr")["cka"].to_numpy()
-    assert peak_snr["decoder.3"] == 17
-    assert abs((d3[-1] - d3[0]) - 0.108) < 1e-3 and abs((d3.max() - d3.min()) - 0.268) < 1e-3
+    for layer, t in dm.groupby("layer"):
+        assert (np.diff(t.sort_values("snr")["cka"].to_numpy()) > 0).all(), layer

@@ -27,14 +27,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from _clean_sources import load_voicebank_test, resolve_clean_source  # noqa: E402
 from _grid import (  # noqa: E402
-    DEMUCS_LEN,
     MODEL_NAMES,
     Heartbeat,
     chunk_loop,
     cka_rows,
     extract_stack,
     load_extractor,
-    pad_or_trim,
 )
 
 from se_probe.data_generation import add_noise_at_snr, load_demand_noise  # noqa: E402
@@ -53,7 +51,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--checkpoint", default=None, help="fine-tuned generator to probe instead of the pretrained one")
     p.add_argument("--model-name", default=None, help="model_name column value (default: MUSE / MP-SENet / Demucs)")
     p.add_argument("--utt-chunk", type=int, default=150, help="utterances per extraction batch (RAM bound)")
-    p.add_argument("--demucs-len", type=int, default=DEMUCS_LEN)
     p.add_argument("--log", type=Path, default=None, help="heartbeat log file")
     return p
 
@@ -74,8 +71,8 @@ def main(argv=None) -> int:
         return 0
 
     _, clean_all = load_voicebank_test(resolve_clean_source(a.clean), a.n_utts)
-    if a.model == "demucs":
-        clean_all = [pad_or_trim(x, a.demucs_len) for x in clean_all]
+    # Demucs is probed at native length: zero padding before the noise is added gives the clean
+    # reference exact-zero tails that the noisy input lacks (see _grid.extract_stack / cka_rows)
     hb(f"clean loaded: {len(clean_all)} utterances")
 
     ext = load_extractor(a.model, device, checkpoint=a.checkpoint)

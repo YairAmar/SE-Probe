@@ -68,21 +68,24 @@ Source sweep: Job B, 824 utterances x 41 SNR x 18 DEMAND noises, three pretraine
 re-aggregated over all 18 noises by `tools/reagg18/reagg18.py` (the 17-noise control first
 reproduced the earlier shipped fits to 1e-15).
 
+Demucs is probed at each utterance's native length, with CKA computed per utterance
+(`scripts/_grid.py`); MUSE and MP-SENet use their fixed-length segment pooling.
+
 | file | columns | backs |
 |---|---|---|
-| `fits_{muse,mpsenet,demucs}_snr_jobB.csv` | `layer, depth, alpha, beta, r2, c_low, c_high, rng, auc` | per-layer profile; `R^2 >= 0.96` (MUSE), Demucs min `R^2` 0.441 at `decoder.3`, 0.094 CKA span; Fig. `fig:regression` point estimates; Fig. `fig:scatter`(a) |
-| `summary_jobB.csv` | `dataset, model, n_layers, n_levels, r_alpha_beta, sat_freedom, identity_r, pc1, pc2, r_auc_alpha, r_auc_clow, r2_min, r2_median, c_low_min/max, c_high_min/max, auc_mean, peak_auc_layer, rho_depth_range, rho_depth_auc, rho_alpha_beta, r_alpha_chigh` | Table `tab:tradeoff` SNR rows (`-0.950/-0.891/0.275/97.54`, `-0.988/-0.929/0.137/98.48`, `-0.877/-0.782/0.956/76.32`) and the `r_c` values `+0.823, +0.853, -0.327` |
+| `fits_{muse,mpsenet,demucs}_snr_jobB.csv` | `layer, depth, alpha, beta, r2, c_low, c_high, rng, auc` | per-layer profile; `R^2 >= 0.96` (MUSE), Demucs min `R^2` 0.828 at `encoder.0`; Fig. `fig:regression` point estimates; Fig. `fig:scatter`(a) |
+| `summary_jobB.csv` | `dataset, model, n_layers, n_levels, r_alpha_beta, sat_freedom, identity_r, pc1, pc2, r_auc_alpha, r_auc_clow, r2_min, r2_median, c_low_min/max, c_high_min/max, auc_mean, peak_auc_layer, rho_depth_range, rho_depth_auc, rho_alpha_beta, r_alpha_chigh` | Table `tab:tradeoff` SNR rows (`-0.950/-0.891/0.275/97.54`, `-0.988/-0.929/0.137/98.48`, `-0.752/-0.791/0.485/61.40`) and the `r_c` values `+0.823, +0.853, +0.242` |
 | `hierarchical_bootstrap_snr_cluster_all18.csv` | `model_name, layer, alpha, beta, alpha_ci_lo/hi, beta_ci_lo/hi, c_low, c_high, n_boot, seed` | 168 hooked layers (72 + 56 + 40), hierarchical utterance x noise bootstrap, 1000 reps, seed 0, exact replay of the shipped RNG stream (`reagg18c.py`) |
 | `hierarchical_bootstrap_snr_cluster_probed18.csv` | same columns | the same CIs restricted to the probed layers (24 + 8 + 11), as read by the figure scripts; copied from `tools/hierarchical_bootstrap_snr_cluster.csv` |
 | `muse_profile_values_18_cluster.csv` | `layer, alpha, alpha_ci_lo/hi, beta, beta_ci_lo/hi, r2` | the 24 MUSE values plotted in Fig. `fig:regression` with their CI bands |
-| `depth_profiles_two_models_values.csv` | `model, axis, depth, layer, alpha, alpha_lo/hi, beta, beta_lo/hi` | MP-SENet and Demucs profiles on both axes (`rho(depth, beta) = +0.833` MP-SENet noise, `-0.727` Demucs noise) |
+| `depth_profiles_two_models_values.csv` | `model, axis, depth, layer, alpha, alpha_lo/hi, beta, beta_lo/hi` | MP-SENet and Demucs profiles on both axes (`rho(depth, beta) = +0.833` MP-SENet noise, `-0.600` Demucs noise) |
 | `cka_heatmap_values_raw_jobB18.csv` | `layer, snr, mean, count` (72 layers x 41 SNR, count 14,832 = 824 x 18) | Fig. `fig:cka_heatmap` (the 24 `.norm1` rows) |
-| `mean_curves_snr_17noise_three_models.csv` | `model, layer, depth, snr, cka, n_utts, n_noises` (24 + 8 + 11 probed layers x 41 SNR) | the per-layer mean level curves of the three pretrained models, exported from the same Job B sweep over the 17 DEMAND noises used before SCAFE was staged (athena job 128990, `SE-probing-hinge/data/mean_<model>_snr.csv`). The only in-tree per-SNR curves for MP-SENet and Demucs; the MUSE rows differ from the 18-noise heatmap by at most 0.007. Shows that Demucs `decoder.1-3` are non-monotone (maxima at +22, +19, +17 dB): `decoder.3` spans 0.108 between its endpoints but travels 0.268, so its low `R^2` is the signature of a peaked curve, not a flat one |
+| `mean_curves_snr_17noise_three_models.csv` | `model, layer, depth, snr, cka, n_utts, n_noises` (24 + 8 + 11 probed layers x 41 SNR) | the per-layer mean level curves of the three pretrained models, exported from the same Job B sweep over the 17 DEMAND noises used before SCAFE was staged (athena job 128990, `SE-probing-hinge/data/mean_<model>_snr.csv`). The only in-tree per-SNR curves for MP-SENet and Demucs; the MUSE rows differ from the 18-noise heatmap by at most 0.007. Every Demucs curve rises monotonically to its maximum at +30 dB; the encoder curves saturate at both ends, which is why `encoder.0` has the lowest Demucs `R^2` |
 | `per_noise_beta_muse.csv` | index = 24 MUSE layers; one `beta` column per DEMAND noise | the noise-set independence paragraph: averaging the five test-split columns against the eight training-split columns reproduces `r = 0.9812`, `rho = 0.9757`, same peak layer Dec-L2.0, and mean `beta` `0.0145 / 0.0136 / 0.0135` (test / train / neither) exactly |
 | `IIIA_independence_18.csv` | `contrast, n_held, n_indist, pearson_r, spearman_rho, mean_beta_held, mean_beta_indist` | the two 5-vs-rest contrasts (`old5_vs_12`: 0.9904; `new5_vs_13`: 0.9880); the manuscript's 5-vs-8 contrast is derived from `per_noise_beta_muse.csv` as above |
 | `IIIA_noise_set_independence.json`, `IIIA_repro_5old_vs_12_muse.csv`, `IIIA_swap.json` | cluster-side reproduction of the old 5-vs-12 contrast (72-layer and 24-layer variants) and the SCAFE-swap check on Demucs (`refit_IIIA.py`, `refit_IIIA_swap.py`) | provenance of the independence numbers; run before SCAFE was staged, so they carry no 5-vs-8 row |
 | `moved_numbers.csv` | `model, quantity, old17, new18, delta` | every reported quantity before/after adding SCAFE (17 -> 18 noises); nothing moves beyond the third decimal |
-| `peak_layer_stability_snr.csv`, `peak_layer_stability_c50.csv` | `axis, model, quantity, layer, wins, frequency` | bootstrap frequency (300 utterance x cluster resamples, seed 0) with which each layer is the peak-`beta` / min-`c_low` / max-`c_high` layer (`scripts/peak_stability.py`); the C50 file is from the superseded 5-RIR Job B2 arms |
+| `peak_layer_stability_snr.csv` | `axis, model, quantity, layer, wins, frequency` | bootstrap frequency (300 utterance x cluster resamples, seed 0) with which each layer is the peak-`beta` / min-`c_low` / max-`c_high` layer (`scripts/peak_stability.py`); the C50 counterpart is `c50/peak_layer_stability_c50.csv` |
 | `profile_correlations.csv` | `pearson_r, pearson_p, spearman_r, spearman_p, n, label` | early cross-axis / cross-model profile correlations on the 17-noise aggregate (`scripts/profile_correlations.py`); superseded by `cross_task/` for the paper's numbers |
 | `refit_5noise_824/` | `fits_snr_5noise_824.csv` (`model_name, layer, alpha, beta, r2, n_levels`), `hierarchical_bootstrap_snr_5noise_824.csv` (+ CIs, `c_low, c_high, n_boot, seed`), `endpoints_snr_5noise_824.csv` | the same sweep restricted to the old held-out five (PCAFETER), all hooked layers; `migration_824/refit_5noise.py`, 1000 reps, seed 0. Kept for provenance of the 5-noise analyses (random init, emergence, diffusion) |
 
@@ -97,6 +100,8 @@ six arms (`{muse,mpsenet,demucs}_{pre,ft}`) all probed under one software stack.
 | `c50_824_per_layer_supp.csv` | `arm, model, depth, label, layer, A, A_lo, A_hi, c_low, c_low_lo/hi, c_high, alpha, beta, r2, spk_abs_delta_A` (bootstrap over 824 utterances, 1000 reps, seed 20260802) | Table `tab:tradeoff` C50 rows (recomputing `r(alpha,beta)`, `rho`, `f`, `r_c` from the `*_ft` rows gives `-0.993/-0.996/0.037/+0.860`, `-0.999/-0.905/0.025/+0.918`, `-0.918/-0.927/0.167/+0.584`); Sec. III-F before/after correlations (`beta`: 0.91 / 0.81 / 0.98, `alpha`: 0.85 / 0.84 / 0.90; mean abs change in `beta` 0.0020 / 0.0029 / 0.0015); Demucs LSTM `alpha = 0.8986` vs runner-up `encoder.4` `0.7444`; `spk_abs_delta_A` = |A(p232) - A(p257)| per layer |
 | `fig_v5_c50_824_ft_profiles_values.csv` | `model, layer, depth, alpha, alpha_lo/hi, beta, beta_lo/hi, n_utts, n_levels, n_boot, seed` (seed 20260806) | Fig. `fig:c50_regression` (MUSE FT arm with CI bands), Fig. `fig:scatter`(b), the MP-SENet/Demucs C50 panels of `snr/depth_profiles_two_models_values.csv` |
 | `fig_v5_c50_824_profiles_values.csv` | same columns (seed 20260802) | the **pretrained** arms of job 128105 (MUSE `g_best`, MP-SENet DNS; its Demucs arm is the FT v2 checkpoint) |
+| `fig_c50_824_pre_profiles_values.csv` | same columns (1000 reps, seed 20260802) | the three truly pretrained arms of job 128939 (`muse_pre`, `mpsenet_pre`, `demucs_pre` = `dns64()`); the same code reproduces `fig_v5_c50_824_profiles_values.csv` to 1.1e-16 |
+| `peak_layer_stability_c50.csv` | `axis, arm, model, layer_set, quantity, layer, wins, frequency, n_boot, seed, resampling, source` | peak-layer stability on the six arms of job 128939 (300 utterance resamples, seed 0; the five RIRs of each utterance are averaged first, then utterances are resampled) |
 | `per_layer_c50.csv` | `scale, model, layer, depth, auc, auc_lo/hi, auc_se, c_low, c_low_lo/hi, c_low_se, n_utts, n_levels, n_boot, seed` | AUC and `c_low` with utterance-bootstrap CIs at 824 and at 780 (`analyze_c50_824.py`, job 128105 arms) |
 | `mean_curves_c50.csv` | `scale, model, layer` + one column per C50 level `-5 ... 25` | the per-layer mean level curves of job 128105 |
 | `demucs_bottleneck.csv` | `scale, model, lstm_auc, lstm_lo/hi, runner_up, runner_auc, gap, gap_lo/hi, gap_mean, gap_sd, p_gap_gt0, p_peak_is_lstm, n_boot, seed` | Demucs bottleneck: LSTM is the AUC arg-max in 1000/1000 resamples at both scales (the manuscript quotes the same 1000/1000 on `alpha`/`beta`, gap `+0.154 [+0.151, +0.158]`, computed on the FT arm) |
@@ -202,13 +207,12 @@ This experiment was scoped out of the paper; it is shipped as a supplementary nu
 
 ## cross_task/ : noise-axis vs reverberation-axis agreement within architecture (Sec. III-C)
 
-`CROSS_TASK.md` holds the whole-profile Spearman/Pearson correlations between each model's
-SNR profile (`snr/fits_*_snr_jobB.csv`) and its fine-tuned C50 profile
-(`c50/c50_824_per_layer_supp.csv`, `*_ft` arms) with 95% layer-resample CIs (20,000 draws,
-seed 20260810): MUSE `beta` `+0.837 [+0.582, +0.942]`, `alpha` `+0.864 [+0.664, +0.957]`;
-MP-SENet `alpha` `+0.833 [+0.300, +1.000]`; Demucs neither, but the LSTM is the most robust
-layer on both axes. The scratch scripts the note names (`xtask/cross.py` and friends) were
-temporary and no longer exist; the two inputs it reads are the two files above, both shipped.
+`CROSS_TASK.md` and `cross_task_values.csv` hold the whole-profile Spearman/Pearson correlations
+between each model's 18-noise SNR profile (`snr/fits_*_snr_jobB.csv`) and its C50 profile
+(`c50/c50_824_per_layer_supp.csv`, `*_ft` and `*_pre` arms) with 95% layer-resample CIs
+(20,000 draws, seed 20260810): MUSE `beta` `+0.837 [+0.580, +0.941]`, `alpha` `+0.864 [+0.664, +0.957]`;
+MP-SENet `alpha` `+0.833 [+0.300, +1.000]` (`beta` `+0.905` against the pretrained arm); Demucs
+neither (`beta` `+0.482` ft, `+0.545` pre), but the LSTM is the most robust layer on both axes.
 
 ## What is not here
 
