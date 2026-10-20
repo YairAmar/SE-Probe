@@ -38,7 +38,7 @@ python scripts/setup.py --full-data
 
 This downloads from the HuggingFace dataset named by `SEPROBE_HF_DATA` (default `yairamr/SE-Probe-data`).
 
-The 824-utterance sweeps of the TASLP version are in the same dataset under `cluster-2026-07/`: the noise-sweep CKA parquets (`cka_snr_all_<model>.parquet`), the CKA rows joined with the quality metrics (`cka_snr_all_metrics_824_v2.parquet`), the six C50 arms (`c50_six_arms/`), the random-init and emergence grids, the diffusion centroids and a copy of `results_tables/`. Fetch any of them with `huggingface_hub.hf_hub_download("yairamr/SE-Probe-data", "cluster-2026-07/<file>", repo_type="dataset")`.
+The 824-utterance sweeps of the TASLP version are in the same dataset under `cluster-2026-07/`: the noise-sweep CKA parquets (`cka_snr_all_<model>.parquet`), the CKA rows joined with the quality metrics (`cka_snr_all_metrics_824_v2.parquet`), the six C50 arms (`c50_six_arms/`), the random-init and emergence grids, the diffusion centroids, the held-out evaluation of the dereverberation fine-tunes (`dereverb_finetuning_eval/`, the same files as `training/results/`) and a copy of `results_tables/`. Fetch any of them with `huggingface_hub.hf_hub_download("yairamr/SE-Probe-data", "cluster-2026-07/<file>", repo_type="dataset")`.
 
 ## Quick sanity check
 
