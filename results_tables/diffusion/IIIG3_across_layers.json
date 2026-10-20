@@ -1,0 +1,148 @@
+[
+  {
+    "label": "old5",
+    "noises": [
+      "TBUS",
+      "PCAFETER",
+      "DLIVING",
+      "OOFFICE",
+      "SPSQUARE"
+    ],
+    "t": 5,
+    "panels": [
+      {
+        "snr": -10,
+        "dim": 13,
+        "norm_between": 0.5087378151063613,
+        "norm_within_enc": 0.20848421852663115,
+        "norm_within_dec": 0.5431547206671246,
+        "between_over_within": 1.3536760499717009,
+        "raw_between": 9.794513448313798e-05
+      },
+      {
+        "snr": -5,
+        "dim": 13,
+        "norm_between": 0.5050649084807346,
+        "norm_within_enc": 0.19746336951199495,
+        "norm_within_dec": 0.5432504048442771,
+        "between_over_within": 1.363724898783389,
+        "raw_between": 9.253437917884611e-05
+      },
+      {
+        "snr": 0,
+        "dim": 13,
+        "norm_between": 0.49828998286785886,
+        "norm_within_enc": 0.17863592728277042,
+        "norm_within_dec": 0.5440667681109945,
+        "between_over_within": 1.37896256937679,
+        "raw_between": 9.247675718194087e-05
+      },
+      {
+        "snr": 10,
+        "dim": 13,
+        "norm_between": 0.4809619046336283,
+        "norm_within_enc": 0.12994697031163724,
+        "norm_within_dec": 0.5452386336482793,
+        "between_over_within": 1.424680567277561,
+        "raw_between": 9.033577468399792e-05
+      },
+      {
+        "snr": 20,
+        "dim": 13,
+        "norm_between": 0.4660117004667549,
+        "norm_within_enc": 0.09591607097024375,
+        "norm_within_dec": 0.5384046487955555,
+        "between_over_within": 1.469325172410617,
+        "raw_between": 8.168279298966897e-05
+      },
+      {
+        "snr": 30,
+        "dim": 13,
+        "norm_between": 0.475755220495823,
+        "norm_within_enc": 0.08762148566584871,
+        "norm_within_dec": 0.536031574490311,
+        "between_over_within": 1.5257047576314182,
+        "raw_between": 8.388578437130574e-05
+      }
+    ],
+    "monotone_decreasing_over_six_panels": false,
+    "spearman_six_panels": -0.942857142857143,
+    "spearman_all_41": -0.9163763066202091,
+    "spearman_all_41_p": 4.298810200960602e-17,
+    "between_over_within_m10": 1.3536760499717009,
+    "between_over_within_p30": 1.5257047576314182
+  },
+  {
+    "label": "new5",
+    "noises": [
+      "TBUS",
+      "SCAFE",
+      "DLIVING",
+      "OOFFICE",
+      "SPSQUARE"
+    ],
+    "t": 5,
+    "panels": [
+      {
+        "snr": -10,
+        "dim": 13,
+        "norm_between": 0.5086384202964065,
+        "norm_within_enc": 0.20674934825634364,
+        "norm_within_dec": 0.5432246155972812,
+        "between_over_within": 1.3564162085916873,
+        "raw_between": 9.700029390739274e-05
+      },
+      {
+        "snr": -5,
+        "dim": 13,
+        "norm_between": 0.5048962899801441,
+        "norm_within_enc": 0.19554078974185546,
+        "norm_within_dec": 0.5434157440522048,
+        "between_over_within": 1.3665114709462833,
+        "raw_between": 9.183176323010632e-05
+      },
+      {
+        "snr": 0,
+        "dim": 13,
+        "norm_between": 0.4966454825555048,
+        "norm_within_enc": 0.17416429245081808,
+        "norm_within_dec": 0.5444507288904977,
+        "between_over_within": 1.3822296161538665,
+        "raw_between": 9.194178520008226e-05
+      },
+      {
+        "snr": 10,
+        "dim": 13,
+        "norm_between": 0.477841782209047,
+        "norm_within_enc": 0.12384890376794595,
+        "norm_within_dec": 0.5446921744411796,
+        "between_over_within": 1.4295061224632,
+        "raw_between": 9.040865115359249e-05
+      },
+      {
+        "snr": 20,
+        "dim": 13,
+        "norm_between": 0.46433407301745677,
+        "norm_within_enc": 0.09249672651640496,
+        "norm_within_dec": 0.5381762809301313,
+        "between_over_within": 1.4725033972753927,
+        "raw_between": 8.73159190249938e-05
+      },
+      {
+        "snr": 30,
+        "dim": 13,
+        "norm_between": 0.4746832964875268,
+        "norm_within_enc": 0.08592041048070985,
+        "norm_within_dec": 0.5360593059173754,
+        "between_over_within": 1.5263626255738396,
+        "raw_between": 8.490439212388984e-05
+      }
+    ],
+    "monotone_decreasing_over_six_panels": false,
+    "spearman_six_panels": -0.942857142857143,
+    "spearman_all_41": -0.9026132404181187,
+    "spearman_all_41_p": 7.39311639883297e-16,
+    "between_over_within_m10": 1.3564162085916873,
+    "between_over_within_p30": 1.5263626255738396
+  }
+]

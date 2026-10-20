@@ -16,7 +16,7 @@ from se_probe.muse.models.pooling import (
     select_first_segment,
 )
 
-__all__ = ["load_muse_model", "load_muse_activation_extractor", "load_muse_activation_extractor_reverb"]
+__all__ = ["load_muse_model", "load_random_init_muse_model", "load_muse_activation_extractor", "load_muse_activation_extractor_reverb", "load_random_init_muse_activation_extractor"]
 
 
 class AttrDict(dict):
@@ -96,3 +96,39 @@ def load_muse_activation_extractor_reverb(
     device = get_device(device) if not isinstance(device, torch.device) else device
     model = load_muse_model(device=device, checkpoint_path=checkpoint_path)
     return ActivationsExtractor(model=model, relevant_layers=MUSE_LAYERS, pooling_fn=pool_muse_activations_mean)
+
+
+def load_random_init_muse_model(
+    seed: int,
+    device: Optional[Union[torch.device, str]] = None,
+) -> torch.nn.Module:
+    """
+    Instantiate MUSE from the same configuration with randomly initialised weights.
+
+    This is the random-initialisation control of the paper: the identical probing
+    pipeline applied to an untrained network. ``torch.manual_seed`` and
+    ``numpy.random.seed`` are set to ``seed`` immediately before construction so
+    the three published seeds (0, 1, 2) are reproducible. No checkpoint is loaded.
+    """
+    import numpy as _np
+
+    device = get_device(device) if not isinstance(device, torch.device) else device
+    with open(CONFIG_FILE) as f:
+        h = AttrDict(json.loads(f.read()))
+    torch.manual_seed(seed)
+    _np.random.seed(seed)
+    model = MUSE(h, single_segment_mode=True).to(device)
+    model.eval()
+    return model
+
+
+def load_random_init_muse_activation_extractor(
+    seed: int,
+    device: Optional[Union[torch.device, str]] = None,
+    with_pooling: bool = True,
+) -> ActivationsExtractor:
+    """Activation extractor over a randomly initialised MUSE (see
+    :func:`load_random_init_muse_model`), hooked on the same probed layers."""
+    model = load_random_init_muse_model(seed, device=device)
+    pooling_fn = pool_muse_activations if with_pooling else select_first_segment
+    return ActivationsExtractor(model=model, relevant_layers=MUSE_LAYERS, pooling_fn=pooling_fn)

@@ -1,0 +1,9 @@
+system,checkpoint,pesq,stoi,estoi,si_sdr_db,n_utts,source
+reverberant_input,none,1.658,0.8156,0.6200,-10.13,4120,PRETRAINED_REVERB_EVAL.md §5.2 (athena job 128960)
+mpsenet_pretrained,JacobLinCool/MP-SENet-DNS (snapshot 8b78493f),1.6925973,0.8019964,0.5952255,-9.6911172,4120,PRETRAINED_REVERB_EVAL.md §5.2 (athena job 128960)
+demucs_pretrained,denoiser dns64 (dns64-a7761ff99a7d5bb6.th),1.7287513,0.7996070,0.6237363,-9.2313523,4120,PRETRAINED_REVERB_EVAL.md §5.2 (athena job 128960)
+muse_pretrained,paper_result/g_best (md5 8fd0ec3d),1.8165748,0.7873640,0.5956568,-10.0340749,4120,PRETRAINED_REVERB_EVAL.md §5.2 (athena job 128960)
+mpsenet_ft_epoch50_control_rerun,checkpoints_mpsenet/all_v2/epoch_50/g_00295909,3.360880,0.965581,0.903607,9.443733,4120,PRETRAINED_REVERB_EVAL.md §5.1 (athena job 128960; torch 2.11 / L40S rerun of the published row)
+mpsenet_ft_epoch50_published,checkpoints_mpsenet/all_v2/epoch_50/g_00295909,3.360794,0.965582,0.903606,9.443636,4120,PRETRAINED_REVERB_EVAL.md §4 (results/mpsenet_ft_test_eval_epoch_50.json)
+demucs_ft_v2_epoch57_published,checkpoints/dereverb_demucs_v2/epoch_57/g_00047310,2.440605,0.918485,0.798840,3.7701,4120,PRETRAINED_REVERB_EVAL.md §4 (results/demucs_ft_test_eval_v2_epoch_57.json)
+demucs_ft_parity_epoch45_published,checkpoints/dereverb_demucs/epoch_45/g_00037350,2.339218,0.914073,0.789893,3.3409,4120,PRETRAINED_REVERB_EVAL.md §4 (results/demucs_ft_test_eval_parity_epoch_45.json)

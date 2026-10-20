@@ -1,0 +1,138 @@
+{
+  "824": {
+    "0.5": {
+      "lowSNR_within_enc": 0.1793933535615603,
+      "lowSNR_within_dec": 0.2547308951616287,
+      "lowSNR_between": 0.2817501773436864,
+      "lowSNR_between_over_within": 1.2980150977770488,
+      "frac_snr_where_max_pair_is_cross_group": 0.34146341463414637,
+      "spearman_snr_vs_between": 0.5559233449477353,
+      "highSNR_between_over_within": 1.3153513471285503,
+      "pearson_beta_vs_mobility": 0.0019072931339953053,
+      "spearman_beta_vs_mobility": 0.02941176470588235
+    },
+    "1": {
+      "lowSNR_within_enc": 0.05221731215715408,
+      "lowSNR_within_dec": 0.08594691008329391,
+      "lowSNR_between": 0.10147900382677714,
+      "lowSNR_between_over_within": 1.4689557353655498,
+      "frac_snr_where_max_pair_is_cross_group": 0.2926829268292683,
+      "spearman_snr_vs_between": -0.00818815331010453,
+      "highSNR_between_over_within": 1.5677199562390645,
+      "pearson_beta_vs_mobility": -0.26054545040666544,
+      "spearman_beta_vs_mobility": -0.26176470588235295
+    },
+    "2": {
+      "lowSNR_within_enc": 0.007437762183447679,
+      "lowSNR_within_dec": 0.015086160507053137,
+      "lowSNR_between": 0.01656904382010301,
+      "lowSNR_between_over_within": 1.4712291558583577,
+      "frac_snr_where_max_pair_is_cross_group": 0.07317073170731707,
+      "spearman_snr_vs_between": -0.4123693379790942,
+      "highSNR_between_over_within": 1.6462670962015789,
+      "pearson_beta_vs_mobility": -0.2954225212194216,
+      "spearman_beta_vs_mobility": -0.29411764705882354
+    },
+    "3": {
+      "lowSNR_within_enc": 0.0012202331563457847,
+      "lowSNR_within_dec": 0.002818355686031282,
+      "lowSNR_between": 0.002890405982422332,
+      "lowSNR_between_over_within": 1.4313990473747253,
+      "frac_snr_where_max_pair_is_cross_group": 0.0,
+      "spearman_snr_vs_between": -0.5259581881533102,
+      "highSNR_between_over_within": 1.5991624196370442,
+      "pearson_beta_vs_mobility": -0.21991397967389603,
+      "spearman_beta_vs_mobility": -0.18823529411764706
+    },
+    "5": {
+      "lowSNR_within_enc": 3.7918878661002964e-05,
+      "lowSNR_within_dec": 0.00010110905471568306,
+      "lowSNR_between": 9.440985134763953e-05,
+      "lowSNR_between_over_within": 1.3582255244255066,
+      "frac_snr_where_max_pair_is_cross_group": 0.0,
+      "spearman_snr_vs_between": -0.5649825783972127,
+      "highSNR_between_over_within": 1.5078862110773723,
+      "pearson_beta_vs_mobility": 0.007596201249892062,
+      "spearman_beta_vs_mobility": -0.10588235294117648
+    },
+    "10": {
+      "lowSNR_within_enc": 8.685398622532148e-09,
+      "lowSNR_within_dec": 2.5698057311747864e-08,
+      "lowSNR_between": 2.1720968431300964e-08,
+      "lowSNR_between_over_within": 1.2637502948443096,
+      "frac_snr_where_max_pair_is_cross_group": 0.0,
+      "spearman_snr_vs_between": -0.5761324041811848,
+      "highSNR_between_over_within": 1.44791974623998,
+      "pearson_beta_vs_mobility": 0.21468882587738125,
+      "spearman_beta_vs_mobility": 0.049999999999999996
+    }
+  },
+  "780": {
+    "0.5": {
+      "lowSNR_within_enc": 0.17654394606749216,
+      "lowSNR_within_dec": 0.2532993058363597,
+      "lowSNR_between": 0.281512975692749,
+      "lowSNR_between_over_within": 1.3098396857579548,
+      "frac_snr_where_max_pair_is_cross_group": 0.36585365853658536,
+      "spearman_snr_vs_between": 0.8362369337979095,
+      "highSNR_between_over_within": 1.2986815770467122,
+      "pearson_beta_vs_mobility": -0.07577494991247091,
+      "spearman_beta_vs_mobility": -0.15
+    },
+    "1": {
+      "lowSNR_within_enc": 0.05031473624209563,
+      "lowSNR_within_dec": 0.08503709236780803,
+      "lowSNR_between": 0.10107394183675449,
+      "lowSNR_between_over_within": 1.4934971332550049,
+      "frac_snr_where_max_pair_is_cross_group": 0.3902439024390244,
+      "spearman_snr_vs_between": 0.7121951219512196,
+      "highSNR_between_over_within": 1.5035919149716694,
+      "pearson_beta_vs_mobility": 0.05919076950322302,
+      "spearman_beta_vs_mobility": -0.02647058823529412
+    },
+    "2": {
+      "lowSNR_within_enc": 0.0069866137734303875,
+      "lowSNR_within_dec": 0.014746020703266064,
+      "lowSNR_between": 0.016311227964858215,
+      "lowSNR_between_over_within": 1.501077135403951,
+      "frac_snr_where_max_pair_is_cross_group": 0.0,
+      "spearman_snr_vs_between": 0.7078397212543556,
+      "highSNR_between_over_within": 1.526083727677663,
+      "pearson_beta_vs_mobility": 0.1613569199309237,
+      "spearman_beta_vs_mobility": 0.01764705882352941
+    },
+    "3": {
+      "lowSNR_within_enc": 0.0011399906167450051,
+      "lowSNR_within_dec": 0.002719238788510362,
+      "lowSNR_between": 0.0028058687457814813,
+      "lowSNR_between_over_within": 1.454105834166209,
+      "frac_snr_where_max_pair_is_cross_group": 0.0,
+      "spearman_snr_vs_between": 0.7168989547038328,
+      "highSNR_between_over_within": 1.4720670779546101,
+      "pearson_beta_vs_mobility": 0.31340725823266546,
+      "spearman_beta_vs_mobility": 0.2441176470588235
+    },
+    "5": {
+      "lowSNR_within_enc": 3.535710432818936e-05,
+      "lowSNR_within_dec": 9.503232164812896e-05,
+      "lowSNR_between": 8.905213568747665e-05,
+      "lowSNR_between_over_within": 1.365949014822642,
+      "frac_snr_where_max_pair_is_cross_group": 0.0,
+      "spearman_snr_vs_between": 0.7473867595818816,
+      "highSNR_between_over_within": 1.3887442549069722,
+      "pearson_beta_vs_mobility": 0.4049486842510101,
+      "spearman_beta_vs_mobility": 0.4294117647058823
+    },
+    "10": {
+      "lowSNR_within_enc": 7.77548655091683e-09,
+      "lowSNR_within_dec": 2.26343752629532e-08,
+      "lowSNR_between": 1.914942604486214e-08,
+      "lowSNR_between_over_within": 1.259461025396983,
+      "frac_snr_where_max_pair_is_cross_group": 0.0,
+      "spearman_snr_vs_between": 0.7717770034843207,
+      "highSNR_between_over_within": 1.3300453424453735,
+      "pearson_beta_vs_mobility": 0.3860230908262028,
+      "spearman_beta_vs_mobility": 0.4617647058823529
+    }
+  }
+}

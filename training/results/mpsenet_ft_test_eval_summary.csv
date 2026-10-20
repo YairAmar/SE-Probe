@@ -1,0 +1,7 @@
+epoch,condition,pesq,stoi,estoi,si_sdr_db,n_utts
+epoch_48,reverberant_input,1.6579,0.8156,0.62,-10.13,4120
+epoch_48,enhanced,3.3751,0.9654,0.9038,9.4,4120
+epoch_49,reverberant_input,1.6579,0.8156,0.62,-10.13,4120
+epoch_49,enhanced,3.3713,0.9657,0.9041,9.31,4120
+epoch_50,reverberant_input,1.6579,0.8156,0.62,-10.13,4120
+epoch_50,enhanced,3.3608,0.9656,0.9036,9.44,4120

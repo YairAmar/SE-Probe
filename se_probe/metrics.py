@@ -121,7 +121,7 @@ def sisdr(clean: np.ndarray, degraded: np.ndarray, eps: float = 1e-10) -> float:
     s_target_norm_sq = np.dot(s_target, s_target) + eps
     e_noise_norm_sq = np.dot(e_noise, e_noise) + eps
 
-    sisdr = - 10 * np.log10(s_target_norm_sq / e_noise_norm_sq)
+    sisdr = 10 * np.log10(s_target_norm_sq / e_noise_norm_sq)
     return float(sisdr)
 
 
