@@ -1,0 +1,5 @@
+checkpoint,condition,pesq,stoi,estoi,si_sdr_db,n_utts
+parity_epoch_45,reverberant_input,1.6579,0.8156,0.62,-10.13,4120
+parity_epoch_45,enhanced,2.3392,0.9141,0.7899,3.34,4120
+v2_epoch_57,reverberant_input,1.6579,0.8156,0.62,-10.13,4120
+v2_epoch_57,enhanced,2.4406,0.9185,0.7988,3.77,4120

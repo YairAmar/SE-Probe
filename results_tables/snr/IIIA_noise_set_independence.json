@@ -1,0 +1,76 @@
+[
+  {
+    "tag": "REPRO old 5-vs-12",
+    "layers": 72,
+    "layer_filter": "all",
+    "set_a": "5held(old)",
+    "n_a": 5,
+    "noises_a": [
+      "TBUS",
+      "PCAFETER",
+      "DLIVING",
+      "OOFFICE",
+      "SPSQUARE"
+    ],
+    "set_b": "12indist",
+    "n_b": 12,
+    "noises_b": [
+      "DKITCHEN",
+      "DWASHING",
+      "NFIELD",
+      "NPARK",
+      "NRIVER",
+      "OHALLWAY",
+      "OMEETING",
+      "PRESTO",
+      "PSTATION",
+      "STRAFFIC",
+      "TCAR",
+      "TMETRO"
+    ],
+    "pearson_r": 0.9797337800509407,
+    "pearson_p": 1.2728120295257701e-50,
+    "spearman_rho": 0.9781979548524022,
+    "spearman_p": 1.5995073542412506e-49,
+    "mean_beta_a": 0.014635588508046186,
+    "mean_beta_b": 0.013426200688967403,
+    "model": "muse"
+  },
+  {
+    "tag": "REPRO old 5-vs-12",
+    "layers": 24,
+    "layer_filter": "norm1",
+    "set_a": "5held(old)",
+    "n_a": 5,
+    "noises_a": [
+      "TBUS",
+      "PCAFETER",
+      "DLIVING",
+      "OOFFICE",
+      "SPSQUARE"
+    ],
+    "set_b": "12indist",
+    "n_b": 12,
+    "noises_b": [
+      "DKITCHEN",
+      "DWASHING",
+      "NFIELD",
+      "NPARK",
+      "NRIVER",
+      "OHALLWAY",
+      "OMEETING",
+      "PRESTO",
+      "PSTATION",
+      "STRAFFIC",
+      "TCAR",
+      "TMETRO"
+    ],
+    "pearson_r": 0.9904328578432207,
+    "pearson_p": 2.0260349342937008e-20,
+    "spearman_rho": 0.9895652173913043,
+    "spearman_p": 5.2435497713356434e-20,
+    "mean_beta_a": 0.01453266388176116,
+    "mean_beta_b": 0.01344854915352967,
+    "model": "muse"
+  }
+]

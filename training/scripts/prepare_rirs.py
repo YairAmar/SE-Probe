@@ -117,7 +117,7 @@ def collect_wav_files(src_dir):
 def main():
     parser = argparse.ArgumentParser(
         description="Compute acoustic metadata for RIR-Mega RIRs (no file copying)")
-    parser.add_argument("--src-dir", default="/home/yairamr/work/data/rirs/rirmega_small",
+    parser.add_argument("--src-dir", default="data/rirmega",
                         help="Root dir containing rir_output_50k/, rir_output_8k_circ/, manifests/")
     parser.add_argument("--meta-out", default=None,
                         help="Output CSV path (default: data/rir_metadata.csv)")

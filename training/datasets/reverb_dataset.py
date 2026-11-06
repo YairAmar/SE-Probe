@@ -176,3 +176,119 @@ class ReverbValDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.audio_indexes)
 
+
+class MPSENetReverbDataset(torch.utils.data.Dataset):
+    """Reverb training dataset for MPSENet.
+
+    Returns raw audio 3-tuple: (reverb_audio, clean_audio, noise_residual)
+    where noise_residual = reverb_audio - clean_audio.
+    All tensors are 1D of length segment_size (32000 by default).
+
+    MPSENet does STFT in the training step, not in the dataset.
+    """
+
+    def __init__(self, training_indexes, clean_wavs_dir, rir_dir, rir_wav_paths,
+                 segment_size, sampling_rate,
+                 split=True, shuffle=True, device=None):
+        self.audio_indexes = list(training_indexes)
+        self.clean_wavs_dir = clean_wavs_dir
+        self.segment_size = segment_size
+        self.sampling_rate = sampling_rate
+        self.split = split
+        self.device = device
+
+        random.seed(1234)
+        if shuffle:
+            random.shuffle(self.audio_indexes)
+
+        self.rirs = load_rirs(rir_dir, rir_wav_paths, "MPSENetReverbDataset")
+
+        # Build flat chunk index: (utterance_idx, chunk_start)
+        self.chunk_index = []
+        for utt_idx, filename in enumerate(self.audio_indexes):
+            wav_path = os.path.join(self.clean_wavs_dir, filename + ".wav")
+            info = sf.info(wav_path)
+            length = int(info.frames)
+
+            if length <= segment_size:
+                self.chunk_index.append((utt_idx, 0))
+            else:
+                n_chunks = length // segment_size
+                for c in range(n_chunks):
+                    self.chunk_index.append((utt_idx, c * segment_size))
+                remainder = length % segment_size
+                if remainder > 0:
+                    self.chunk_index.append((utt_idx, length - segment_size))
+
+        print(f"MPSENetReverbDataset: {len(self.audio_indexes)} utterances -> "
+              f"{len(self.chunk_index)} chunks (segment_size={segment_size})")
+
+    def __getitem__(self, flat_idx):
+        utt_idx, chunk_start = self.chunk_index[flat_idx]
+        filename = self.audio_indexes[utt_idx]
+
+        wav_path = os.path.join(self.clean_wavs_dir, filename + ".wav")
+        clean_audio, _ = librosa.load(
+            wav_path, sr=self.sampling_rate,
+            offset=chunk_start / self.sampling_rate,
+            duration=self.segment_size / self.sampling_rate,
+        )
+
+        if len(clean_audio) < self.segment_size:
+            clean_audio = np.pad(clean_audio, (0, self.segment_size - len(clean_audio)))
+
+        # Random RIR convolution
+        rir = self.rirs[random.randint(0, len(self.rirs) - 1)]
+        reverb_audio = fftconvolve(clean_audio, rir, mode="full")[:self.segment_size]
+
+        clean_audio = torch.FloatTensor(clean_audio)
+        reverb_audio = torch.FloatTensor(reverb_audio)
+
+        # Normalize by reverb energy
+        norm_factor = torch.sqrt(len(reverb_audio) / torch.sum(reverb_audio ** 2.0))
+        clean_audio = clean_audio * norm_factor
+        reverb_audio = reverb_audio * norm_factor
+
+        noise_residual = reverb_audio - clean_audio
+        return reverb_audio, clean_audio, noise_residual
+
+    def __len__(self):
+        return len(self.chunk_index)
+
+
+class MPSENetReverbValDataset(torch.utils.data.Dataset):
+    """Validation dataset for MPSENet reverb mode.
+
+    Returns full-length (clean_audio, reverb_audio) pairs.
+    Same interface as ReverbValDataset.
+    """
+
+    def __init__(self, validation_indexes, clean_wavs_dir, rir_dir, rir_wav_paths, sampling_rate):
+        self.audio_indexes = list(validation_indexes)
+        self.clean_wavs_dir = clean_wavs_dir
+        self.sampling_rate = sampling_rate
+
+        self.rirs = load_rirs(rir_dir, rir_wav_paths, "MPSENetReverbValDataset")
+
+    def __getitem__(self, index):
+        filename = self.audio_indexes[index]
+        clean_audio, _ = librosa.load(
+            os.path.join(self.clean_wavs_dir, filename + ".wav"),
+            sr=self.sampling_rate,
+        )
+
+        # Deterministic RIR assignment
+        rir = self.rirs[index % len(self.rirs)]
+        reverb_audio = fftconvolve(clean_audio, rir, mode="full")[:len(clean_audio)]
+
+        clean_audio = torch.FloatTensor(clean_audio)
+        reverb_audio = torch.FloatTensor(reverb_audio)
+
+        norm_factor = torch.sqrt(len(reverb_audio) / torch.sum(reverb_audio ** 2.0))
+        clean_audio = clean_audio * norm_factor
+        reverb_audio = reverb_audio * norm_factor
+
+        return clean_audio, reverb_audio
+
+    def __len__(self):
+        return len(self.audio_indexes)

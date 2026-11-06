@@ -44,7 +44,7 @@ def load_rir(rir_dir, wav_path, channel=0):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate reverb and noise test sets")
-    parser.add_argument("--rir-dir", default="/home/yairamr/work/data/rirs/rirmega_small",
+    parser.add_argument("--rir-dir", default="data/rirmega",
                         help="Root directory of raw RIR dataset")
     args = parser.parse_args()
 

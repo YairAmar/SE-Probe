@@ -1,0 +1,4 @@
+model,n_layers,pearson_r_beta,mean_abs_dbeta,max_abs_dbeta,max_dbeta_layer,peak_beta_layer_pre,peak_beta_layer_ft,peak_beta_pre,peak_beta_ft
+MUSE,24,0.8781465749461065,0.0048821360725222,0.013343041277193702,TCFTransformer.decoder_level2.mhca_blks.0.transformer_layers.3.norm1,TCFTransformer.decoder_level2.mhca_blks.0.transformer_layers.3.norm1,TCFTransformer.decoder_level1.mhca_blks.0.transformer_layers.0.norm1,0.0181872547611648,0.0077813153214507
+MP-SENet,8,0.8060039257486067,0.0040802723212993,0.0088804015571818,TSTransformer.3.freq_transformer.norm1,TSTransformer.3.freq_transformer.norm1,TSTransformer.1.time_transformer.norm1,0.0205536742088122,0.0129584018651382
+Demucs,11,0.9389755628926916,0.0017569623154637,0.0061287809340727,decoder.3,encoder.0,encoder.0,0.0252910695538852,0.0239971538668587

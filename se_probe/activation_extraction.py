@@ -14,6 +14,7 @@ __all__ = [
     "load_demucs_activation_extractor",
     "load_muse_activation_extractor_reverb",
     "load_mpsenet_activation_extractor_reverb",
+    "load_demucs_activation_extractor_reverb",
 ]
 
 
@@ -294,13 +295,14 @@ def load_muse_activation_extractor_reverb(device: Optional[Union[str, torch.devi
     return _load_muse_reverb(device=device, checkpoint_path=checkpoint_path)
 
 
-def load_mpsenet_activation_extractor_reverb(device: Optional[Union[str, torch.device]] = None) -> 'ActivationsExtractor':
+def load_mpsenet_activation_extractor_reverb(device: Optional[Union[str, torch.device]] = None, checkpoint_path: str = None) -> 'ActivationsExtractor':
     """
     Load the MPSENet activation extractor for reverb analysis.
     Uses mean pooling over all windows except the last.
 
     Args:
         device: Device to load the model on. ``None`` autodetects.
+        checkpoint_path: Fine-tuned checkpoint; ``None`` probes the pretrained DNS checkpoint.
 
     Returns:
         ActivationsExtractor configured for MPSENet reverb analysis.
@@ -309,4 +311,22 @@ def load_mpsenet_activation_extractor_reverb(device: Optional[Union[str, torch.d
     from se_probe.mpsenet.model import (
         load_mpsenet_activation_extractor_reverb as _load_mpsenet_reverb,
     )
-    return _load_mpsenet_reverb(device=device)
+    return _load_mpsenet_reverb(device=device, checkpoint_path=checkpoint_path)
+
+
+def load_demucs_activation_extractor_reverb(device: Optional[Union[str, torch.device]] = None, checkpoint_path: str = None) -> 'ActivationsExtractor':
+    """
+    Load the Demucs DNS64 activation extractor for reverb analysis ([T, C] pooling).
+
+    Args:
+        device: Device to load the model on. ``None`` autodetects.
+        checkpoint_path: Fine-tuned checkpoint; ``None`` probes the pretrained DNS64 checkpoint.
+
+    Returns:
+        ActivationsExtractor configured for Demucs reverb analysis.
+    """
+    device = get_device(device) if not isinstance(device, torch.device) else device
+    from se_probe.demucs.model import (
+        load_demucs_activation_extractor_reverb as _load_demucs_reverb,
+    )
+    return _load_demucs_reverb(device=device, checkpoint_path=checkpoint_path)

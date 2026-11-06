@@ -1,0 +1,133 @@
+{
+  "n_utts": 824,
+  "epochs": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    10,
+    12,
+    24,
+    36,
+    48
+  ],
+  "convergence": [
+    {
+      "epoch": -1,
+      "beta_pearson_r_vs_e48": 0.7757643346370892,
+      "beta_spearman_r_vs_e48": 0.6452173913043477,
+      "alpha_pearson_r_vs_e48": 0.7761403752025825,
+      "alpha_spearman_r_vs_e48": 0.6913043478260869,
+      "rms_dbeta_vs_e48": 0.008159229021266309
+    },
+    {
+      "epoch": 1,
+      "beta_pearson_r_vs_e48": 0.7644718967570434,
+      "beta_spearman_r_vs_e48": 0.7008695652173912,
+      "alpha_pearson_r_vs_e48": 0.7903483599558855,
+      "alpha_spearman_r_vs_e48": 0.64,
+      "rms_dbeta_vs_e48": 0.004465237144105513
+    },
+    {
+      "epoch": 3,
+      "beta_pearson_r_vs_e48": 0.771505591463262,
+      "beta_spearman_r_vs_e48": 0.6478260869565217,
+      "alpha_pearson_r_vs_e48": 0.772893036690231,
+      "alpha_spearman_r_vs_e48": 0.6634782608695651,
+      "rms_dbeta_vs_e48": 0.002805293643914224
+    },
+    {
+      "epoch": 5,
+      "beta_pearson_r_vs_e48": 0.8864949383729619,
+      "beta_spearman_r_vs_e48": 0.8426086956521738,
+      "alpha_pearson_r_vs_e48": 0.867197792839009,
+      "alpha_spearman_r_vs_e48": 0.8078260869565217,
+      "rms_dbeta_vs_e48": 0.0033838770788609464
+    },
+    {
+      "epoch": 7,
+      "beta_pearson_r_vs_e48": 0.8818550003355957,
+      "beta_spearman_r_vs_e48": 0.8539130434782608,
+      "alpha_pearson_r_vs_e48": 0.8716493481331483,
+      "alpha_spearman_r_vs_e48": 0.8086956521739129,
+      "rms_dbeta_vs_e48": 0.002321601141625628
+    },
+    {
+      "epoch": 9,
+      "beta_pearson_r_vs_e48": 0.9207613441831182,
+      "beta_spearman_r_vs_e48": 0.8817391304347826,
+      "alpha_pearson_r_vs_e48": 0.9010000338838545,
+      "alpha_spearman_r_vs_e48": 0.8582608695652173,
+      "rms_dbeta_vs_e48": 0.0020710461333693043
+    },
+    {
+      "epoch": 10,
+      "beta_pearson_r_vs_e48": 0.9272706124892486,
+      "beta_spearman_r_vs_e48": 0.8843478260869565,
+      "alpha_pearson_r_vs_e48": 0.9121782399591591,
+      "alpha_spearman_r_vs_e48": 0.8808695652173912,
+      "rms_dbeta_vs_e48": 0.0020296303172238454
+    },
+    {
+      "epoch": 12,
+      "beta_pearson_r_vs_e48": 0.9269762329291305,
+      "beta_spearman_r_vs_e48": 0.917391304347826,
+      "alpha_pearson_r_vs_e48": 0.9071481718378733,
+      "alpha_spearman_r_vs_e48": 0.863478260869565,
+      "rms_dbeta_vs_e48": 0.002046215760767346
+    },
+    {
+      "epoch": 24,
+      "beta_pearson_r_vs_e48": 0.9785248373998124,
+      "beta_spearman_r_vs_e48": 0.9626086956521739,
+      "alpha_pearson_r_vs_e48": 0.9686182487873676,
+      "alpha_spearman_r_vs_e48": 0.9582608695652173,
+      "rms_dbeta_vs_e48": 0.0007620148155559194
+    },
+    {
+      "epoch": 36,
+      "beta_pearson_r_vs_e48": 0.9965474558973771,
+      "beta_spearman_r_vs_e48": 0.9878260869565217,
+      "alpha_pearson_r_vs_e48": 0.9940907917142886,
+      "alpha_spearman_r_vs_e48": 0.9895652173913043,
+      "rms_dbeta_vs_e48": 0.0003780111940748843
+    },
+    {
+      "epoch": 48,
+      "beta_pearson_r_vs_e48": 1.0,
+      "beta_spearman_r_vs_e48": 0.9999999999999999,
+      "alpha_pearson_r_vs_e48": 1.0,
+      "alpha_spearman_r_vs_e48": 0.9999999999999999,
+      "rms_dbeta_vs_e48": 0.0
+    }
+  ],
+  "concentration": {
+    "enc_l1_mean_abs_dbeta": 0.0029025489799597666,
+    "enc_l1_mean_abs_dalpha": 0.06926507184640851,
+    "enc_l1l2_mean_abs_dbeta": 0.005141853718772067,
+    "enc_l1l2_mean_abs_dalpha": 0.15241226473278252,
+    "decref_mean_abs_dbeta": 0.008880227535881774,
+    "decref_mean_abs_dalpha": 0.3810420946895512,
+    "ratio_dbeta_decref_over_encl1": 3.0594582889708435,
+    "ratio_dalpha_decref_over_encl1": 5.501215613180783,
+    "ratio_dbeta_decref_over_encl1l2": 1.727047874477937,
+    "ratio_dalpha_decref_over_encl1l2": 2.500075012713806,
+    "max_abs_dbeta": 0.015323339489340199,
+    "max_abs_dbeta_layer": "TCFTransformer.decoder_level2.mhca_blks.0.transformer_layers.0.norm1",
+    "max_abs_dalpha": 0.48788193496191656,
+    "max_abs_dalpha_layer": "TCFTransformer.decoder_level2.mhca_blks.0.transformer_layers.3.norm1",
+    "mean_abs_dbeta_all": 0.007211622565311867,
+    "mean_abs_dalpha_all": 0.273596697582664
+  },
+  "peak": {
+    "pretrained_snr_max_beta": 0.022628769792044798,
+    "e48_snr_max_beta": 0.012936733193295559,
+    "n_layers_beta_decreased": 23,
+    "n_layers_alpha_increased": 23
+  },
+  "e48_checkpoint": "g_00051852 (md5 fbac7b7941f5ce998f1cfd7af161b76b)",
+  "e48_source": "/home/yairamr/work/cluster-2026-07/migration_824/emergence/e48_fix/snr",
+  "epochs_1_36_source": "/home/yairamr/work/cluster-2026-07/aggregated/emergence_snr_824.parquet",
+  "pretrained_source": "/home/yairamr/work/cluster-2026-07/aggregated/cka_snr_all_metrics_824.parquet"
+}

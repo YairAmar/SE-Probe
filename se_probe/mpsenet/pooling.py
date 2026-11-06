@@ -13,6 +13,10 @@ def _pool_single(name: str, act: torch.Tensor) -> torch.Tensor:
     """
     if act.ndim < 2:
         return act
+    if act.ndim == 4:
+        # get_activations stacks repeated window calls of equal shape into [S, ...];
+        # pool each window and average (as for the list case) instead of averaging the wrong axes.
+        return torch.stack([_pool_single(name, a) for a in act]).mean(dim=0)
     if "time_transformer" in name:
         # Shape: [F', T, C] -> mean over T (dim=1) -> [F', C] -> transpose -> [C, F']
         return act.mean(dim=1).T

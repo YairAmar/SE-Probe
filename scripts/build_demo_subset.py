@@ -115,6 +115,28 @@ def _filter_reverb(df: pd.DataFrame, utts: int, seed: int) -> pd.DataFrame:
     return pd.concat(parts, ignore_index=True) if parts else df
 
 
+def _load_snr_chunks(chunks_dir: Path, model: str, snrs: Iterable[int], noise: str) -> pd.DataFrame:
+    """Read the ``<model>__<noise>__snr<NN>.parquet`` chunks of ``run_snr_grid.py`` for the
+    requested noise and SNRs (an 824-scale alternative to ``snr/cka_snr_<model>.parquet``)."""
+    parts = []
+    for snr in snrs:
+        f = chunks_dir / f"{model}__{noise}__snr{int(snr):+03d}.parquet"
+        if f.exists():
+            parts.append(pd.read_parquet(f))
+    if not parts:
+        raise FileNotFoundError(f"no {model}__{noise}__snr*.parquet chunks under {chunks_dir}")
+    return pd.concat(parts, ignore_index=True)
+
+
+def _load_reverb_shards(shards: Iterable[Path]) -> pd.DataFrame:
+    """Concatenate the ``shard_<arm>_*.parquet`` files of one ``run_reverb_grid.py`` arm."""
+    shards = [Path(s) for s in shards]
+    missing = [s for s in shards if not s.exists()]
+    if missing:
+        raise FileNotFoundError(f"missing reverb shard(s): {missing}")
+    return pd.concat([pd.read_parquet(s) for s in shards], ignore_index=True)
+
+
 def _human_bytes(n: int) -> str:
     for unit in ("B", "KB", "MB", "GB"):
         if n < 1024 or unit == "GB":
@@ -138,6 +160,10 @@ def main() -> int:
     parser.add_argument("--budget-mb", type=float, default=DEFAULT_BUDGET_MB,
                         help=f"Total byte budget in MB (default: {DEFAULT_BUDGET_MB})")
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--snr-chunks-dir", type=Path, default=None,
+                        help="824-scale SNR chunk dir (run_snr_grid.py); replaces snr/cka_snr_<model>.parquet")
+    parser.add_argument("--reverb-arm-shards", type=Path, nargs="+", default=None,
+                        help="shard_<arm>_*.parquet files of one run_reverb_grid.py arm; replaces the reverb parquet")
     args = parser.parse_args()
 
     source_dir = args.source_dir or (
@@ -163,22 +189,36 @@ def main() -> int:
 
     written: List[Path] = []
     for model, rel in SNR_FILES.items():
-        in_path = src / rel
-        if not in_path.exists():
-            print(f"ERROR: missing input parquet: {in_path}", file=sys.stderr)
-            return 2
-        df = pd.read_parquet(in_path)
+        if args.snr_chunks_dir is not None:
+            try:
+                df = _load_snr_chunks(args.snr_chunks_dir, model, DEFAULT_SNRS, args.noise)
+            except FileNotFoundError as e:
+                print(f"ERROR: {e}", file=sys.stderr)
+                return 2
+        else:
+            in_path = src / rel
+            if not in_path.exists():
+                print(f"ERROR: missing input parquet: {in_path}", file=sys.stderr)
+                return 2
+            df = pd.read_parquet(in_path)
         sub = _filter_snr(df, DEFAULT_SNRS, args.noise, args.utts_per_cell, args.seed)
         out_path = dst / f"cka_snr_{model}_demo.parquet"
         sub.to_parquet(out_path, index=False)
         written.append(out_path)
         print(f"  {out_path.name}: {len(sub):>7} rows  ({_human_bytes(out_path.stat().st_size)})")
 
-    reverb_in = src / REVERB_FILE
-    if not reverb_in.exists():
-        print(f"ERROR: missing reverb parquet: {reverb_in}", file=sys.stderr)
-        return 2
-    rev_df = pd.read_parquet(reverb_in)
+    if args.reverb_arm_shards is not None:
+        try:
+            rev_df = _load_reverb_shards(args.reverb_arm_shards)
+        except FileNotFoundError as e:
+            print(f"ERROR: {e}", file=sys.stderr)
+            return 2
+    else:
+        reverb_in = src / REVERB_FILE
+        if not reverb_in.exists():
+            print(f"ERROR: missing reverb parquet: {reverb_in}", file=sys.stderr)
+            return 2
+        rev_df = pd.read_parquet(reverb_in)
     rev_sub = _filter_reverb(rev_df, args.utts_per_cell, args.seed)
     rev_out = dst / "cka_reverb_muse_demo.parquet"
     rev_sub.to_parquet(rev_out, index=False)

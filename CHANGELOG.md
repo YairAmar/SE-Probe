@@ -2,6 +2,37 @@
 
 All notable changes to SE-Probe are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to semantic versioning.
 
+## v0.2.0, TASLP revision (2026-10-06)
+
+Everything the closed research repositories implemented for the journal version of the paper, *Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models Under Noise and Reverberation* (IEEE/ACM TASLP), ported into the public package. Nothing from v0.1.x was removed.
+
+### Added
+- `se_probe.layers`: the probed-layer sets (24 / 8 / 11), the architectural depth order (never alphabetical), short labels, figure layouts, the SNR and C50 grids, the DEMAND split lists (VoiceBank-DEMAND test five with SCAFE, training eight, neither five) and the 88-RIR AIR pool description.
+- `se_probe.profiles`: mean degradation-level curves, closed-form per-layer OLS with endpoint and AUC statistics, utterance-cluster and two-way utterance x noise/RIR bootstraps (the latter replays the stream of the cluster script behind the published CIs), the saturation spread `f`, the identity `r(alpha,beta) = (r_c f - 1)/sqrt(f^2 - 2 r_c f + 1)` and its floor, PC1/PC2 shares, Table I summaries, profile agreement with layer-resample CIs, noise-set independence, random-init and emergence summaries, before/after fine-tuning shifts and the Demucs bottleneck gap.
+- `se_probe.bootstrap`: a NumPy-only hierarchical (cluster) bootstrap with an explicit, mandatory sampling unit, strata, crossed margins and `PseudoReplicationWarning`; reproduces the paper's 0.041 vs 0.505 interval-width comparison.
+- `se_probe.perceptual`: within-group centring, per-layer correlations for PESQ / STOI / SI-SDR / DNSMOS, utterance-cluster bootstrap on Pearson r via sufficient sums, per-speaker and speaker-level (Student-t) inference, SI-SDR sign-convention detection and the ceiling-free PESQ gain.
+- `se_probe.cka`: the unbiased HSIC estimator and the frames-as-samples conventions of the estimator ablation.
+- `se_probe.centroids` and the 824-scale diffusion helpers in `se_probe.diffusion_analysis` (joint per-block embedding, arc lengths, between/within group distances).
+- Model adapters: `load_mpsenet_model` / `load_demucs_model` accept fine-tuned checkpoints (trainer key names are remapped for MP-SENet), `load_demucs_activation_extractor_reverb`, and `load_random_init_muse_model` / `load_random_init_muse_activation_extractor` for the control.
+- `se_probe.plotting`: column-width rcParams, Okabe-Ito palette, the two-panel profile figure, the tradeoff scatter and depth-axis helpers.
+- `results_tables/`: 87 small tables with provenance and SHA-256 manifest, including the six-arm C50 mean curves that reproduce the C50 rows of Table I and the 17-noise per-SNR mean curves of the three pretrained models (`snr/mean_curves_snr_17noise_three_models.csv`), the only in-tree level curves for MP-SENet and Demucs.
+- The book is rebuilt as eight chapters that follow the paper in order and recompute every manuscript number from those tables (`02_noise_profile`, `03_architectures_tradeoff`, `04_reverberation_finetuning`, `05_origin_in_training`, `06_perceptual_quality`, `07_geometric_view`, `08_checks`); the v0.1.x demo-scale chapters 02–06 are folded into them, each figure now appears once, and `01_pipeline_overview` is unchanged.
+- `03_architectures_tradeoff` also pins the depth statistics of Sec. III-C/D (`rho(depth, beta)` = +0.833 for MP-SENet and -0.600 for Demucs, the most sensitive MP-SENet layer, Demucs's minimum R² of 0.828 at `encoder.0`, and how far below the identity floor the six Table I rows fall), and shows from the 17-noise curves that every Demucs curve rises monotonically, the encoder curves saturating at both ends of the sweep.
+- `scripts/`: resumable, cluster-agnostic drivers for the noise grid (824 x 41 x 18), the reverberation grid (824 x 13 x 5-of-88 RIRs, six arms), the random-init and emergence grids, the perceptual-metric grid and join, diffusion centroids and psi tables, the HSIC ablation, the analysis CLIs behind every table, and a dry-run HuggingFace upload manifest.
+- HuggingFace: the 824-utterance sweeps, the six C50 arms, the random-init, emergence and perceptual aggregates and a copy of `results_tables/` in `yairamr/SE-Probe-data` under `cluster-2026-07/`; the MP-SENet (epoch 50) and Demucs (epochs 57 and 45) dereverberation fine-tunes in `yairamr/SE-Probe-models`.
+- `training/`: MP-SENet and Demucs dereverberation fine-tuning (trainers, datasets, models, configs, launch scripts, DNS key converter), the held-out evaluation harnesses with their results (4,120 mixtures, 202 held-out RIR-Mega RIRs) and the pretrained "before" rows, and selective freezing / the three profile-guided arms in `train.py` (`--unfreeze`, `--freeze_arm`, `--seed`).
+- Tests for all of the above (`tests/test_{layers,profiles,perceptual,cka_variants,diffusion_824,model_loaders,metrics_sign,bootstrap}.py`, `training/tests/test_freeze_arms.py`); CI also runs the training tests.
+
+### Fixed
+- Demucs noise-axis data: the per-utterance CKA parquet published on HuggingFace in July 2026 came from a sweep that zero-padded every utterance to 4 s before adding noise, which left the clean reference with silent tails the noisy input lacked. Demucs is now probed at native length with per-utterance CKA, and the corrected parquet and every table derived from it replace the old ones (Table I Demucs noise row `r = -0.752`, `rho = -0.791`, `f = 0.485`, PC1 61.40%). MUSE and MP-SENet are unaffected.
+- `se_probe.mpsenet.pooling`: inputs whose length is a multiple of 32,000 samples are pooled per window instead of over the wrong axes.
+- `einops` and `joblib`, imported by the vendored MUSE model, are declared dependencies.
+- `se_probe.metrics.sisdr` returned the negated SI-SDR; the sign is corrected and pinned by a test. The shipped demo and result tables already carried the correct sign.
+- `torchvision` (required by the vendored MUSE deformable convolution) is now a declared dependency; `MPSENet` / `denoiser` and the DNSMOS stack are declared optional extras (`[models]`, `[metrics]`).
+
+### Changed
+- README, book intro, `docs/architecture.md` and `data/README.md` describe the TASLP scope, the 824-utterance sweeps and where their raw artifacts live; `CITATION.cff` carries the journal citation alongside the preprint.
+
 ## v0.1.2, Reverb FT pipeline (2026-05-03)
 
 ### Added
@@ -46,4 +77,4 @@ First public release accompanying the paper *"Where Does Speech Enhancement Adap
 ### Notes on locked decisions
 - D14 (Git LFS for `results_demo/*.parquet`) was a contingency for the case where the demo-data subset exceeded a comfortable in-tree size. The actual subset totals ~200 KB across five parquets (three per-model SNR tables, one reverb table, one diffusion-maps table), so LFS was not configured for v0.1.0. If a future release expands the demo set, ship `.gitattributes` with `*.parquet filter=lfs diff=lfs merge=lfs -text`.
 
-[Unreleased]: https://github.com/YairAmar/SE-Probe/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/YairAmar/SE-Probe/compare/v0.2.0...HEAD
