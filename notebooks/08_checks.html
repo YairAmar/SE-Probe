@@ -1,0 +1,1355 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Two checks: the CKA estimator and profile-guided freezing &#8212; SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/08_checks';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="A geometric view: diffusion maps" href="07_geometric_view.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">Pipeline overview</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="02_noise_profile.html">The robustness–sensitivity profile under noise</a></li>
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_architectures_tradeoff.html">Across architectures: the tradeoff and the saturation spread</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="04_reverberation_finetuning.html">Reverberation and dereverberation fine-tuning</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="05_origin_in_training.html">Origin of the profile in training</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="06_perceptual_quality.html">Representational change and perceptual quality</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="07_geometric_view.html">A geometric view: diffusion maps</a></li>
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Two checks: the CKA estimator and profile-guided freezing</a></li>
+
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe/edit/main/./notebooks/08_checks.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe/issues/new?title=Issue%20on%20page%20%2Fnotebooks/08_checks.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/08_checks.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Two checks: the CKA estimator and profile-guided freezing</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Two checks: the CKA estimator and profile-guided freezing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#estimator-and-sample-convention">Estimator and sample convention</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-estimators-on-synthetic-activations">The estimators on synthetic activations</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-one-real-activation">Optional: one real activation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#profile-guided-freezing-supplementary">Profile-guided freezing (supplementary)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dereverberation-quality-per-arm">Dereverberation quality per arm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#re-probing-the-arms-under-reverberation">Re-probing the arms under reverberation</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="two-checks-the-cka-estimator-and-profile-guided-freezing">
+<h1>Two checks: the CKA estimator and profile-guided freezing<a class="headerlink" href="#two-checks-the-cka-estimator-and-profile-guided-freezing" title="Link to this heading">#</a></h1>
+<p>Two checks close the book. The first asks whether the sensitivity profile depends on how CKA is estimated: the paper’s statistic is the biased linear CKA estimator on the time-pooled <code class="docutils literal notranslate"><span class="pre">[C,</span> <span class="pre">F]</span></code> representation, and its <em>Centered Kernel Alignment</em> section reports one ablation, the MUSE profile recomputed with the unbiased HSIC estimator on a reduced grid of 150 utterances x 9 SNR levels x 2 DEMAND noises with non-pooled activations, which reproduces the biased profile at a per-layer slope correlation of 0.98 with the same peak layer. Changing the sample convention instead (frames rather than channels as samples) is an additional check shipped with this book and is not in the paper. The second check is a supplementary fine-tuning experiment, also not in the manuscript, that asked whether the profile localises where adaptation effort matters; the answer was a null.</p>
+<p>Runtime: under a minute on CPU; the gated live cell adds about a minute.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">REPO</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="k">while</span> <span class="n">REPO</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"SE-Probe"</span> <span class="ow">and</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">REPO</span><span class="p">:</span>
+    <span class="n">REPO</span> <span class="o">=</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span>
+<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">REPO</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rel</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Repo-relative path for display (absolute only if outside the repo)."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.device</span><span class="w"> </span><span class="kn">import</span> <span class="n">device_info</span><span class="p">,</span> <span class="n">get_device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_paper_rcparams</span>
+
+<span class="n">apply_paper_rcparams</span><span class="p">()</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">device_info</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">))</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="p">(</span><span class="s2">"results_df"</span> <span class="k">if</span> <span class="p">(</span><span class="n">REPO</span> <span class="o">/</span> <span class="s2">"results_df"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"results_demo"</span><span class="p">)</span>
+<span class="n">TABLES</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="s2">"results_tables"</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using data from: </span><span class="si">{</span><span class="n">_rel</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Paper tables from: </span><span class="si">{</span><span class="n">_rel</span><span class="p">(</span><span class="n">TABLES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Detected device: cpu
+Using data from: results_demo
+Paper tables from: results_tables
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="estimator-and-sample-convention">
+<h1>Estimator and sample convention<a class="headerlink" href="#estimator-and-sample-convention" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">results_tables/ablation/hsic_frames_slopes.csv</span></code> holds the per-layer OLS slope of CKA against SNR on the reduced grid for the four variants: <code class="docutils literal notranslate"><span class="pre">pooled_linear</span></code> (the paper’s statistic), <code class="docutils literal notranslate"><span class="pre">hsic_unbiased</span></code> (same <code class="docutils literal notranslate"><span class="pre">[C,</span> <span class="pre">F]</span></code> representation, unbiased HSIC estimator), <code class="docutils literal notranslate"><span class="pre">frames_TFC</span></code> (<code class="docutils literal notranslate"><span class="pre">[T,</span> <span class="pre">C*F]</span></code>, frames as samples) and <code class="docutils literal notranslate"><span class="pre">frames_TC</span></code> (<code class="docutils literal notranslate"><span class="pre">[T,</span> <span class="pre">C]</span></code>, the Demucs-style convention). Only the estimator swap leaves the profile intact; changing what counts as a sample changes which invariance is measured and gives a different profile, which is why profiles are comparable only within a fixed sample-axis convention.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">profile_agreement</span>
+
+<span class="n">ab</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"ablation/hsic_frames_slopes.csv"</span><span class="p">)</span>
+<span class="n">VARIANTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"pooled_linear"</span><span class="p">,</span> <span class="s2">"hsic_unbiased"</span><span class="p">,</span> <span class="s2">"frames_TFC"</span><span class="p">,</span> <span class="s2">"frames_TC"</span><span class="p">]</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">VARIANTS</span><span class="p">:</span>
+    <span class="n">ag</span> <span class="o">=</span> <span class="n">profile_agreement</span><span class="p">(</span><span class="n">ab</span><span class="o">.</span><span class="n">pooled_linear</span><span class="p">,</span> <span class="n">ab</span><span class="p">[</span><span class="n">v</span><span class="p">])</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"variant"</span><span class="p">:</span> <span class="n">v</span><span class="p">,</span> <span class="s2">"pearson_r_vs_pooled"</span><span class="p">:</span> <span class="n">ag</span><span class="p">[</span><span class="s2">"pearson_r"</span><span class="p">],</span> <span class="s2">"spearman_rho_vs_pooled"</span><span class="p">:</span> <span class="n">ag</span><span class="p">[</span><span class="s2">"spearman_rho"</span><span class="p">],</span>
+                 <span class="s2">"peak_layer"</span><span class="p">:</span> <span class="n">ab</span><span class="o">.</span><span class="n">layer_short</span><span class="p">[</span><span class="n">ab</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()],</span> <span class="s2">"peak_beta"</span><span class="p">:</span> <span class="n">ab</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()})</span>
+<span class="n">agree</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"variant"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">agree</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">r_hsic</span> <span class="o">=</span> <span class="n">agree</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"hsic_unbiased"</span><span class="p">,</span> <span class="s2">"pearson_r_vs_pooled"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unbiased HSIC vs biased: r = </span><span class="si">{</span><span class="n">r_hsic</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper 0.98), peak layer </span><span class="si">{</span><span class="n">agree</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'hsic_unbiased'</span><span class="p">,</span><span class="w"> </span><span class="s1">'peak_layer'</span><span class="p">]</span><span class="si">}</span><span class="s2"> "</span>
+      <span class="sa">f</span><span class="s2">"vs </span><span class="si">{</span><span class="n">agree</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'pooled_linear'</span><span class="p">,</span><span class="w"> </span><span class="s1">'peak_layer'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r_hsic</span> <span class="o">-</span> <span class="mf">0.98</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+<span class="k">assert</span> <span class="n">agree</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"hsic_unbiased"</span><span class="p">,</span> <span class="s2">"peak_layer"</span><span class="p">]</span> <span class="o">==</span> <span class="n">agree</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"pooled_linear"</span><span class="p">,</span> <span class="s2">"peak_layer"</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">agree</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"frames_TFC"</span><span class="p">,</span> <span class="s2">"pearson_r_vs_pooled"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">agree</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"frames_TC"</span><span class="p">,</span> <span class="s2">"pearson_r_vs_pooled"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pearson_r_vs_pooled</th>
+      <th>spearman_rho_vs_pooled</th>
+      <th>peak_layer</th>
+      <th>peak_beta</th>
+    </tr>
+    <tr>
+      <th>variant</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>pooled_linear</th>
+      <td>1.0000</td>
+      <td>1.0000</td>
+      <td>Enc-L2.3</td>
+      <td>0.0242</td>
+    </tr>
+    <tr>
+      <th>hsic_unbiased</th>
+      <td>0.9764</td>
+      <td>0.9722</td>
+      <td>Enc-L2.3</td>
+      <td>0.0258</td>
+    </tr>
+    <tr>
+      <th>frames_TFC</th>
+      <td>-0.4993</td>
+      <td>-0.3209</td>
+      <td>Enc-L2.0</td>
+      <td>0.0136</td>
+    </tr>
+    <tr>
+      <th>frames_TC</th>
+      <td>-0.2630</td>
+      <td>-0.2374</td>
+      <td>Enc-L2.0</td>
+      <td>0.0185</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>unbiased HSIC vs biased: r = 0.976 (paper 0.98), peak layer Enc-L2.3 vs Enc-L2.3
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.layers</span><span class="w"> </span><span class="kn">import</span> <span class="n">layout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">OKABE_ITO</span><span class="p">,</span> <span class="n">depth_axis</span>
+
+<span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pooled_linear"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"blue"</span><span class="p">],</span> <span class="s2">"hsic_unbiased"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"vermillion"</span><span class="p">],</span>
+          <span class="s2">"frames_TFC"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"green"</span><span class="p">],</span> <span class="s2">"frames_TC"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"purple"</span><span class="p">]}</span>
+<span class="n">markers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pooled_linear"</span><span class="p">:</span> <span class="s2">"o"</span><span class="p">,</span> <span class="s2">"hsic_unbiased"</span><span class="p">:</span> <span class="s2">"s"</span><span class="p">,</span> <span class="s2">"frames_TFC"</span><span class="p">:</span> <span class="s2">"^"</span><span class="p">,</span> <span class="s2">"frames_TC"</span><span class="p">:</span> <span class="s2">"d"</span><span class="p">}</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pooled_linear"</span><span class="p">:</span> <span class="s2">"pooled linear (paper)"</span><span class="p">,</span> <span class="s2">"hsic_unbiased"</span><span class="p">:</span> <span class="s2">"unbiased HSIC"</span><span class="p">,</span>
+          <span class="s2">"frames_TFC"</span><span class="p">:</span> <span class="s2">"frames as samples [T, C*F]"</span><span class="p">,</span> <span class="s2">"frames_TC"</span><span class="p">:</span> <span class="s2">"[T, C] convention"</span><span class="p">}</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.5</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">))</span>
+<span class="n">depth_axis</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">layout</span><span class="p">(</span><span class="s2">"muse"</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ab</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">VARIANTS</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ab</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">markers</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.9</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">"pooled_linear"</span> <span class="k">else</span> <span class="mf">1.2</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">labels</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="si">}</span><span class="s2"> (r = </span><span class="si">{</span><span class="n">agree</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="s1">'pearson_r_vs_pooled'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\beta_\ell$ (CKA/dB)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"MUSE sensitivity profile under estimator and sample-convention changes (150 utts x 9 SNR x 2 noises)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/7d6d016643cb123ec07139f398b8927d4da3942cbbc0993bcde8390b49d92535.png" src="../_images/7d6d016643cb123ec07139f398b8927d4da3942cbbc0993bcde8390b49d92535.png" />
+</div>
+</div>
+</section>
+<section id="the-estimators-on-synthetic-activations">
+<h1>The estimators on synthetic activations<a class="headerlink" href="#the-estimators-on-synthetic-activations" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">cka_variants</span></code> builds the three representations from one non-pooled first-segment activation of shape <code class="docutils literal notranslate"><span class="pre">(C,</span> <span class="pre">T,</span> <span class="pre">F)</span></code> and returns all four values. The biased estimator is exact only as the number of samples grows; the unbiased HSIC estimator removes the finite-sample bias, which is visible below as the two agreeing more closely as <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">C</span></code> increases. <code class="docutils literal notranslate"><span class="pre">linear_cka_biased</span></code> on the pooled matrix is the same number as <code class="docutils literal notranslate"><span class="pre">cka()</span></code> in the pipeline chapter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="n">cka_mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">"se_probe.cka"</span><span class="p">)</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">()</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">C</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">96</span><span class="p">):</span>
+    <span class="n">clean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+    <span class="n">degraded</span> <span class="o">=</span> <span class="n">clean</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">cka_mod</span><span class="o">.</span><span class="n">cka_variants</span><span class="p">(</span><span class="n">clean</span><span class="p">,</span> <span class="n">degraded</span><span class="p">)</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"n_samples (C)"</span><span class="p">:</span> <span class="n">C</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">()}})</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"n_samples (C)"</span><span class="p">))</span>
+
+<span class="n">pooled_c</span><span class="p">,</span> <span class="n">pooled_d</span> <span class="o">=</span> <span class="n">clean</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">degraded</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">cka_mod</span><span class="o">.</span><span class="n">linear_cka_biased</span><span class="p">(</span><span class="n">pooled_c</span><span class="p">,</span> <span class="n">pooled_d</span><span class="p">)</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">cka_mod</span><span class="o">.</span><span class="n">cka</span><span class="p">(</span><span class="n">pooled_c</span><span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">pooled_d</span><span class="p">[</span><span class="kc">None</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"linear_cka_biased = </span><span class="si">{</span><span class="n">b</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">, cka() on the pooled matrix = </span><span class="si">{</span><span class="n">ref</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pooled_linear</th>
+      <th>hsic_unbiased</th>
+      <th>frames_TFC</th>
+      <th>frames_TC</th>
+    </tr>
+    <tr>
+      <th>n_samples (C)</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>8</th>
+      <td>0.9700</td>
+      <td>0.7610</td>
+      <td>0.9910</td>
+      <td>0.7425</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>0.9603</td>
+      <td>0.7996</td>
+      <td>0.9955</td>
+      <td>0.8636</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>0.9117</td>
+      <td>0.7205</td>
+      <td>0.9978</td>
+      <td>0.8906</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>0.8926</td>
+      <td>0.7545</td>
+      <td>0.9990</td>
+      <td>0.9395</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>0.8514</td>
+      <td>0.7573</td>
+      <td>1.0000</td>
+      <td>0.9539</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>linear_cka_biased = 0.851360, cka() on the pooled matrix = 0.851360
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="optional-one-real-activation">
+<h1>Optional: one real activation<a class="headerlink" href="#optional-one-real-activation" title="Link to this heading">#</a></h1>
+<p>Set <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE=1</span></code> (after <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/setup.py</span></code>) to extract a non-pooled activation of the first probed MUSE layer on a synthetic clip and print the four variants.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SE_PROBE_RUN_INFERENCE"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.activation_extraction</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_muse_activation_extractor</span>
+
+    <span class="n">extractor</span> <span class="o">=</span> <span class="n">load_muse_activation_extractor</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">DEVICE</span><span class="p">,</span> <span class="n">with_pooling</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sr</span> <span class="o">=</span> <span class="mi">16000</span>
+    <span class="n">clean</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span>
+    <span class="n">noisy</span> <span class="o">=</span> <span class="n">clean</span> <span class="o">+</span> <span class="n">noise</span>
+    <span class="n">act_c</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">extractor</span><span class="p">(</span><span class="n">clean</span><span class="p">)</span>
+    <span class="n">act_n</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">extractor</span><span class="p">(</span><span class="n">noisy</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">act_c</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cka_mod</span><span class="o">.</span><span class="n">cka_variants</span><span class="p">(</span><span class="n">act_c</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">act_n</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span><span class="o">.</span><span class="n">float</span><span class="p">())</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"SE_PROBE_RUN_INFERENCE not set — skipping live extraction. Set it to '1' to enable."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SE_PROBE_RUN_INFERENCE not set — skipping live extraction. Set it to '1' to enable.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="profile-guided-freezing-supplementary">
+<h1>Profile-guided freezing (supplementary)<a class="headerlink" href="#profile-guided-freezing-supplementary" title="Link to this heading">#</a></h1>
+<p><strong>This experiment is not in the paper.</strong> If the decoder and refinement blocks are the condition-dependent stages, freezing the profile-robust encoder during dereverberation fine-tuning should cost little and freezing the profile-sensitive decoder should cost a lot. MUSE was fine-tuned under three regimes, each over three seeds (<code class="docutils literal notranslate"><span class="pre">full_ft</span></code>, <code class="docutils literal notranslate"><span class="pre">freeze_encoder</span></code>, <code class="docutils literal notranslate"><span class="pre">freeze_decoder</span></code>), and the resulting checkpoints were re-probed under reverberation. The answer was a null: both freezing regimes cost the same, so the profile describes a structural property of the trained network without implying that a stage is where fine-tuning quality is won. The nine checkpoints are public on Hugging Face (<code class="docutils literal notranslate"><span class="pre">yairamr/SE-Probe-models</span></code>, under <code class="docutils literal notranslate"><span class="pre">cluster-2026-07/</span></code>), and <code class="docutils literal notranslate"><span class="pre">training/train.py</span> <span class="pre">--freeze_arm</span> <span class="pre">{full_ft,freeze_encoder,freeze_decoder}</span></code> reproduces the arms.</p>
+<section id="dereverberation-quality-per-arm">
+<h2>Dereverberation quality per arm<a class="headerlink" href="#dereverberation-quality-per-arm" title="Link to this heading">#</a></h2>
+<p>Best-epoch PESQ and STOI on the held-out RIR-Mega validation subset, mean and standard deviation over the three seeds. The <code class="docutils literal notranslate"><span class="pre">freeze_encoder</span></code> minus <code class="docutils literal notranslate"><span class="pre">freeze_decoder</span></code> difference is −0.002 PESQ with a bootstrap interval that spans zero and lies entirely below the 0.05 audibility threshold, while full fine-tuning is ahead of both arms by 0.08 to 0.09 PESQ.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">FA</span> <span class="o">=</span> <span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"freeze_arms"</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">FA</span> <span class="o">/</span> <span class="s2">"jobA_stats.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"arm"</span><span class="p">)</span>
+<span class="n">runs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">FA</span> <span class="o">/</span> <span class="s2">"jobA_per_run_stats.csv"</span><span class="p">)</span>
+<span class="n">pub</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">FA</span> <span class="o">/</span> <span class="s2">"jobA_publication_stats.csv"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">stats</span><span class="p">[[</span><span class="s2">"n_seeds"</span><span class="p">,</span> <span class="s2">"peak_pesq_mean"</span><span class="p">,</span> <span class="s2">"peak_pesq_std"</span><span class="p">,</span> <span class="s2">"peak_stoi_mean"</span><span class="p">,</span> <span class="s2">"peak_stoi_std"</span><span class="p">,</span> <span class="s2">"trainable_M"</span><span class="p">]]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">runs</span><span class="p">[[</span><span class="s2">"run"</span><span class="p">,</span> <span class="s2">"arm"</span><span class="p">,</span> <span class="s2">"seed"</span><span class="p">,</span> <span class="s2">"peak_epoch"</span><span class="p">,</span> <span class="s2">"peak_pesq"</span><span class="p">,</span> <span class="s2">"peak_stoi"</span><span class="p">]])</span>
+<span class="n">PAPER</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"full_ft"</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.783</span><span class="p">,</span> <span class="mf">0.011</span><span class="p">),</span> <span class="s2">"freeze_encoder"</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.697</span><span class="p">,</span> <span class="mf">0.004</span><span class="p">),</span> <span class="s2">"freeze_decoder"</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.700</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">)}</span>
+<span class="k">for</span> <span class="n">arm</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">sd</span><span class="p">)</span> <span class="ow">in</span> <span class="n">PAPER</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">arm</span><span class="si">:</span><span class="s2">15s</span><span class="si">}</span><span class="s2"> PESQ </span><span class="si">{</span><span class="n">stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">arm</span><span class="p">,</span><span class="w"> </span><span class="s1">'peak_pesq_mean'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> +/- </span><span class="si">{</span><span class="n">stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">arm</span><span class="p">,</span><span class="w"> </span><span class="s1">'peak_pesq_std'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (recorded </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2"> +/- </span><span class="si">{</span><span class="n">sd</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">arm</span><span class="p">,</span> <span class="s2">"peak_pesq_mean"</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">arm</span><span class="p">,</span> <span class="s2">"peak_pesq_std"</span><span class="p">]</span> <span class="o">-</span> <span class="n">sd</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">pub</span><span class="p">[(</span><span class="n">pub</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s2">"pesq"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pub</span><span class="o">.</span><span class="n">arm_a</span> <span class="o">==</span> <span class="s2">"freeze_encoder"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pub</span><span class="o">.</span><span class="n">arm_b</span> <span class="o">==</span> <span class="s2">"freeze_decoder"</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"freeze_encoder - freeze_decoder: </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="s1">'diff'</span><span class="p">]</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2"> PESQ, 95% CI [</span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">diff_ci_lo</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">diff_ci_hi</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">], Welch p = </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">welch_p</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"diff"</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.002</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">diff_ci_lo</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.007</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">diff_ci_hi</span> <span class="o">-</span> <span class="mf">0.002</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+<span class="n">display</span><span class="p">(</span><span class="n">pub</span><span class="p">[[</span><span class="s2">"metric"</span><span class="p">,</span> <span class="s2">"arm_a"</span><span class="p">,</span> <span class="s2">"arm_b"</span><span class="p">,</span> <span class="s2">"diff"</span><span class="p">,</span> <span class="s2">"diff_ci_lo"</span><span class="p">,</span> <span class="s2">"diff_ci_hi"</span><span class="p">,</span> <span class="s2">"cohens_d"</span><span class="p">,</span> <span class="s2">"welch_p"</span><span class="p">,</span> <span class="s2">"practically_significant"</span><span class="p">]]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>n_seeds</th>
+      <th>peak_pesq_mean</th>
+      <th>peak_pesq_std</th>
+      <th>peak_stoi_mean</th>
+      <th>peak_stoi_std</th>
+      <th>trainable_M</th>
+    </tr>
+    <tr>
+      <th>arm</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>freeze_decoder</th>
+      <td>3</td>
+      <td>2.6997</td>
+      <td>0.0032</td>
+      <td>0.9293</td>
+      <td>0.0006</td>
+      <td>0.37</td>
+    </tr>
+    <tr>
+      <th>freeze_encoder</th>
+      <td>3</td>
+      <td>2.6973</td>
+      <td>0.0038</td>
+      <td>0.9300</td>
+      <td>0.0010</td>
+      <td>0.39</td>
+    </tr>
+    <tr>
+      <th>full_ft</th>
+      <td>3</td>
+      <td>2.7827</td>
+      <td>0.0110</td>
+      <td>0.9333</td>
+      <td>0.0012</td>
+      <td>0.51</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>run</th>
+      <th>arm</th>
+      <th>seed</th>
+      <th>peak_epoch</th>
+      <th>peak_pesq</th>
+      <th>peak_stoi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>freeze_decoder__seed1234</td>
+      <td>freeze_decoder</td>
+      <td>1234</td>
+      <td>50</td>
+      <td>2.701</td>
+      <td>0.929</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>freeze_decoder__seed2345</td>
+      <td>freeze_decoder</td>
+      <td>2345</td>
+      <td>50</td>
+      <td>2.696</td>
+      <td>0.930</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>freeze_decoder__seed3456</td>
+      <td>freeze_decoder</td>
+      <td>3456</td>
+      <td>50</td>
+      <td>2.702</td>
+      <td>0.929</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>freeze_encoder__seed1234</td>
+      <td>freeze_encoder</td>
+      <td>1234</td>
+      <td>48</td>
+      <td>2.693</td>
+      <td>0.931</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>freeze_encoder__seed2345</td>
+      <td>freeze_encoder</td>
+      <td>2345</td>
+      <td>36</td>
+      <td>2.699</td>
+      <td>0.929</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>freeze_encoder__seed3456</td>
+      <td>freeze_encoder</td>
+      <td>3456</td>
+      <td>48</td>
+      <td>2.700</td>
+      <td>0.930</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>full_ft__seed1234</td>
+      <td>full_ft</td>
+      <td>1234</td>
+      <td>46</td>
+      <td>2.789</td>
+      <td>0.934</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>full_ft__seed2345</td>
+      <td>full_ft</td>
+      <td>2345</td>
+      <td>46</td>
+      <td>2.789</td>
+      <td>0.932</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>full_ft__seed3456</td>
+      <td>full_ft</td>
+      <td>3456</td>
+      <td>46</td>
+      <td>2.770</td>
+      <td>0.934</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>full_ft         PESQ 2.783 +/- 0.011 (recorded 2.783 +/- 0.011)
+freeze_encoder  PESQ 2.697 +/- 0.004 (recorded 2.697 +/- 0.004)
+freeze_decoder  PESQ 2.700 +/- 0.003 (recorded 2.7 +/- 0.003)
+freeze_encoder - freeze_decoder: -0.002 PESQ, 95% CI [-0.007, +0.002], Welch p = 0.46
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>metric</th>
+      <th>arm_a</th>
+      <th>arm_b</th>
+      <th>diff</th>
+      <th>diff_ci_lo</th>
+      <th>diff_ci_hi</th>
+      <th>cohens_d</th>
+      <th>welch_p</th>
+      <th>practically_significant</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>pesq</td>
+      <td>full_ft</td>
+      <td>freeze_encoder</td>
+      <td>0.0853</td>
+      <td>0.0730</td>
+      <td>0.0940</td>
+      <td>10.3993</td>
+      <td>0.0026</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>pesq</td>
+      <td>full_ft</td>
+      <td>freeze_decoder</td>
+      <td>0.0830</td>
+      <td>0.0707</td>
+      <td>0.0913</td>
+      <td>10.2686</td>
+      <td>0.0033</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>pesq</td>
+      <td>freeze_encoder</td>
+      <td>freeze_decoder</td>
+      <td>-0.0023</td>
+      <td>-0.0067</td>
+      <td>0.0020</td>
+      <td>-0.6644</td>
+      <td>0.4626</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>stoi</td>
+      <td>full_ft</td>
+      <td>freeze_encoder</td>
+      <td>0.0030</td>
+      <td>0.0023</td>
+      <td>0.0037</td>
+      <td>5.1962</td>
+      <td>0.0031</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>stoi</td>
+      <td>full_ft</td>
+      <td>freeze_decoder</td>
+      <td>0.0040</td>
+      <td>0.0033</td>
+      <td>0.0047</td>
+      <td>6.9282</td>
+      <td>0.0011</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>stoi</td>
+      <td>freeze_encoder</td>
+      <td>freeze_decoder</td>
+      <td>0.0010</td>
+      <td>0.0003</td>
+      <td>0.0017</td>
+      <td>1.7321</td>
+      <td>0.1012</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="re-probing-the-arms-under-reverberation">
+<h2>Re-probing the arms under reverberation<a class="headerlink" href="#re-probing-the-arms-under-reverberation" title="Link to this heading">#</a></h2>
+<p>Every arm was probed on the C50 axis (780 utterances, 88-RIR AIR pool, 13 levels). The pre-fine-tuning probe reproduces the manuscript’s published pretrained MUSE artifact exactly (<code class="docutils literal notranslate"><span class="pre">jobA_probe_pre_ft_vs_manuscript.csv</span></code>). <code class="docutils literal notranslate"><span class="pre">jobA_probe_stage_summary.csv</span></code> averages the normalised AUC over the four layers of each stage, per arm (mean over seeds); the frozen stages hold their pre-fine-tuning values and the adaptation shifts to the stages that were left trainable. Note that <code class="docutils literal notranslate"><span class="pre">freeze_decoder</span></code> leaves <code class="docutils literal notranslate"><span class="pre">mag_refinement</span></code> trainable and that <code class="docutils literal notranslate"><span class="pre">latent</span></code> is frozen in neither arm. The figure shows the per-layer profile of one seed per arm against the pre-fine-tuning profile.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.layers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MUSE_STAGE_LABELS</span><span class="p">,</span> <span class="n">MUSE_STAGES</span><span class="p">,</span> <span class="n">layout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">OKABE_ITO</span><span class="p">,</span> <span class="n">depth_axis</span>
+
+<span class="n">stg</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">FA</span> <span class="o">/</span> <span class="s2">"jobA_probe_stage_summary.csv"</span><span class="p">)</span>
+<span class="n">piv</span> <span class="o">=</span> <span class="n">stg</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">"stage"</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">"arm"</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s2">"auc"</span><span class="p">)</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">MUSE_STAGES</span><span class="p">)</span>
+<span class="n">piv</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"pre_ft"</span><span class="p">,</span> <span class="n">stg</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"stage"</span><span class="p">)</span><span class="o">.</span><span class="n">pre_auc</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">MUSE_STAGES</span><span class="p">))</span>
+<span class="n">piv</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">MUSE_STAGE_LABELS</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">MUSE_STAGES</span><span class="p">]</span>
+<span class="n">display</span><span class="p">(</span><span class="n">piv</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ARMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"full_ft"</span><span class="p">,</span> <span class="s2">"freeze_encoder"</span><span class="p">,</span> <span class="s2">"freeze_decoder"</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pre_ft"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"gray"</span><span class="p">],</span> <span class="s2">"full_ft"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"blue"</span><span class="p">],</span> <span class="s2">"freeze_encoder"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"green"</span><span class="p">],</span> <span class="s2">"freeze_decoder"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"vermillion"</span><span class="p">]}</span>
+
+<span class="n">per</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">FA</span> <span class="o">/</span> <span class="s2">"jobA_probe_per_layer.csv"</span><span class="p">)</span>
+<span class="n">pre</span> <span class="o">=</span> <span class="n">per</span><span class="p">[</span><span class="n">per</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">"pre_ft"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"depth"</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">arm</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">ARMS</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">per</span><span class="p">[</span><span class="n">per</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">arm</span><span class="si">}</span><span class="s2">__seed1234"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"depth"</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">depth_axis</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">layout</span><span class="p">(</span><span class="s2">"muse"</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pre</span><span class="o">.</span><span class="n">auc</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"gray"</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"pre-FT"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">auc_lo</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">auc_hi</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">arm</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">auc</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">arm</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">arm</span><span class="si">}</span><span class="s2"> (seed 1234)"</span><span class="p">)</span>
+    <span class="n">fz</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">frozen_in_arm</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fz</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">fz</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">fz</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.5</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.06</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.86</span><span class="p">,</span> <span class="s2">"frozen"</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">arm</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"lower left"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"normalized AUC (C50)"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Per-layer robustness after fine-tuning, with 95</span><span class="si">% u</span><span class="s2">tterance-bootstrap intervals"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>arm</th>
+      <th>pre_ft</th>
+      <th>freeze_decoder</th>
+      <th>freeze_encoder</th>
+      <th>full_ft</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Enc-L1</th>
+      <td>0.9976</td>
+      <td>0.9972</td>
+      <td>0.9985</td>
+      <td>0.9974</td>
+    </tr>
+    <tr>
+      <th>Enc-L2</th>
+      <td>0.9670</td>
+      <td>0.9497</td>
+      <td>0.9913</td>
+      <td>0.9710</td>
+    </tr>
+    <tr>
+      <th>Latent</th>
+      <td>0.9621</td>
+      <td>0.9609</td>
+      <td>0.9759</td>
+      <td>0.9765</td>
+    </tr>
+    <tr>
+      <th>Dec-L2</th>
+      <td>0.9119</td>
+      <td>0.9407</td>
+      <td>0.9514</td>
+      <td>0.9602</td>
+    </tr>
+    <tr>
+      <th>Dec-L1</th>
+      <td>0.9063</td>
+      <td>0.9639</td>
+      <td>0.9586</td>
+      <td>0.9503</td>
+    </tr>
+    <tr>
+      <th>Refine</th>
+      <td>0.9069</td>
+      <td>0.9509</td>
+      <td>0.9515</td>
+      <td>0.9651</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><img alt="../_images/cc3eb41edf9cf93abf0f23acf0475db908c65d572443cd724c46175058d129fc.png" src="../_images/cc3eb41edf9cf93abf0f23acf0475db908c65d572443cd724c46175058d129fc.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="07_geometric_view.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">A geometric view: diffusion maps</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Two checks: the CKA estimator and profile-guided freezing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#estimator-and-sample-convention">Estimator and sample convention</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-estimators-on-synthetic-activations">The estimators on synthetic activations</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-one-real-activation">Optional: one real activation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#profile-guided-freezing-supplementary">Profile-guided freezing (supplementary)</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dereverberation-quality-per-arm">Dereverberation quality per arm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#re-probing-the-arms-under-reverberation">Re-probing the arms under reverberation</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Yair Amar, Amir Ivry, Israel Cohen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

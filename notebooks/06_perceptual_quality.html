@@ -1,0 +1,896 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Representational change and perceptual quality &#8212; SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/06_perceptual_quality';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="A geometric view: diffusion maps" href="07_geometric_view.html" />
+    <link rel="prev" title="Origin of the profile in training" href="05_origin_in_training.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">Pipeline overview</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="02_noise_profile.html">The robustness–sensitivity profile under noise</a></li>
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_architectures_tradeoff.html">Across architectures: the tradeoff and the saturation spread</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="04_reverberation_finetuning.html">Reverberation and dereverberation fine-tuning</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="05_origin_in_training.html">Origin of the profile in training</a></li>
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Representational change and perceptual quality</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="07_geometric_view.html">A geometric view: diffusion maps</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="08_checks.html">Two checks: the CKA estimator and profile-guided freezing</a></li>
+
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe/edit/main/./notebooks/06_perceptual_quality.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe/issues/new?title=Issue%20on%20page%20%2Fnotebooks/06_perceptual_quality.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/06_perceptual_quality.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Representational change and perceptual quality</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Representational change and perceptual quality</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#utterance-level-correlations-at-824-utterances">Utterance-level correlations at 824 utterances</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-speaker-as-the-sampling-unit">The speaker as the sampling unit</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-the-quality-association-with-the-speaker-as-the-unit">Figure: the quality association with the speaker as the unit</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#a-ceiling-check-on-the-pesq-gain">A ceiling check on the PESQ gain</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="representational-change-and-perceptual-quality">
+<h1>Representational change and perceptual quality<a class="headerlink" href="#representational-change-and-perceptual-quality" title="Link to this heading">#</a></h1>
+<p>Does layer-wise CKA carry information on how much a model improves output quality? Both CKA and the metric improvement are driven by the degradation level, so a raw per-utterance correlation mostly restates the SNR sweep. This chapter centres both quantities within each (layer, level) cell and correlates the residuals for PESQ, STOI and SI-SDR at 824-utterance scale (paper Fig. 4), then repeats the association with the <strong>speaker</strong> as the sampling unit (paper Fig. 5): the VoiceBank-DEMAND test split holds two speakers and a second sweep adds two more, so the paper reports per-speaker values, their sign agreement and their spread rather than a population-level test, and the decoder-side PESQ lobe of the utterance-level figure does not survive the change of unit. A final check asks whether the PESQ gain is an artefact of the metric’s ceiling.</p>
+<p>Runtime: under 30 seconds on any device.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">REPO</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="k">while</span> <span class="n">REPO</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"SE-Probe"</span> <span class="ow">and</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">REPO</span><span class="p">:</span>
+    <span class="n">REPO</span> <span class="o">=</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span>
+<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">REPO</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rel</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Repo-relative path for display (absolute only if outside the repo)."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.device</span><span class="w"> </span><span class="kn">import</span> <span class="n">device_info</span><span class="p">,</span> <span class="n">get_device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_paper_rcparams</span>
+
+<span class="n">apply_paper_rcparams</span><span class="p">()</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">device_info</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">))</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="p">(</span><span class="s2">"results_df"</span> <span class="k">if</span> <span class="p">(</span><span class="n">REPO</span> <span class="o">/</span> <span class="s2">"results_df"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"results_demo"</span><span class="p">)</span>
+<span class="n">TABLES</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="s2">"results_tables"</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using data from: </span><span class="si">{</span><span class="n">_rel</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Paper tables from: </span><span class="si">{</span><span class="n">_rel</span><span class="p">(</span><span class="n">TABLES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Detected device: cpu
+Using data from: results_demo
+Paper tables from: results_tables
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="utterance-level-correlations-at-824-utterances">
+<h1>Utterance-level correlations at 824 utterances<a class="headerlink" href="#utterance-level-correlations-at-824-utterances" title="Link to this heading">#</a></h1>
+<p>A per-utterance correlation between layer-wise CKA and the PESQ gain is dominated by SNR: both quantities track degradation severity. The level effect is removed by subtracting from each quantity the mean of its (layer, SNR) cell, so the residual correlation asks whether an utterance whose representation moved more than its peers at the same level also gained more quality than they did. <code class="docutils literal notranslate"><span class="pre">results_tables/perceptual/sec3b_824_v2_perlayer.csv</span></code> holds this per-layer Pearson correlation between centred CKA and the centred metric improvement over the pooled 5 noises x 41 SNRs x 824 utterances (n = 168,920 observations per layer) for three models and six metrics. For MUSE, SI-SDR is positive at every probed layer, STOI negative at every layer, and PESQ mixed in sign: small and positive across the encoder and latent blocks, largest at the first encoder layer, and increasingly negative through the decoder.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sec</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"perceptual/sec3b_824_v2_perlayer.csv"</span><span class="p">)</span>
+<span class="n">muse</span> <span class="o">=</span> <span class="n">sec</span><span class="p">[</span><span class="n">sec</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">"muse"</span><span class="p">]</span>
+<span class="n">ranges</span> <span class="o">=</span> <span class="n">muse</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"metric"</span><span class="p">)[</span><span class="s2">"pearson"</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s2">"min"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SI-SDR utterance-level range [</span><span class="si">{</span><span class="n">ranges</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'SI-SDR'</span><span class="p">,</span><span class="s1">'min'</span><span class="p">]</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ranges</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'SI-SDR'</span><span class="p">,</span><span class="s1">'max'</span><span class="p">]</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">] "</span>
+      <span class="s2">"(shipped table sec3b_824_v2_perlayer.csv; the paper reports the speaker-level 0.17 to 0.60 and r = 0.40 [0.12, 0.68], not this range)"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ranges</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"SI-SDR"</span><span class="p">,</span> <span class="s2">"min"</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.396</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ranges</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"SI-SDR"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.756</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+<span class="k">assert</span> <span class="n">ranges</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"STOI"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ranges</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"SI-SDR"</span><span class="p">,</span> <span class="s2">"min"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="k">assert</span> <span class="n">ranges</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"PESQ"</span><span class="p">,</span> <span class="s2">"min"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">ranges</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"PESQ"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.layers</span><span class="w"> </span><span class="kn">import</span> <span class="n">layout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">OKABE_ITO</span><span class="p">,</span> <span class="n">depth_axis</span>
+
+<span class="n">palette</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"PESQ"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"blue"</span><span class="p">],</span> <span class="s2">"STOI"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"vermillion"</span><span class="p">],</span> <span class="s2">"SI-SDR"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"green"</span><span class="p">]}</span>
+<span class="n">markers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"PESQ"</span><span class="p">:</span> <span class="s2">"o"</span><span class="p">,</span> <span class="s2">"STOI"</span><span class="p">:</span> <span class="s2">"s"</span><span class="p">,</span> <span class="s2">"SI-SDR"</span><span class="p">:</span> <span class="s2">"^"</span><span class="p">}</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">))</span>
+<span class="n">depth_axis</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">layout</span><span class="p">(</span><span class="s2">"muse"</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"PESQ"</span><span class="p">,</span> <span class="s2">"STOI"</span><span class="p">,</span> <span class="s2">"SI-SDR"</span><span class="p">]:</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">muse</span><span class="p">[</span><span class="n">muse</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"layer_idx"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">layer_idx</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">pearson</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">markers</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">palette</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Pearson $r$ (centred CKA vs centred $</span><span class="se">\\</span><span class="s2">Delta M$)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"MUSE, 824 utterances: utterance-level association per layer"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"lower left"</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>min</th>
+      <th>max</th>
+    </tr>
+    <tr>
+      <th>metric</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>DNSMOS-BAK</th>
+      <td>-0.719</td>
+      <td>-0.432</td>
+    </tr>
+    <tr>
+      <th>DNSMOS-OVRL</th>
+      <td>-0.629</td>
+      <td>-0.352</td>
+    </tr>
+    <tr>
+      <th>DNSMOS-SIG</th>
+      <td>-0.540</td>
+      <td>-0.222</td>
+    </tr>
+    <tr>
+      <th>PESQ</th>
+      <td>-0.072</td>
+      <td>0.302</td>
+    </tr>
+    <tr>
+      <th>SI-SDR</th>
+      <td>0.396</td>
+      <td>0.756</td>
+    </tr>
+    <tr>
+      <th>STOI</th>
+      <td>-0.503</td>
+      <td>-0.240</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SI-SDR utterance-level range [+0.396, +0.756] (shipped table sec3b_824_v2_perlayer.csv; the paper reports the speaker-level 0.17 to 0.60 and r = 0.40 [0.12, 0.68], not this range)
+</pre></div>
+</div>
+<img alt="../_images/299feb0a05c8793e505f9daa69ee4dc2ffee7af7f9fc15d118653151ce5ba745.png" src="../_images/299feb0a05c8793e505f9daa69ee4dc2ffee7af7f9fc15d118653151ce5ba745.png" />
+</div>
+</div>
+</section>
+<section id="the-speaker-as-the-sampling-unit">
+<h1>The speaker as the sampling unit<a class="headerlink" href="#the-speaker-as-the-sampling-unit" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">spk_v2__per_speaker_all.csv</span></code> holds one correlation per speaker per layer, recentred within the speaker, for the two probing sweeps (780: p226/p287; 824: p232/p257). The paper pools the four speakers of the MUSE sweeps and reports the speaker mean with a Student-<em>t</em> interval over speakers (<code class="docutils literal notranslate"><span class="pre">speaker_summary_from_published</span></code>); the shipped <code class="docutils literal notranslate"><span class="pre">spk_v2__speaker_level_all.csv</span></code> (scope <code class="docutils literal notranslate"><span class="pre">pooled4</span></code>) is the same computation. At the deepest first-decoder layer (Dec-L2.3) the utterance-cluster bootstrap interval has width 0.041 while the speaker-level interval has width 0.505, twelve times wider and spanning zero.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.perceptual</span><span class="w"> </span><span class="kn">import</span> <span class="n">speaker_summary_from_published</span>
+
+<span class="n">ps</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"perceptual/spk_v2__per_speaker_all.csv"</span><span class="p">)</span>
+<span class="n">ps_muse</span> <span class="o">=</span> <span class="n">ps</span><span class="p">[</span><span class="n">ps</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">"muse"</span><span class="p">]</span>
+<span class="n">spk4</span> <span class="o">=</span> <span class="n">speaker_summary_from_published</span><span class="p">(</span><span class="n">ps_muse</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">"pooled4"</span><span class="p">)</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"perceptual/spk_v2__speaker_level_all.csv"</span><span class="p">)</span>
+<span class="n">ref4</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[(</span><span class="n">ref</span><span class="o">.</span><span class="n">scope</span> <span class="o">==</span> <span class="s2">"pooled4"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ref</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">"muse"</span><span class="p">)]</span>
+<span class="n">chk</span> <span class="o">=</span> <span class="n">spk4</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">ref4</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"metric"</span><span class="p">,</span> <span class="s2">"layer_idx"</span><span class="p">],</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"_ref"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"agreement with the shipped pooled4 table: max |d mean_r| = </span><span class="si">{</span><span class="p">(</span><span class="n">chk</span><span class="o">.</span><span class="n">mean_r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">chk</span><span class="o">.</span><span class="n">mean_r_ref</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">, "</span>
+      <span class="sa">f</span><span class="s2">"max |d spk_lo| = </span><span class="si">{</span><span class="p">(</span><span class="n">chk</span><span class="o">.</span><span class="n">spk_lo</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">chk</span><span class="o">.</span><span class="n">spk_lo_ref</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">chk</span><span class="o">.</span><span class="n">mean_r</span> <span class="o">-</span> <span class="n">chk</span><span class="o">.</span><span class="n">mean_r_ref</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-9</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">spk_row</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">spk4</span><span class="p">[(</span><span class="n">spk4</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="n">metric</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">spk4</span><span class="o">.</span><span class="n">layer_idx</span> <span class="o">==</span> <span class="n">idx</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">per</span> <span class="o">=</span> <span class="n">ps_muse</span><span class="p">[(</span><span class="n">ps_muse</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="n">metric</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ps_muse</span><span class="o">.</span><span class="n">layer_idx</span> <span class="o">==</span> <span class="n">idx</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">per</span>
+
+<span class="n">r</span><span class="p">,</span> <span class="n">per</span> <span class="o">=</span> <span class="n">spk_row</span><span class="p">(</span><span class="s2">"PESQ"</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="n">ut</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"perceptual/spk_v2__utterance_level_all.csv"</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">ut</span><span class="p">[(</span><span class="n">ut</span><span class="o">.</span><span class="n">sweep</span> <span class="o">==</span> <span class="mi">780</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">"muse"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s2">"PESQ"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ut</span><span class="o">.</span><span class="n">layer_idx</span> <span class="o">==</span> <span class="mi">15</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">w_utt</span><span class="p">,</span> <span class="n">w_spk</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">utt_hi</span> <span class="o">-</span> <span class="n">u</span><span class="o">.</span><span class="n">utt_lo</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">spk_hi</span> <span class="o">-</span> <span class="n">r</span><span class="o">.</span><span class="n">spk_lo</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"PESQ at </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">: speakers </span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">per</span><span class="o">.</span><span class="n">speaker</span><span class="p">,</span><span class="w"> </span><span class="n">per</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span><span class="si">}</span><span class="s2">; "</span>
+      <span class="sa">f</span><span class="s2">"mean r = </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean_r</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">, spread [</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">spk_lo</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">spk_hi</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">] (paper -0.21 [-0.46, +0.05])"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  utterance-cluster interval width </span><span class="si">{</span><span class="n">w_utt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper 0.041) vs speaker-level width </span><span class="si">{</span><span class="n">w_spk</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper 0.505), ratio </span><span class="si">{</span><span class="n">w_spk</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">w_utt</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">mean_r</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.21</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">5e-3</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">spk_lo</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.46</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">5e-3</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">spk_hi</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">w_utt</span> <span class="o">-</span> <span class="mf">0.041</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">w_spk</span> <span class="o">-</span> <span class="mf">0.505</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">per</span><span class="o">.</span><span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">per</span><span class="o">.</span><span class="n">r</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span>  <span class="c1"># signs split three to one</span>
+
+<span class="n">r0</span><span class="p">,</span> <span class="n">per0</span> <span class="o">=</span> <span class="n">spk_row</span><span class="p">(</span><span class="s2">"PESQ"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"PESQ at </span><span class="si">{</span><span class="n">r0</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">: all four positive = </span><span class="si">{</span><span class="p">(</span><span class="n">per0</span><span class="o">.</span><span class="n">r</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="si">}</span><span class="s2">; mean r = </span><span class="si">{</span><span class="n">r0</span><span class="o">.</span><span class="n">mean_r</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">, spread [</span><span class="si">{</span><span class="n">r0</span><span class="o">.</span><span class="n">spk_lo</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">r0</span><span class="o">.</span><span class="n">spk_hi</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">] (paper +0.29 [+0.20, +0.38])"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">per0</span><span class="o">.</span><span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r0</span><span class="o">.</span><span class="n">mean_r</span> <span class="o">-</span> <span class="mf">0.29</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r0</span><span class="o">.</span><span class="n">spk_lo</span> <span class="o">-</span> <span class="mf">0.20</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">r0</span><span class="o">.</span><span class="n">spk_hi</span> <span class="o">-</span> <span class="mf">0.38</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+
+<span class="n">sisdr_min</span> <span class="o">=</span> <span class="n">ps_muse</span><span class="p">[</span><span class="n">ps_muse</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s2">"SI-SDR"</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"layer_idx"</span><span class="p">)</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SI-SDR positive in all four speakers at all </span><span class="si">{</span><span class="nb">int</span><span class="p">((</span><span class="n">sisdr_min</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="si">}</span><span class="s2"> layers (paper: all 24)"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">sisdr_min</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sisdr_min</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span>
+<span class="n">rs</span><span class="p">,</span> <span class="n">pers</span> <span class="o">=</span> <span class="n">spk_row</span><span class="p">(</span><span class="s2">"SI-SDR"</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SI-SDR at </span><span class="si">{</span><span class="n">rs</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">: spread of speakers [</span><span class="si">{</span><span class="n">pers</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">pers</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">] (paper 0.17 to 0.60); "</span>
+      <span class="sa">f</span><span class="s2">"r = </span><span class="si">{</span><span class="n">rs</span><span class="o">.</span><span class="n">mean_r</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">rs</span><span class="o">.</span><span class="n">spk_lo</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">rs</span><span class="o">.</span><span class="n">spk_hi</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">] (paper 0.40 [0.12, 0.68])"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pers</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.17</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pers</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.60</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rs</span><span class="o">.</span><span class="n">mean_r</span> <span class="o">-</span> <span class="mf">0.40</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rs</span><span class="o">.</span><span class="n">spk_lo</span> <span class="o">-</span> <span class="mf">0.12</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rs</span><span class="o">.</span><span class="n">spk_hi</span> <span class="o">-</span> <span class="mf">0.68</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+
+<span class="n">stoi</span> <span class="o">=</span> <span class="n">ps_muse</span><span class="p">[</span><span class="n">ps_muse</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s2">"STOI"</span><span class="p">]</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">"layer_idx"</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">"speaker"</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s2">"r"</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">spk4</span><span class="p">[</span><span class="n">spk4</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s2">"STOI"</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"layer_idx"</span><span class="p">)</span><span class="o">.</span><span class="n">label</span>
+<span class="n">flipped</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stoi</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">stoi</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"STOI: a speaker reverses the sign at </span><span class="si">{</span><span class="n">flipped</span><span class="si">}</span><span class="s2"> (paper: Dec-L2.3, Dec-L1.1, Dec-L1.3)"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">flipped</span> <span class="o">==</span> <span class="p">[</span><span class="s2">"Dec-L2.3"</span><span class="p">,</span> <span class="s2">"Dec-L1.1"</span><span class="p">,</span> <span class="s2">"Dec-L1.3"</span><span class="p">]</span>
+<span class="n">covers_zero</span> <span class="o">=</span> <span class="n">spk4</span><span class="p">[(</span><span class="n">spk4</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s2">"STOI"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">spk4</span><span class="o">.</span><span class="n">excludes_zero</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"STOI: the speaker band covers zero at </span><span class="si">{</span><span class="n">covers_zero</span><span class="si">}</span><span class="s2"> (paper adds Dec-L1.2)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>agreement with the shipped pooled4 table: max |d mean_r| = 0.0e+00, max |d spk_lo| = 0.0e+00
+PESQ at Dec-L2.3: speakers {'p226': -0.32, 'p287': -0.31, 'p232': -0.22, 'p257': 0.02}; mean r = -0.21, spread [-0.46, +0.05] (paper -0.21 [-0.46, +0.05])
+  utterance-cluster interval width 0.041 (paper 0.041) vs speaker-level width 0.505 (paper 0.505), ratio 12.2x
+PESQ at Enc-L1.0: all four positive = True; mean r = +0.29, spread [+0.20, +0.38] (paper +0.29 [+0.20, +0.38])
+SI-SDR positive in all four speakers at all 24 layers (paper: all 24)
+SI-SDR at Dec-L1.3: spread of speakers [0.17, 0.60] (paper 0.17 to 0.60); r = 0.40 [0.12, 0.68] (paper 0.40 [0.12, 0.68])
+STOI: a speaker reverses the sign at ['Dec-L2.3', 'Dec-L1.1', 'Dec-L1.3'] (paper: Dec-L2.3, Dec-L1.1, Dec-L1.3)
+STOI: the speaker band covers zero at ['Dec-L2.3', 'Dec-L1.1', 'Dec-L1.2', 'Dec-L1.3'] (paper adds Dec-L1.2)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="figure-the-quality-association-with-the-speaker-as-the-unit">
+<h1>Figure: the quality association with the speaker as the unit<a class="headerlink" href="#figure-the-quality-association-with-the-speaker-as-the-unit" title="Link to this heading">#</a></h1>
+<p>Black: the speaker mean; grey band: its 95% <em>t</em>-interval over the four speakers (describing spread rather than testing); coloured dots: the four speakers; red columns: layers whose band covers zero. (a) dSI-SDR is positive in all four speakers at every layer. (b) dSTOI is negative in all four except at Dec-L2.3, Dec-L1.1 and Dec-L1.3.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">SPK_COLOR</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"p226"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"blue"</span><span class="p">],</span> <span class="s2">"p287"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"sky"</span><span class="p">],</span> <span class="s2">"p232"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"vermillion"</span><span class="p">],</span> <span class="s2">"p257"</span><span class="p">:</span> <span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"orange"</span><span class="p">]}</span>
+<span class="n">SPK_MARK</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"p226"</span><span class="p">:</span> <span class="s2">"o"</span><span class="p">,</span> <span class="s2">"p287"</span><span class="p">:</span> <span class="s2">"s"</span><span class="p">,</span> <span class="s2">"p232"</span><span class="p">:</span> <span class="s2">"^"</span><span class="p">,</span> <span class="s2">"p257"</span><span class="p">:</span> <span class="s2">"D"</span><span class="p">}</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">5.4</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="p">[</span><span class="s2">"SI-SDR"</span><span class="p">,</span> <span class="s2">"STOI"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"(a)"</span><span class="p">,</span> <span class="s2">"(b)"</span><span class="p">]):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">spk4</span><span class="p">[</span><span class="n">spk4</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="n">metric</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"layer_idx"</span><span class="p">)</span>
+    <span class="n">depth_axis</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">layout</span><span class="p">(</span><span class="s2">"muse"</span><span class="p">),</span> <span class="n">show_labels</span><span class="o">=</span><span class="p">(</span><span class="n">metric</span> <span class="o">==</span> <span class="s2">"STOI"</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">li</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="o">~</span><span class="n">s</span><span class="o">.</span><span class="n">excludes_zero</span><span class="p">]</span><span class="o">.</span><span class="n">layer_idx</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">li</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">li</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.10</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">layer_idx</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">spk_lo</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">spk_hi</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"0.55"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"speaker-level 95% $t$-interval ($n$ = 4)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">layer_idx</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">mean_r</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"speaker mean"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">spk</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">ps_muse</span><span class="p">[</span><span class="n">ps_muse</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="n">metric</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"speaker"</span><span class="p">):</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"layer_idx"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">layer_idx</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">SPK_COLOR</span><span class="p">[</span><span class="n">spk</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">SPK_MARK</span><span class="p">[</span><span class="n">spk</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">spk</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"k"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Pearson $r$"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> $</span><span class="se">\\</span><span class="s2">Delta$</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2">: speaker level"</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"lower left"</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/99c3d9f2a520298720f33ffa7541afe08e54a8ff070da4575d79034e2d022cb6.png" src="../_images/99c3d9f2a520298720f33ffa7541afe08e54a8ff070da4575d79034e2d022cb6.png" />
+</div>
+</div>
+</section>
+<section id="a-ceiling-check-on-the-pesq-gain">
+<h1>A ceiling check on the PESQ gain<a class="headerlink" href="#a-ceiling-check-on-the-pesq-gain" title="Link to this heading">#</a></h1>
+<p>Within an SNR bin, an utterance whose degraded PESQ is already high has little headroom, so its raw gain is mechanically small. <code class="docutils literal notranslate"><span class="pre">ceiling_free_gain</span></code> expresses the gain as the fraction of the remaining headroom to the wide-band PESQ bound of 4.5. On the per-utterance probing table shipped with the repository (a 49-utterance slice of the earlier 780-utterance sweep unless the full <code class="docutils literal notranslate"><span class="pre">results_df/</span></code> snapshot is present) the correlation between the degraded PESQ and the gain shrinks once the headroom is normalised.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.perceptual</span><span class="w"> </span><span class="kn">import</span> <span class="n">ceiling_free_gain</span><span class="p">,</span> <span class="n">center_within</span>
+
+<span class="n">demo_path</span> <span class="o">=</span> <span class="n">DATA_DIR</span> <span class="o">/</span> <span class="p">(</span><span class="s2">"snr/cka_snr_muse.parquet"</span> <span class="k">if</span> <span class="p">(</span><span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">"snr"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"cka_snr_muse_demo.parquet"</span><span class="p">)</span>
+<span class="n">demo</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">demo_path</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">demo</span><span class="p">[</span><span class="n">demo</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".norm1"</span><span class="p">)]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"noisy_pesq"</span><span class="p">,</span> <span class="s2">"enhanced_pesq"</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">d</span><span class="p">[</span><span class="s2">"gain"</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">enhanced_pesq</span> <span class="o">-</span> <span class="n">d</span><span class="o">.</span><span class="n">noisy_pesq</span>
+<span class="n">d</span><span class="p">[</span><span class="s2">"ngain"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ceiling_free_gain</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">enhanced_pesq</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">noisy_pesq</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">center_within</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="p">[</span><span class="s2">"gain"</span><span class="p">,</span> <span class="s2">"ngain"</span><span class="p">,</span> <span class="s2">"noisy_pesq"</span><span class="p">],</span> <span class="n">by</span><span class="o">=</span><span class="p">(</span><span class="s2">"layer"</span><span class="p">,</span> <span class="s2">"snr"</span><span class="p">))</span>
+<span class="n">r_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">noisy_pesq_c</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">gain_c</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">r_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">noisy_pesq_c</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">ngain_c</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"r(degraded PESQ, raw gain) = </span><span class="si">{</span><span class="n">r_raw</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">   r(degraded PESQ, headroom-normalised gain) = </span><span class="si">{</span><span class="n">r_norm</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>r(degraded PESQ, raw gain) = -0.256   r(degraded PESQ, headroom-normalised gain) = +0.140
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05_origin_in_training.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Origin of the profile in training</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="07_geometric_view.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">A geometric view: diffusion maps</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Representational change and perceptual quality</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#utterance-level-correlations-at-824-utterances">Utterance-level correlations at 824 utterances</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-speaker-as-the-sampling-unit">The speaker as the sampling unit</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#figure-the-quality-association-with-the-speaker-as-the-unit">Figure: the quality association with the speaker as the unit</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#a-ceiling-check-on-the-pesq-gain">A ceiling check on the PESQ gain</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Yair Amar, Amir Ivry, Israel Cohen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

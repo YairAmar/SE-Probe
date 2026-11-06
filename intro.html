@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>SE-Probe: Where Does Speech Enhancement Adapt? &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
+    <title>SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models &#8212; SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -63,26 +63,33 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Pipeline overview" href="notebooks/01_pipeline_overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -108,7 +115,47 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
     </header>
   
 
@@ -145,7 +192,7 @@
   
   
   
-    <p class="title logo__title">SE-Probe: Where Does Speech Enhancement Adapt?</p>
+    <p class="title logo__title">SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -161,7 +208,7 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    SE-Probe: Where Does Speech Enhancement Adapt?
+                    SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models
                 </a>
             </li>
         </ul>
@@ -169,22 +216,46 @@
 <li class="toctree-l1"><a class="reference internal" href="notebooks/01_pipeline_overview.html">Pipeline overview</a></li>
 
 
-<li class="toctree-l1"><a class="reference internal" href="notebooks/02_cka_per_layer.html">CKA per layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/02_noise_profile.html">The robustness–sensitivity profile under noise</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="notebooks/06_reverb_probing.html">Reverb probing</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="notebooks/03_cross_architectures.html">Cross-architecture profiles</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/03_architectures_tradeoff.html">Across architectures: the tradeoff and the saturation spread</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="notebooks/04_cka_to_pesq.html">CKA to PESQ</a></li>
 
 
-<li class="toctree-l1"><a class="reference internal" href="notebooks/05_diffusion.html">Diffusion</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/04_reverberation_finetuning.html">Reverberation and dereverberation fine-tuning</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/05_origin_in_training.html">Origin of the profile in training</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/06_perceptual_quality.html">Representational change and perceptual quality</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/07_geometric_view.html">A geometric view: diffusion maps</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="notebooks/08_checks.html">Two checks: the CKA estimator and profile-guided freezing</a></li>
+
+
 
 
 </ul>
@@ -384,7 +455,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>SE-Probe: Where Does Speech Enhancement Adapt?</h1>
+    <h1>SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -398,12 +469,22 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="se-probe-where-does-speech-enhancement-adapt">
-<h1>SE-Probe: Where Does Speech Enhancement Adapt?<a class="headerlink" href="#se-probe-where-does-speech-enhancement-adapt" title="Link to this heading">#</a></h1>
-<p>📄 <strong>Paper:</strong> <a class="reference external" href="https://arxiv.org/abs/2512.00482">arXiv:2512.00482</a>  ·  💻 <strong>Code:</strong> <a class="github reference external" href="https://github.com/YairAmar/SE-Probe">YairAmar/SE-Probe</a></p>
-<p>Public companion code for <em>“Where Does Speech Enhancement Adapt? Probing Study Under Controlled Degradation”</em> (Amar, Ivry, Cohen, 2026). Speech enhancement networks are treated as black boxes: clean and degraded utterances are pushed through a frozen SE model, activations are extracted layer by layer, clean and degraded representations are compared by linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50) to identify the layers most sensitive to each condition. Diffusion map distances and downstream PESQ correlations cross check the picture from a different angle.</p>
-<p>The book renders the analysis end to end across MUSE, MP-SENet, and Demucs, using the precomputed CKA tables shipped under <code class="docutils literal notranslate"><span class="pre">results_demo/</span></code>. Two chapters (01 and 06) optionally re-run model inference when hardware is available; the published version skips those cells, and every figure is rebuilt from parquet.</p>
-<p>Each chapter opens with a short statement of what it shows. Reading top to bottom traces the same arc as the paper: the pipeline walkthrough in chapter 01 sets up the per-layer CKA heatmap in 02, the reverb probe in 06, the cross-architecture scatter in 03, the within-group correlation with PESQ in 04, and the diffusion view in 05.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="se-probe-probing-layer-wise-robustness-and-sensitivity-of-speech-enhancement-models">
+<h1>SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models<a class="headerlink" href="#se-probe-probing-layer-wise-robustness-and-sensitivity-of-speech-enhancement-models" title="Link to this heading">#</a></h1>
+<p>📄 <strong>Paper:</strong> <em>Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models Under Noise and Reverberation</em> (Amar, Ivry, Cohen; IEEE/ACM TASLP), preprint <a class="reference external" href="https://arxiv.org/abs/2512.00482">arXiv:2512.00482</a>  ·  💻 <strong>Code:</strong> <a class="github reference external" href="https://github.com/YairAmar/SE-Probe">YairAmar/SE-Probe</a>  ·  🎛️ <strong>Interactive demo (ICASSP 2026 Show &amp; Tell):</strong> <a class="reference external" href="https://yairamar.github.io/seint-show-web/">https://yairamar.github.io/seint-show-web/</a></p>
+<p>Public companion code for the paper. Speech enhancement networks are treated as black boxes: clean and degraded utterances are pushed through a frozen SE model, activations are extracted layer by layer, clean and degraded representations are compared by linear CKA, and the resulting curves are regressed against degradation severity (SNR or C50) to give each layer a robustness (intercept) and a sensitivity (slope). Diffusion-map distances and downstream quality correlations cross check the picture from a different angle.</p>
+<p>The eight chapters follow the paper in order. Every number the paper prints is recomputed next to the printed value from the small result tables shipped under <code class="docutils literal notranslate"><span class="pre">results_tables/</span></code> (each with its provenance in <code class="docutils literal notranslate"><span class="pre">results_tables/README.md</span></code>); nothing needs a GPU.</p>
+<ol class="arabic simple">
+<li><p><strong>Pipeline overview</strong> sets up one utterance end to end: degrade, extract, compare.</p></li>
+<li><p><strong>The profile under noise</strong> builds the (layer, SNR) heatmap, the per-layer linear fit that defines robustness <span class="math notranslate nohighlight">\(\alpha\)</span> and sensitivity <span class="math notranslate nohighlight">\(\beta\)</span>, its utterance × noise-type intervals, and shows the profile does not depend on which DEMAND recordings are used.</p></li>
+<li><p><strong>Across architectures</strong> repeats the probe on MP-SENet and Demucs, and scopes the robustness–sensitivity tradeoff with the saturation spread (Table I).</p></li>
+<li><p><strong>Reverberation and fine-tuning</strong> swaps noise for room impulse responses at controlled C50, then re-probes all three architectures after dereverberation fine-tuning, with their held-out quality.</p></li>
+<li><p><strong>Origin in training</strong> shows the profile is absent in an untrained network and forms epoch by epoch.</p></li>
+<li><p><strong>Perceptual quality</strong> relates representational change to PESQ, STOI, SI-SDR and DNSMOS, with the speaker as the sampling unit.</p></li>
+<li><p><strong>Geometric view</strong> gives the diffusion-map picture of the same activations, across SNR and across layers.</p></li>
+<li><p><strong>Checks</strong> swaps the CKA estimator and uses the profile to decide which blocks to fine-tune.</p></li>
+</ol>
+<p>Four chapters (the pipeline overview, reverberation, origin in training, and the checks) optionally re-run model inference when <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE</span></code> is set and hardware is available; the published version skips those cells and reads the shipped tables.</p>
 <p>Source code, issue tracker, and citation metadata at <a class="github reference external" href="https://github.com/YairAmar/SE-Probe">YairAmar/SE-Probe</a>.</p>
 <div class="toctree-wrapper compound">
 </div>
@@ -498,8 +579,8 @@ By Yair Amar, Amir Ivry, Israel Cohen
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

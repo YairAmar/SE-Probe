@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Pipeline overview &#8212; SE-Probe: Where Does Speech Enhancement Adapt?</title>
+    <title>Pipeline overview &#8212; SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</title>
   
   
   
@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
@@ -39,10 +39,10 @@
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
@@ -63,27 +63,34 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/01_pipeline_overview';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="CKA per layer" href="02_cka_per_layer.html" />
-    <link rel="prev" title="SE-Probe: Where Does Speech Enhancement Adapt?" href="../intro.html" />
+    <link rel="next" title="The robustness–sensitivity profile under noise" href="02_noise_profile.html" />
+    <link rel="prev" title="SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models" href="../intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -109,7 +116,51 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
     </header>
   
 
@@ -144,7 +195,7 @@
   
   
   
-    <p class="title logo__title">SE-Probe: Where Does Speech Enhancement Adapt?</p>
+    <p class="title logo__title">SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -160,7 +211,7 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../intro.html">
-                    SE-Probe: Where Does Speech Enhancement Adapt?
+                    SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models
                 </a>
             </li>
         </ul>
@@ -168,22 +219,46 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Pipeline overview</a></li>
 
 
-<li class="toctree-l1"><a class="reference internal" href="02_cka_per_layer.html">CKA per layer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_noise_profile.html">The robustness–sensitivity profile under noise</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="06_reverb_probing.html">Reverb probing</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="03_cross_architectures.html">Cross-architecture profiles</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_architectures_tradeoff.html">Across architectures: the tradeoff and the saturation spread</a></li>
 
 
 
-<li class="toctree-l1"><a class="reference internal" href="04_cka_to_pesq.html">CKA to PESQ</a></li>
 
 
-<li class="toctree-l1"><a class="reference internal" href="05_diffusion.html">Diffusion</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="04_reverberation_finetuning.html">Reverberation and dereverberation fine-tuning</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="05_origin_in_training.html">Origin of the profile in training</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="06_perceptual_quality.html">Representational change and perceptual quality</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="07_geometric_view.html">A geometric view: diffusion maps</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="08_checks.html">Two checks: the CKA estimator and profile-guided freezing</a></li>
+
+
 
 
 </ul>
@@ -394,7 +469,7 @@
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="visible nav section-nav flex-column">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Pipeline overview</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#one-utterance-one-snr-one-model">One utterance, one SNR, one model</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference">Optional: live inference</a></li>
@@ -415,17 +490,25 @@
 <p>A single utterance walked through the probing pipeline. The same clean signal is paired with a noisy counterpart at one SNR; both are passed through the frozen MUSE model; activations at one probed layer are extracted and time averaged; the resulting representation matrices are compared by linear CKA. The remaining chapters repeat this construction across the SNR sweep, all probed layers, the three architectures, and reverberation, but the geometry of a single comparison is easier to read in isolation.</p>
 <p>Runtime: under 60 seconds on CPU; faster with CUDA or MPS.</p>
 <p><img alt="Probing pipeline" src="../_images/pipeline_flow.png" /></p>
-<p><em>Activation-extraction pipeline (poster, Fig. 1). For each clean utterance <span class="math notranslate nohighlight">\(y\)</span> and its degraded counterpart <span class="math notranslate nohighlight">\(x_s\)</span> at level <span class="math notranslate nohighlight">\(s\)</span>, both signals are passed through the frozen SE model. The activations <span class="math notranslate nohighlight">\(\mathbf{A}^{(\ell)}\)</span> at probed layer <span class="math notranslate nohighlight">\(\ell\)</span> are time-averaged into representation matrices <span class="math notranslate nohighlight">\(\mathbf{H}^{(\ell)}\)</span>, and clean and degraded representations are compared by linear CKA.</em></p>
+<p><em>Activation-extraction pipeline, as drawn above. For each clean utterance <span class="math notranslate nohighlight">\(y\)</span> and its degraded counterpart <span class="math notranslate nohighlight">\(x_s\)</span> at level <span class="math notranslate nohighlight">\(s\)</span>, both signals are passed through the frozen SE model. The activations <span class="math notranslate nohighlight">\(\mathbf{A}^{(\ell)}\)</span> at probed layer <span class="math notranslate nohighlight">\(\ell\)</span> are time-averaged into representation matrices <span class="math notranslate nohighlight">\(\mathbf{H}^{(\ell)}\)</span>, and clean and degraded representations are compared by linear CKA.</em></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">REPO</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
-<span class="k">while</span> <span class="n">REPO</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;SE-Probe&quot;</span> <span class="ow">and</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">REPO</span><span class="p">:</span>
+<span class="k">while</span> <span class="n">REPO</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"SE-Probe"</span> <span class="ow">and</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">REPO</span><span class="p">:</span>
     <span class="n">REPO</span> <span class="o">=</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span>
 <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">REPO</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rel</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Repo-relative path for display (absolute only if outside the repo)."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.device</span><span class="w"> </span><span class="kn">import</span> <span class="n">device_info</span><span class="p">,</span> <span class="n">get_device</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_paper_rcparams</span>
@@ -437,14 +520,14 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="p">(</span><span class="s2">&quot;results_df&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">REPO</span> <span class="o">/</span> <span class="s2">&quot;results_df&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;results_demo&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using data from: </span><span class="si">{</span><span class="n">DATA_DIR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="p">(</span><span class="s2">"results_df"</span> <span class="k">if</span> <span class="p">(</span><span class="n">REPO</span> <span class="o">/</span> <span class="s2">"results_df"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"results_demo"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using data from: </span><span class="si">{</span><span class="n">_rel</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Detected device: cpu
-Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
+Using data from: results_demo
 </pre></div>
 </div>
 </div>
@@ -455,15 +538,15 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 <p>We pick a single clean utterance (<code class="docutils literal notranslate"><span class="pre">clean_idx</span></code>) and a single SNR for MUSE on the TBUS noise. The demo parquet ships precomputed CKA values; if <code class="docutils literal notranslate"><span class="pre">results_df/</span></code> is present the notebook silently uses the full table instead.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">muse_path</span> <span class="o">=</span> <span class="n">DATA_DIR</span> <span class="o">/</span> <span class="p">(</span><span class="s2">&quot;snr/cka_snr_muse.parquet&quot;</span> <span class="k">if</span> <span class="p">(</span><span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">&quot;snr&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cka_snr_muse_demo.parquet&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">muse_path</span> <span class="o">=</span> <span class="n">DATA_DIR</span> <span class="o">/</span> <span class="p">(</span><span class="s2">"snr/cka_snr_muse.parquet"</span> <span class="k">if</span> <span class="p">(</span><span class="n">DATA_DIR</span> <span class="o">/</span> <span class="s2">"snr"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"cka_snr_muse_demo.parquet"</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">muse_path</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;noise_name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;TBUS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"noise_name"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"TBUS"</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
 <span class="n">first</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">utt</span><span class="p">,</span> <span class="n">snr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">first</span><span class="p">[</span><span class="s2">&quot;clean_idx&quot;</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">first</span><span class="p">[</span><span class="s2">&quot;snr&quot;</span><span class="p">])</span>
-<span class="n">one</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;clean_idx&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">utt</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;snr&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">snr</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;layer&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;utterance clean_idx=</span><span class="si">{</span><span class="n">utt</span><span class="si">}</span><span class="s2">, SNR=</span><span class="si">{</span><span class="n">snr</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> dB, layers=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">one</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">one</span><span class="p">[[</span><span class="s2">&quot;layer&quot;</span><span class="p">,</span> <span class="s2">&quot;CKA&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">utt</span><span class="p">,</span> <span class="n">snr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">first</span><span class="p">[</span><span class="s2">"clean_idx"</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">first</span><span class="p">[</span><span class="s2">"snr"</span><span class="p">])</span>
+<span class="n">one</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s2">"clean_idx"</span><span class="p">]</span> <span class="o">==</span> <span class="n">utt</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"snr"</span><span class="p">]</span> <span class="o">==</span> <span class="n">snr</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"layer"</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"utterance clean_idx=</span><span class="si">{</span><span class="n">utt</span><span class="si">}</span><span class="s2">, SNR=</span><span class="si">{</span><span class="n">snr</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> dB, layers=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">one</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">one</span><span class="p">[[</span><span class="s2">"layer"</span><span class="p">,</span> <span class="s2">"CKA"</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -540,12 +623,12 @@ Using data from: /home/runner/work/SE-Probe/SE-Probe/results_demo
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">first_layer_cka</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">one</span><span class="p">[</span><span class="s2">&quot;CKA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">last_layer_cka</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">one</span><span class="p">[</span><span class="s2">&quot;CKA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">min_layer_cka</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">one</span><span class="p">[</span><span class="s2">&quot;CKA&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CKA at first probed layer: </span><span class="si">{</span><span class="n">first_layer_cka</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CKA at last probed layer:  </span><span class="si">{</span><span class="n">last_layer_cka</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CKA minimum across layers: </span><span class="si">{</span><span class="n">min_layer_cka</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">first_layer_cka</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">one</span><span class="p">[</span><span class="s2">"CKA"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">last_layer_cka</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">one</span><span class="p">[</span><span class="s2">"CKA"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">min_layer_cka</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">one</span><span class="p">[</span><span class="s2">"CKA"</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CKA at first probed layer: </span><span class="si">{</span><span class="n">first_layer_cka</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CKA at last probed layer:  </span><span class="si">{</span><span class="n">last_layer_cka</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CKA minimum across layers: </span><span class="si">{</span><span class="n">min_layer_cka</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -565,7 +648,7 @@ CKA minimum across layers: 0.0271
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SE_PROBE_RUN_INFERENCE&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SE_PROBE_RUN_INFERENCE"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.activation_extraction</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_muse_activation_extractor</span>
@@ -573,8 +656,8 @@ CKA minimum across layers: 0.0271
 
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">sr</span> <span class="o">=</span> <span class="mi">16000</span>
-    <span class="n">clean</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span>
-    <span class="n">noise</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span>
+    <span class="n">clean</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span>
     <span class="n">target_snr_db</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="n">sig_p</span> <span class="o">=</span> <span class="nb">float</span><span class="p">((</span><span class="n">clean</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
     <span class="n">noise_p</span> <span class="o">=</span> <span class="n">sig_p</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">target_snr_db</span> <span class="o">/</span> <span class="mi">10</span><span class="p">))</span>
@@ -586,14 +669,14 @@ CKA minimum across layers: 0.0271
 
     <span class="n">layer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">act_clean</span><span class="p">))</span>
     <span class="n">val</span> <span class="o">=</span> <span class="n">cka</span><span class="p">(</span><span class="n">act_clean</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="n">act_noisy</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Live CKA on synthetic clip (</span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Live CKA on synthetic clip (</span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SE_PROBE_RUN_INFERENCE not set — skipping live inference. Set it to &#39;1&#39; to enable.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"SE_PROBE_RUN_INFERENCE not set — skipping live inference. Set it to '1' to enable."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SE_PROBE_RUN_INFERENCE not set — skipping live inference. Set it to &#39;1&#39; to enable.
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SE_PROBE_RUN_INFERENCE not set — skipping live inference. Set it to '1' to enable.
 </pre></div>
 </div>
 </div>
@@ -636,15 +719,15 @@ CKA minimum across layers: 0.0271
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">SE-Probe: Where Does Speech Enhancement Adapt?</p>
+        <p class="prev-next-title">SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</p>
       </div>
     </a>
     <a class="right-next"
-       href="02_cka_per_layer.html"
+       href="02_noise_profile.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">CKA per layer</p>
+        <p class="prev-next-title">The robustness–sensitivity profile under noise</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -665,7 +748,7 @@ CKA minimum across layers: 0.0271
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Pipeline overview</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#one-utterance-one-snr-one-model">One utterance, one SNR, one model</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference">Optional: live inference</a></li>
@@ -718,8 +801,8 @@ By Yair Amar, Amir Ivry, Israel Cohen
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -1,0 +1,1273 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Reverberation and dereverberation fine-tuning &#8212; SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/04_reverberation_finetuning';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Origin of the profile in training" href="05_origin_in_training.html" />
+    <link rel="prev" title="Across architectures: the tradeoff and the saturation spread" href="03_architectures_tradeoff.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    SE-Probe: Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_pipeline_overview.html">Pipeline overview</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="02_noise_profile.html">The robustness–sensitivity profile under noise</a></li>
+
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="03_architectures_tradeoff.html">Across architectures: the tradeoff and the saturation spread</a></li>
+
+
+
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Reverberation and dereverberation fine-tuning</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="05_origin_in_training.html">Origin of the profile in training</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="06_perceptual_quality.html">Representational change and perceptual quality</a></li>
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="07_geometric_view.html">A geometric view: diffusion maps</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="08_checks.html">Two checks: the CKA estimator and profile-guided freezing</a></li>
+
+
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe/edit/main/./notebooks/04_reverberation_finetuning.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/YairAmar/SE-Probe/issues/new?title=Issue%20on%20page%20%2Fnotebooks/04_reverberation_finetuning.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/notebooks/04_reverberation_finetuning.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Reverberation and dereverberation fine-tuning</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Reverberation and dereverberation fine-tuning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-c50-axis">The C50 axis</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#held-out-dereverberation-quality-before-and-after-fine-tuning">Held-out dereverberation quality, before and after fine-tuning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#does-fine-tuning-reorganise-the-profile">Does fine-tuning reorganise the profile?</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-muse-profile-under-reverberation-with-bootstrap-intervals">The MUSE profile under reverberation, with bootstrap intervals</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-task-agreement-does-the-noise-profile-anticipate-the-reverberation-profile">Cross-task agreement: does the noise profile anticipate the reverberation profile?</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-recurrent-bottleneck-is-demucs-s-most-robust-layer-on-both-axes">The recurrent bottleneck is Demucs’s most robust layer, on both axes</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference-with-the-reverb-fine-tuned-muse">Optional: live inference with the reverb fine-tuned MUSE</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="reverberation-and-dereverberation-fine-tuning">
+<h1>Reverberation and dereverberation fine-tuning<a class="headerlink" href="#reverberation-and-dereverberation-fine-tuning" title="Link to this heading">#</a></h1>
+<p>The probing pipeline repeated on a second degradation axis, reverberation, and then on models adapted to that degradation. Three architectures are swept over C50 at their pretrained and their dereverberation-fine-tuned checkpoints, which answers two questions at once: what fine-tuning does to held-out quality, and what it does to the layer-wise profile. The chapter reproduces the held-out dereverberation scores of MP-SENet and Demucs before and after fine-tuning, the pre/post profile correlations, the fine-tuned MUSE profile under reverberation with bootstrap intervals (paper Fig. 6), the cross-task agreement between noise and reverberation profiles, and the Demucs bottleneck statistics. All numbers come from the small tables under <code class="docutils literal notranslate"><span class="pre">results_tables/</span></code> and <code class="docutils literal notranslate"><span class="pre">training/results/</span></code>; the multi-GB per-utterance parquets are not needed. A gated last section runs the reverb fine-tuned MUSE live.</p>
+<p>Runtime: under 2 minutes on any device (the 20,000-draw layer-resample intervals dominate); the optional live inference adds about 1 minute on CUDA, 5 minutes on MPS.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">REPO</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="k">while</span> <span class="n">REPO</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"SE-Probe"</span> <span class="ow">and</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">REPO</span><span class="p">:</span>
+    <span class="n">REPO</span> <span class="o">=</span> <span class="n">REPO</span><span class="o">.</span><span class="n">parent</span>
+<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">REPO</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rel</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Repo-relative path for display (absolute only if outside the repo)."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">REPO</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">p</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.device</span><span class="w"> </span><span class="kn">import</span> <span class="n">device_info</span><span class="p">,</span> <span class="n">get_device</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODEL_COLORS</span><span class="p">,</span> <span class="n">MODEL_LABELS</span><span class="p">,</span> <span class="n">apply_paper_rcparams</span>
+
+<span class="n">apply_paper_rcparams</span><span class="p">()</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">device_info</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">))</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="p">(</span><span class="s2">"results_df"</span> <span class="k">if</span> <span class="p">(</span><span class="n">REPO</span> <span class="o">/</span> <span class="s2">"results_df"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"results_demo"</span><span class="p">)</span>
+<span class="n">TABLES</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="s2">"results_tables"</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using data from: </span><span class="si">{</span><span class="n">_rel</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Paper tables from: </span><span class="si">{</span><span class="n">_rel</span><span class="p">(</span><span class="n">TABLES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Detected device: cpu
+Using data from: results_demo
+Paper tables from: results_tables
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-c50-axis">
+<h1>The C50 axis<a class="headerlink" href="#the-c50-axis" title="Link to this heading">#</a></h1>
+<p>C50 is the early-to-late energy ratio of the room impulse response in dB; higher is drier. The reverberation sweep uses 13 nominal target levels from −5 to 25 dB in 2.5 dB steps, a pool of 88 impulse responses from six rooms of the Aachen Impulse Response database (56 binaural and 32 phone recordings), and five RIR draws per utterance at each level. Per-layer lines are fitted against the nominal levels after averaging CKA across utterances per level, exactly as on the noise axis. The grid and the pool composition are the constants in <code class="docutils literal notranslate"><span class="pre">se_probe.layers</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.layers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIR_TEST_POOL_ROOM_COUNTS</span><span class="p">,</span> <span class="n">AIR_TEST_POOL_SIZE</span><span class="p">,</span> <span class="n">C50_GRID</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"C50 grid: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">C50_GRID</span><span class="p">)</span><span class="si">}</span><span class="s2"> levels, </span><span class="si">{</span><span class="n">C50_GRID</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">C50_GRID</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> dB"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AIR pool: </span><span class="si">{</span><span class="n">AIR_TEST_POOL_SIZE</span><span class="si">}</span><span class="s2"> RIRs over </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">AIR_TEST_POOL_ROOM_COUNTS</span><span class="p">)</span><span class="si">}</span><span class="s2"> rooms: </span><span class="si">{</span><span class="n">AIR_TEST_POOL_ROOM_COUNTS</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">C50_GRID</span><span class="p">)</span> <span class="o">==</span> <span class="mi">13</span> <span class="ow">and</span> <span class="n">C50_GRID</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">==</span> <span class="o">-</span><span class="mf">5.0</span> <span class="ow">and</span> <span class="n">C50_GRID</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">==</span> <span class="mf">25.0</span>
+<span class="k">assert</span> <span class="nb">sum</span><span class="p">(</span><span class="n">AIR_TEST_POOL_ROOM_COUNTS</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">==</span> <span class="n">AIR_TEST_POOL_SIZE</span> <span class="o">==</span> <span class="mi">88</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C50 grid: 13 levels, -5 to 25 dB
+AIR pool: 88 RIRs over 6 rooms: {'lecture': 32, 'meeting': 24, 'office': 18, 'corridor': 6, 'bathroom': 4, 'kitchen': 4}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="held-out-dereverberation-quality-before-and-after-fine-tuning">
+<h1>Held-out dereverberation quality, before and after fine-tuning<a class="headerlink" href="#held-out-dereverberation-quality-before-and-after-fine-tuning" title="Link to this heading">#</a></h1>
+<p>MP-SENet and Demucs were fine-tuned on RIR-Mega convolutive mixtures (schedules in <code class="docutils literal notranslate"><span class="pre">training/README.md</span></code>) and evaluated on a held-out set of 4,120 mixtures: 824 clean VoiceBank-DEMAND test utterances, each convolved with five draws from a pool of 202 held-out RIR-Mega impulse responses. The pretrained “before” rows were measured on exactly the same set. The MUSE fine-tune was evaluated on a <em>different</em> held-out set of the same size (824 utterances x five distinct RIRs of mean C50 12.0 dB), which is less adverse, so MUSE’s absolute values are not comparable with the other two rows; each architecture is read against its own pretrained arm.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">REPO</span> <span class="o">/</span> <span class="s2">"training/results/pretrained_reverb_eval.csv"</span><span class="p">)</span>
+<span class="n">mps</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">REPO</span> <span class="o">/</span> <span class="s2">"training/results/mpsenet_ft_test_eval_summary.csv"</span><span class="p">)</span>
+<span class="n">dem</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">REPO</span> <span class="o">/</span> <span class="s2">"training/results/demucs_ft_test_eval_summary.csv"</span><span class="p">)</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_row</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="p">(</span><span class="s2">"pesq"</span><span class="p">,</span> <span class="s2">"stoi"</span><span class="p">,</span> <span class="s2">"estoi"</span><span class="p">,</span> <span class="s2">"si_sdr_db"</span><span class="p">)):</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"system"</span><span class="p">:</span> <span class="n">system</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">src</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">}})</span>
+
+<span class="n">_row</span><span class="p">(</span><span class="s2">"reverberant input"</span><span class="p">,</span> <span class="n">pre</span><span class="p">[</span><span class="n">pre</span><span class="o">.</span><span class="n">system</span> <span class="o">==</span> <span class="s2">"reverberant_input"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">_row</span><span class="p">(</span><span class="s2">"MP-SENet pretrained (DNS)"</span><span class="p">,</span> <span class="n">pre</span><span class="p">[</span><span class="n">pre</span><span class="o">.</span><span class="n">system</span> <span class="o">==</span> <span class="s2">"mpsenet_pretrained"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">_row</span><span class="p">(</span><span class="s2">"MP-SENet fine-tuned (epoch 50)"</span><span class="p">,</span> <span class="n">mps</span><span class="p">[(</span><span class="n">mps</span><span class="o">.</span><span class="n">epoch</span> <span class="o">==</span> <span class="s2">"epoch_50"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mps</span><span class="o">.</span><span class="n">condition</span> <span class="o">==</span> <span class="s2">"enhanced"</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">_row</span><span class="p">(</span><span class="s2">"Demucs pretrained (DNS64)"</span><span class="p">,</span> <span class="n">pre</span><span class="p">[</span><span class="n">pre</span><span class="o">.</span><span class="n">system</span> <span class="o">==</span> <span class="s2">"demucs_pretrained"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">_row</span><span class="p">(</span><span class="s2">"Demucs fine-tuned (v2, epoch 57, lr 3e-4)"</span><span class="p">,</span> <span class="n">dem</span><span class="p">[(</span><span class="n">dem</span><span class="o">.</span><span class="n">checkpoint</span> <span class="o">==</span> <span class="s2">"v2_epoch_57"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dem</span><span class="o">.</span><span class="n">condition</span> <span class="o">==</span> <span class="s2">"enhanced"</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">_row</span><span class="p">(</span><span class="s2">"Demucs fine-tuned (parity, epoch 45, lr 1e-4)"</span><span class="p">,</span> <span class="n">dem</span><span class="p">[(</span><span class="n">dem</span><span class="o">.</span><span class="n">checkpoint</span> <span class="o">==</span> <span class="s2">"parity_epoch_45"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dem</span><span class="o">.</span><span class="n">condition</span> <span class="o">==</span> <span class="s2">"enhanced"</span><span class="p">)]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">_row</span><span class="p">(</span><span class="s2">"MUSE pretrained (same 202-RIR set, control only)"</span><span class="p">,</span> <span class="n">pre</span><span class="p">[</span><span class="n">pre</span><span class="o">.</span><span class="n">system</span> <span class="o">==</span> <span class="s2">"muse_pretrained"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">heldout</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"system"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">heldout</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+
+<span class="n">inp</span> <span class="o">=</span> <span class="n">heldout</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"reverberant input"</span><span class="p">]</span>
+<span class="n">mp_ft</span> <span class="o">=</span> <span class="n">heldout</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"MP-SENet fine-tuned (epoch 50)"</span><span class="p">]</span>
+<span class="n">dm_ft</span> <span class="o">=</span> <span class="n">heldout</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Demucs fine-tuned (v2, epoch 57, lr 3e-4)"</span><span class="p">]</span>
+<span class="n">dm_par</span> <span class="o">=</span> <span class="n">heldout</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Demucs fine-tuned (parity, epoch 45, lr 1e-4)"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"input PESQ </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">pesq</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper 1.658)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MP-SENet FT PESQ </span><span class="si">{</span><span class="n">mp_ft</span><span class="o">.</span><span class="n">pesq</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper 3.361), SI-SDR gain </span><span class="si">{</span><span class="n">mp_ft</span><span class="o">.</span><span class="n">si_sdr_db</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">inp</span><span class="o">.</span><span class="n">si_sdr_db</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2"> dB (paper +19.6)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Demucs v2 PESQ </span><span class="si">{</span><span class="n">dm_ft</span><span class="o">.</span><span class="n">pesq</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper 2.441), parity </span><span class="si">{</span><span class="n">dm_par</span><span class="o">.</span><span class="n">pesq</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper 2.339), SI-SDR gain </span><span class="si">{</span><span class="n">dm_ft</span><span class="o">.</span><span class="n">si_sdr_db</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">inp</span><span class="o">.</span><span class="n">si_sdr_db</span><span class="si">:</span><span class="s2">+.1f</span><span class="si">}</span><span class="s2"> dB (paper +13.9)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"pretrained PESQ: MP-SENet </span><span class="si">{</span><span class="n">heldout</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'MP-SENet pretrained (DNS)'</span><span class="p">]</span><span class="o">.</span><span class="n">pesq</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> (paper 1.69), Demucs </span><span class="si">{</span><span class="n">heldout</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'Demucs pretrained (DNS64)'</span><span class="p">]</span><span class="o">.</span><span class="n">pesq</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> (paper 1.73)"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">pesq</span> <span class="o">-</span> <span class="mf">1.658</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">mp_ft</span><span class="o">.</span><span class="n">pesq</span> <span class="o">-</span> <span class="mf">3.361</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">((</span><span class="n">mp_ft</span><span class="o">.</span><span class="n">si_sdr_db</span> <span class="o">-</span> <span class="n">inp</span><span class="o">.</span><span class="n">si_sdr_db</span><span class="p">)</span> <span class="o">-</span> <span class="mf">19.6</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.05</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dm_ft</span><span class="o">.</span><span class="n">pesq</span> <span class="o">-</span> <span class="mf">2.441</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dm_par</span><span class="o">.</span><span class="n">pesq</span> <span class="o">-</span> <span class="mf">2.339</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">((</span><span class="n">dm_ft</span><span class="o">.</span><span class="n">si_sdr_db</span> <span class="o">-</span> <span class="n">inp</span><span class="o">.</span><span class="n">si_sdr_db</span><span class="p">)</span> <span class="o">-</span> <span class="mf">13.9</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.05</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">heldout</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"MP-SENet pretrained (DNS)"</span><span class="p">]</span><span class="o">.</span><span class="n">pesq</span> <span class="o">-</span> <span class="mf">1.69</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">heldout</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"Demucs pretrained (DNS64)"</span><span class="p">]</span><span class="o">.</span><span class="n">pesq</span> <span class="o">-</span> <span class="mf">1.73</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+<span class="c1"># MUSE (different held-out set, from training/README.md): PESQ 2.17 -&gt; 3.02, STOI 0.834 -&gt; 0.944</span>
+<span class="n">muse_eval</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"PESQ"</span><span class="p">:</span> <span class="p">[</span><span class="mf">2.172</span><span class="p">,</span> <span class="mf">3.024</span><span class="p">],</span> <span class="s2">"STOI"</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.834</span><span class="p">,</span> <span class="mf">0.944</span><span class="p">]},</span>
+                         <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">"MUSE pretrained (824 x 5 RIRs, mean C50 12.0 dB)"</span><span class="p">,</span> <span class="s2">"MUSE fine-tuned (epoch 48)"</span><span class="p">])</span>
+<span class="n">display</span><span class="p">(</span><span class="n">muse_eval</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pesq</th>
+      <th>stoi</th>
+      <th>estoi</th>
+      <th>si_sdr_db</th>
+    </tr>
+    <tr>
+      <th>system</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>reverberant input</th>
+      <td>1.658</td>
+      <td>0.816</td>
+      <td>0.620</td>
+      <td>-10.130</td>
+    </tr>
+    <tr>
+      <th>MP-SENet pretrained (DNS)</th>
+      <td>1.693</td>
+      <td>0.802</td>
+      <td>0.595</td>
+      <td>-9.691</td>
+    </tr>
+    <tr>
+      <th>MP-SENet fine-tuned (epoch 50)</th>
+      <td>3.361</td>
+      <td>0.966</td>
+      <td>0.904</td>
+      <td>9.440</td>
+    </tr>
+    <tr>
+      <th>Demucs pretrained (DNS64)</th>
+      <td>1.729</td>
+      <td>0.800</td>
+      <td>0.624</td>
+      <td>-9.231</td>
+    </tr>
+    <tr>
+      <th>Demucs fine-tuned (v2, epoch 57, lr 3e-4)</th>
+      <td>2.441</td>
+      <td>0.918</td>
+      <td>0.799</td>
+      <td>3.770</td>
+    </tr>
+    <tr>
+      <th>Demucs fine-tuned (parity, epoch 45, lr 1e-4)</th>
+      <td>2.339</td>
+      <td>0.914</td>
+      <td>0.790</td>
+      <td>3.340</td>
+    </tr>
+    <tr>
+      <th>MUSE pretrained (same 202-RIR set, control only)</th>
+      <td>1.817</td>
+      <td>0.787</td>
+      <td>0.596</td>
+      <td>-10.034</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>input PESQ 1.658 (paper 1.658)
+MP-SENet FT PESQ 3.361 (paper 3.361), SI-SDR gain +19.6 dB (paper +19.6)
+Demucs v2 PESQ 2.441 (paper 2.441), parity 2.339 (paper 2.339), SI-SDR gain +13.9 dB (paper +13.9)
+pretrained PESQ: MP-SENet 1.69 (paper 1.69), Demucs 1.73 (paper 1.73)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>PESQ</th>
+      <th>STOI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>MUSE pretrained (824 x 5 RIRs, mean C50 12.0 dB)</th>
+      <td>2.172</td>
+      <td>0.834</td>
+    </tr>
+    <tr>
+      <th>MUSE fine-tuned (epoch 48)</th>
+      <td>3.024</td>
+      <td>0.944</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="does-fine-tuning-reorganise-the-profile">
+<h1>Does fine-tuning reorganise the profile?<a class="headerlink" href="#does-fine-tuning-reorganise-the-profile" title="Link to this heading">#</a></h1>
+<p>Each architecture was re-probed under reverberation at its pretrained and its dereverberation-fine-tuned checkpoint, over the same 88-RIR six-room AIR pool, 824 utterances and 13 target C50 levels, under one software stack (<code class="docutils literal notranslate"><span class="pre">results_tables/c50/c50_824_per_layer_supp.csv</span></code>, arms <code class="docutils literal notranslate"><span class="pre">*_pre</span></code> / <code class="docutils literal notranslate"><span class="pre">*_ft</span></code>). The paper reports that the per-layer slope profile before and after fine-tuning correlates at r = 0.91 for MUSE, 0.81 for MP-SENet and 0.98 for Demucs, the intercept profiles at 0.85, 0.84 and 0.90, with mean absolute changes of 0.0020, 0.0029 and 0.0015 in the slope: the magnitude moves more than the shape.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">finetune_shift</span>
+
+<span class="n">supp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"c50/c50_824_per_layer_supp.csv"</span><span class="p">)</span>
+<span class="n">PAPER_SHIFT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"muse"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.91</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.0020</span><span class="p">),</span> <span class="s2">"mpsenet"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.81</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">,</span> <span class="mf">0.0029</span><span class="p">),</span> <span class="s2">"demucs"</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.0015</span><span class="p">)}</span>
+<span class="n">shift_rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"muse"</span><span class="p">,</span> <span class="s2">"mpsenet"</span><span class="p">,</span> <span class="s2">"demucs"</span><span class="p">]:</span>
+    <span class="n">pre_t</span> <span class="o">=</span> <span class="n">supp</span><span class="p">[</span><span class="n">supp</span><span class="o">.</span><span class="n">arm</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_pre"</span><span class="p">]</span>
+    <span class="n">post_t</span> <span class="o">=</span> <span class="n">supp</span><span class="p">[</span><span class="n">supp</span><span class="o">.</span><span class="n">arm</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_ft"</span><span class="p">]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">finetune_shift</span><span class="p">(</span><span class="n">pre_t</span><span class="p">,</span> <span class="n">post_t</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="p">(</span><span class="s2">"beta"</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">,</span> <span class="s2">"A"</span><span class="p">))</span>
+    <span class="n">shift_rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"model"</span><span class="p">:</span> <span class="n">MODEL_LABELS</span><span class="p">[</span><span class="n">model</span><span class="p">],</span> <span class="s2">"n_layers"</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"n_layers"</span><span class="p">],</span>
+                       <span class="s2">"r(beta)"</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"beta_r"</span><span class="p">],</span> <span class="s2">"r(alpha)"</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"alpha_r"</span><span class="p">],</span>
+                       <span class="s2">"mean|d beta|"</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"beta_mean_abs_delta"</span><span class="p">],</span> <span class="s2">"mean|d alpha|"</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"alpha_mean_abs_delta"</span><span class="p">],</span>
+                       <span class="s2">"r(AUC)"</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"A_r"</span><span class="p">]})</span>
+    <span class="n">pb</span><span class="p">,</span> <span class="n">pa</span><span class="p">,</span> <span class="n">pd_</span> <span class="o">=</span> <span class="n">PAPER_SHIFT</span><span class="p">[</span><span class="n">model</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">MODEL_LABELS</span><span class="p">[</span><span class="n">model</span><span class="p">]</span><span class="si">:</span><span class="s2">9s</span><span class="si">}</span><span class="s2"> r(beta) </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">'beta_r'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper </span><span class="si">{</span><span class="n">pb</span><span class="si">}</span><span class="s2">), r(alpha) </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">'alpha_r'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (paper </span><span class="si">{</span><span class="n">pa</span><span class="si">}</span><span class="s2">), "</span>
+          <span class="sa">f</span><span class="s2">"mean|d beta| </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">'beta_mean_abs_delta'</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> (paper </span><span class="si">{</span><span class="n">pd_</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">"beta_r"</span><span class="p">]</span> <span class="o">-</span> <span class="n">pb</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">"alpha_r"</span><span class="p">]</span> <span class="o">-</span> <span class="n">pa</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">"beta_mean_abs_delta"</span><span class="p">]</span> <span class="o">-</span> <span class="n">pd_</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-4</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">shift_rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"model"</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MUSE      r(beta) 0.906 (paper 0.91), r(alpha) 0.854 (paper 0.85), mean|d beta| 0.0020 (paper 0.002)
+MP-SENet  r(beta) 0.809 (paper 0.81), r(alpha) 0.835 (paper 0.84), mean|d beta| 0.0029 (paper 0.0029)
+Demucs    r(beta) 0.976 (paper 0.98), r(alpha) 0.900 (paper 0.9), mean|d beta| 0.0015 (paper 0.0015)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>n_layers</th>
+      <th>r(beta)</th>
+      <th>r(alpha)</th>
+      <th>mean|d beta|</th>
+      <th>mean|d alpha|</th>
+      <th>r(AUC)</th>
+    </tr>
+    <tr>
+      <th>model</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>MUSE</th>
+      <td>24</td>
+      <td>0.9062</td>
+      <td>0.8539</td>
+      <td>0.0020</td>
+      <td>0.0658</td>
+      <td>0.7755</td>
+    </tr>
+    <tr>
+      <th>MP-SENet</th>
+      <td>8</td>
+      <td>0.8085</td>
+      <td>0.8354</td>
+      <td>0.0029</td>
+      <td>0.0628</td>
+      <td>0.8615</td>
+    </tr>
+    <tr>
+      <th>Demucs</th>
+      <td>11</td>
+      <td>0.9760</td>
+      <td>0.9001</td>
+      <td>0.0015</td>
+      <td>0.0589</td>
+      <td>0.8070</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.layers</span><span class="w"> </span><span class="kn">import</span> <span class="n">layout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">OKABE_ITO</span><span class="p">,</span> <span class="n">depth_axis</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">),</span> <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">"width_ratios"</span><span class="p">:</span> <span class="p">[</span><span class="mi">24</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">]})</span>
+<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">"muse"</span><span class="p">,</span> <span class="s2">"mpsenet"</span><span class="p">,</span> <span class="s2">"demucs"</span><span class="p">]):</span>
+    <span class="n">lay</span> <span class="o">=</span> <span class="n">layout</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">pre_t</span> <span class="o">=</span> <span class="n">supp</span><span class="p">[</span><span class="n">supp</span><span class="o">.</span><span class="n">arm</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_pre"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"depth"</span><span class="p">)</span>
+    <span class="n">post_t</span> <span class="o">=</span> <span class="n">supp</span><span class="p">[</span><span class="n">supp</span><span class="o">.</span><span class="n">arm</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_ft"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"depth"</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pre_t</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">"beta"</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">]):</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+        <span class="n">depth_axis</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">lay</span><span class="p">,</span> <span class="n">show_labels</span><span class="o">=</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pre_t</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"gray"</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"pretrained"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">post_t</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">OKABE_ITO</span><span class="p">[</span><span class="s2">"vermillion"</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"fine-tuned"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">MODEL_LABELS</span><span class="p">[</span><span class="n">model</span><span class="p">]</span><span class="si">}</span><span class="s2"> (C50 axis)"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\beta_\ell$ (CKA/dB)"</span> <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"beta"</span> <span class="k">else</span> <span class="sa">r</span><span class="s2">"$\alpha_\ell$ (CKA at 0 dB C50)"</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s2">"Per-layer profile before and after dereverberation fine-tuning (824 utterances, 88 AIR RIRs)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b7052c754e7dc75d86f097f327f9978dbf91e9afb9ff455fd63352b382638392.png" src="../_images/b7052c754e7dc75d86f097f327f9978dbf91e9afb9ff455fd63352b382638392.png" />
+</div>
+</div>
+</section>
+<section id="the-muse-profile-under-reverberation-with-bootstrap-intervals">
+<h1>The MUSE profile under reverberation, with bootstrap intervals<a class="headerlink" href="#the-muse-profile-under-reverberation-with-bootstrap-intervals" title="Link to this heading">#</a></h1>
+<p>The fine-tuned MUSE profile on the C50 axis, in the layout of the noise-axis profile figure. Bands are 95% percentile intervals from 1,000 whole-utterance resamples of the 824 probing utterances (<code class="docutils literal notranslate"><span class="pre">fig_v5_c50_824_ft_profiles_values.csv</span></code>, seed 20260806). Stars mark the encoder skip sources and triangles the decoder skip targets; under reverberation the network maximum of the slope falls at the encoder skip source rather than at a decoder junction.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">profile_panel_pair</span>
+
+<span class="n">prof</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"c50/fig_v5_c50_824_ft_profiles_values.csv"</span><span class="p">)</span>
+<span class="n">muse_c50</span> <span class="o">=</span> <span class="n">prof</span><span class="p">[</span><span class="n">prof</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">"muse"</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"depth"</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">muse_c50</span><span class="p">)</span> <span class="o">==</span> <span class="mi">24</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">profile_panel_pair</span><span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="n">muse_c50</span><span class="p">,</span> <span class="n">layout</span><span class="p">(</span><span class="s2">"muse"</span><span class="p">),</span> <span class="n">axis_tag</span><span class="o">=</span><span class="s2">"C50"</span><span class="p">,</span>
+                   <span class="n">beta_ci</span><span class="o">=</span><span class="p">(</span><span class="s2">"beta_lo"</span><span class="p">,</span> <span class="s2">"beta_hi"</span><span class="p">),</span> <span class="n">alpha_ci</span><span class="o">=</span><span class="p">(</span><span class="s2">"alpha_lo"</span><span class="p">,</span> <span class="s2">"alpha_hi"</span><span class="p">))</span>
+<span class="n">h</span><span class="p">,</span> <span class="n">lab</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">h</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">lab</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">peak</span> <span class="o">=</span> <span class="n">muse_c50</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">muse_c50</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"peak sensitivity at depth </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">peak</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">peak</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> layer </span><span class="si">{</span><span class="n">peak</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">, "</span>
+      <span class="sa">f</span><span class="s2">"beta = </span><span class="si">{</span><span class="n">peak</span><span class="o">.</span><span class="n">beta</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">; r(alpha, beta) = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">muse_c50</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span><span class="w"> </span><span class="n">muse_c50</span><span class="o">.</span><span class="n">beta</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2"> (paper -0.993)"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">muse_c50</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">muse_c50</span><span class="o">.</span><span class="n">beta</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.993</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>peak sensitivity at depth 7: encoder_level2 layer 3, beta = 0.0065; r(alpha, beta) = -0.993 (paper -0.993)
+</pre></div>
+</div>
+<img alt="../_images/9b7a8a0a148617b6dbfdec2eeb2d4b0972c1d2a4207fa588cd69aa166ea0d12c.png" src="../_images/9b7a8a0a148617b6dbfdec2eeb2d4b0972c1d2a4207fa588cd69aa166ea0d12c.png" />
+</div>
+</div>
+</section>
+<section id="cross-task-agreement-does-the-noise-profile-anticipate-the-reverberation-profile">
+<h1>Cross-task agreement: does the noise profile anticipate the reverberation profile?<a class="headerlink" href="#cross-task-agreement-does-the-noise-profile-anticipate-the-reverberation-profile" title="Link to this heading">#</a></h1>
+<p>Each architecture’s noise-axis profile (pretrained checkpoint, <code class="docutils literal notranslate"><span class="pre">results_tables/snr/fits_*_snr_jobB.csv</span></code>) is correlated with its own reverberation-axis profile (fine-tuned arm) across its layers. The 95% intervals resample <em>layers</em> with replacement (20,000 draws, seed 20260810), the appropriate unit for a question about profile shape. The paper quotes MUSE rank correlations of +0.837 [+0.580, +0.941] for sensitivity and +0.864 [+0.664, +0.957] for robustness, and MP-SENet +0.833 [+0.300, +1.000] for robustness; the interval endpoints depend on the resample draws (and on the discard rule for degenerate draws) at the third decimal.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">layer_resample_ci</span><span class="p">,</span> <span class="n">profile_agreement</span>
+
+<span class="n">PAPER_CROSS</span> <span class="o">=</span> <span class="p">{(</span><span class="s2">"muse"</span><span class="p">,</span> <span class="s2">"beta"</span><span class="p">):</span> <span class="p">(</span><span class="mf">0.837</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.580</span><span class="p">,</span> <span class="mf">0.941</span><span class="p">)),</span> <span class="p">(</span><span class="s2">"muse"</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">):</span> <span class="p">(</span><span class="mf">0.864</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.664</span><span class="p">,</span> <span class="mf">0.957</span><span class="p">)),</span>
+               <span class="p">(</span><span class="s2">"mpsenet"</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">):</span> <span class="p">(</span><span class="mf">0.833</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.300</span><span class="p">,</span> <span class="mf">1.000</span><span class="p">))}</span>
+<span class="n">cross_rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"muse"</span><span class="p">,</span> <span class="s2">"mpsenet"</span><span class="p">,</span> <span class="s2">"demucs"</span><span class="p">]:</span>
+    <span class="n">snr_fit</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"snr/fits_</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_snr_jobB.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"layer"</span><span class="p">)</span>
+    <span class="n">ft</span> <span class="o">=</span> <span class="n">supp</span><span class="p">[</span><span class="n">supp</span><span class="o">.</span><span class="n">arm</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_ft"</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"layer"</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">snr_fit</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"beta"</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">]:</span>
+        <span class="n">ag</span> <span class="o">=</span> <span class="n">profile_agreement</span><span class="p">(</span><span class="n">snr_fit</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">ft</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="n">ci</span> <span class="o">=</span> <span class="n">layer_resample_ci</span><span class="p">(</span><span class="n">snr_fit</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">ft</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">n_boot</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">20260810</span><span class="p">)</span>
+        <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">ci</span><span class="p">[</span><span class="s2">"spearman"</span><span class="p">]</span>
+        <span class="n">cross_rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"model"</span><span class="p">:</span> <span class="n">MODEL_LABELS</span><span class="p">[</span><span class="n">model</span><span class="p">],</span> <span class="s2">"profile"</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">:</span> <span class="n">ag</span><span class="p">[</span><span class="s2">"n"</span><span class="p">],</span>
+                           <span class="s2">"spearman"</span><span class="p">:</span> <span class="n">ag</span><span class="p">[</span><span class="s2">"spearman_rho"</span><span class="p">],</span> <span class="s2">"ci_lo"</span><span class="p">:</span> <span class="n">lo</span><span class="p">,</span> <span class="s2">"ci_hi"</span><span class="p">:</span> <span class="n">hi</span><span class="p">,</span> <span class="s2">"p"</span><span class="p">:</span> <span class="n">ag</span><span class="p">[</span><span class="s2">"spearman_p"</span><span class="p">],</span>
+                           <span class="s2">"pearson"</span><span class="p">:</span> <span class="n">ag</span><span class="p">[</span><span class="s2">"pearson_r"</span><span class="p">]})</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="ow">in</span> <span class="n">PAPER_CROSS</span><span class="p">:</span>
+            <span class="n">pr</span><span class="p">,</span> <span class="p">(</span><span class="n">plo</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span> <span class="o">=</span> <span class="n">PAPER_CROSS</span><span class="p">[(</span><span class="n">model</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">MODEL_LABELS</span><span class="p">[</span><span class="n">model</span><span class="p">]</span><span class="si">:</span><span class="s2">9s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">5s</span><span class="si">}</span><span class="s2"> rho = </span><span class="si">{</span><span class="n">ag</span><span class="p">[</span><span class="s1">'spearman_rho'</span><span class="p">]</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">lo</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">hi</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">]"</span>
+                  <span class="sa">f</span><span class="s2">"  (paper </span><span class="si">{</span><span class="n">pr</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">plo</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">phi</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">])"</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ag</span><span class="p">[</span><span class="s2">"spearman_rho"</span><span class="p">]</span> <span class="o">-</span> <span class="n">pr</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-3</span>
+<span class="n">cross</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cross_rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">"model"</span><span class="p">,</span> <span class="s2">"profile"</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">cross</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MUSE      beta  rho = +0.837 [+0.580, +0.941]  (paper +0.837 [+0.580, +0.941])
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MUSE      alpha rho = +0.864 [+0.658, +0.954]  (paper +0.864 [+0.664, +0.957])
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MP-SENet  alpha rho = +0.833 [+0.308, +1.000]  (paper +0.833 [+0.300, +1.000])
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>n</th>
+      <th>spearman</th>
+      <th>ci_lo</th>
+      <th>ci_hi</th>
+      <th>p</th>
+      <th>pearson</th>
+    </tr>
+    <tr>
+      <th>model</th>
+      <th>profile</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="2" valign="top">MUSE</th>
+      <th>beta</th>
+      <td>24</td>
+      <td>0.837</td>
+      <td>0.580</td>
+      <td>0.941</td>
+      <td>0.000</td>
+      <td>0.877</td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td>24</td>
+      <td>0.864</td>
+      <td>0.658</td>
+      <td>0.954</td>
+      <td>0.000</td>
+      <td>0.881</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">MP-SENet</th>
+      <th>beta</th>
+      <td>8</td>
+      <td>0.476</td>
+      <td>-0.524</td>
+      <td>1.000</td>
+      <td>0.233</td>
+      <td>0.676</td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td>8</td>
+      <td>0.833</td>
+      <td>0.308</td>
+      <td>1.000</td>
+      <td>0.010</td>
+      <td>0.776</td>
+    </tr>
+    <tr>
+      <th rowspan="2" valign="top">Demucs</th>
+      <th>beta</th>
+      <td>11</td>
+      <td>0.482</td>
+      <td>-0.211</td>
+      <td>0.916</td>
+      <td>0.133</td>
+      <td>0.435</td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td>11</td>
+      <td>0.518</td>
+      <td>-0.215</td>
+      <td>0.917</td>
+      <td>0.102</td>
+      <td>0.498</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Demucs is organised around its bottleneck rather than depth, so its whole-profile correlations are not significant; what carries across tasks for Demucs is one specific feature, examined next.</p>
+</section>
+<section id="the-recurrent-bottleneck-is-demucs-s-most-robust-layer-on-both-axes">
+<h1>The recurrent bottleneck is Demucs’s most robust layer, on both axes<a class="headerlink" href="#the-recurrent-bottleneck-is-demucs-s-most-robust-layer-on-both-axes" title="Link to this heading">#</a></h1>
+<p>The paper’s statement: under reverberation the LSTM bottleneck is the network maximum of the intercept, alpha = 0.8986 against 0.7444 for the runner-up encoder block, a gap of +0.154 [+0.151, +0.158]; it is the arg-max of alpha in 1,000 of 1,000 utterance bootstrap resamples and the arg-min of beta in 1,000 of 1,000. It replicates on the noise axis, alpha = 0.878 against 0.715 for the runner-up decoder block.</p>
+<p>What the shipped tables support. The point estimates are reproduced below from the per-arm fit tables: 0.8986 against 0.7444 and the +0.154 gap on the C50 axis, and 0.87754 against 0.71454 (<code class="docutils literal notranslate"><span class="pre">decoder.0</span></code>) on the noise axis. The paper’s alpha-gap interval [+0.151, +0.158] and its two 1,000/1,000 counts were computed from the per-utterance C50 parquet, which is not shipped, so they cannot be rebuilt here and are not asserted. What ships instead is a supplementary statistic on a different quantity, the normalised AUC of the CKA-vs-C50 curve (<code class="docutils literal notranslate"><span class="pre">demucs_bottleneck.csv</span></code>, seed 20260802): LSTM 0.9416 against 0.8564 for <code class="docutils literal notranslate"><span class="pre">encoder.3</span></code>, gap +0.0852 [+0.0832, +0.0873], arg-max in 1,000 of 1,000 utterance resamples. Those AUC figures are the shipped file’s numbers, not numbers from the paper.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"c50/per_layer_c50.csv"</span><span class="p">)</span>
+<span class="n">dm</span> <span class="o">=</span> <span class="n">pl</span><span class="p">[(</span><span class="n">pl</span><span class="o">.</span><span class="n">scale</span> <span class="o">==</span> <span class="mi">824</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="s2">"demucs"</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"depth"</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Paper numbers: the alpha point estimates and the +0.154 point gap (C50 axis), and the noise-axis pair.</span>
+<span class="n">dft</span> <span class="o">=</span> <span class="n">supp</span><span class="p">[</span><span class="n">supp</span><span class="o">.</span><span class="n">arm</span> <span class="o">==</span> <span class="s2">"demucs_ft"</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"layer"</span><span class="p">)</span>
+<span class="n">a_lstm</span><span class="p">,</span> <span class="n">a_run</span> <span class="o">=</span> <span class="n">dft</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"lstm"</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">],</span> <span class="n">dft</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"lstm"</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"C50 alpha (paper's numbers): LSTM </span><span class="si">{</span><span class="n">a_lstm</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> vs runner-up </span><span class="si">{</span><span class="n">dft</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'lstm'</span><span class="p">)</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">a_run</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">; "</span>
+      <span class="sa">f</span><span class="s2">"point gap </span><span class="si">{</span><span class="n">a_lstm</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a_run</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">   (paper 0.8986 vs 0.7444, +0.154)"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a_lstm</span> <span class="o">-</span> <span class="mf">0.8986</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a_run</span> <span class="o">-</span> <span class="mf">0.7444</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">((</span><span class="n">a_lstm</span> <span class="o">-</span> <span class="n">a_run</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.154</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"  the paper's gap interval [+0.151, +0.158] and its 1,000/1,000 arg-max / arg-min counts need the</span><span class="se">\n</span><span class="s2">"</span>
+      <span class="s2">"  per-utterance C50 parquet, which is not shipped: not reproduced here, not asserted."</span><span class="p">)</span>
+<span class="n">dsnr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"snr/fits_demucs_snr_jobB.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"layer"</span><span class="p">)</span>
+<span class="n">s_lstm</span><span class="p">,</span> <span class="n">s_run</span> <span class="o">=</span> <span class="n">dsnr</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">"lstm"</span><span class="p">,</span> <span class="s2">"alpha"</span><span class="p">],</span> <span class="n">dsnr</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">"lstm"</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SNR alpha (paper's numbers): LSTM </span><span class="si">{</span><span class="n">s_lstm</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> vs runner-up </span><span class="si">{</span><span class="n">dsnr</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">'lstm'</span><span class="p">)</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">s_run</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> "</span>
+      <span class="sa">f</span><span class="s2">"(paper 0.878 vs 0.715)"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">s_lstm</span> <span class="o">-</span> <span class="mf">0.878</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">s_run</span> <span class="o">-</span> <span class="mf">0.715</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+
+<span class="c1"># Shipped supplementary statistic (demucs_bottleneck.csv): normalised AUC, not a paper number.</span>
+<span class="n">bn</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">TABLES</span> <span class="o">/</span> <span class="s2">"c50/demucs_bottleneck.csv"</span><span class="p">)</span>
+<span class="n">bn824</span> <span class="o">=</span> <span class="n">bn</span><span class="p">[</span><span class="n">bn</span><span class="o">.</span><span class="n">scale</span> <span class="o">==</span> <span class="mi">824</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"normalised AUC (shipped supplementary statistic, demucs_bottleneck.csv, not in the paper): "</span>
+      <span class="sa">f</span><span class="s2">"LSTM </span><span class="si">{</span><span class="n">bn824</span><span class="o">.</span><span class="n">lstm_auc</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> vs runner-up </span><span class="si">{</span><span class="n">bn824</span><span class="o">.</span><span class="n">runner_up</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">bn824</span><span class="o">.</span><span class="n">runner_auc</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">; "</span>
+      <span class="sa">f</span><span class="s2">"gap </span><span class="si">{</span><span class="n">bn824</span><span class="o">.</span><span class="n">gap</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">bn824</span><span class="o">.</span><span class="n">gap_lo</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">bn824</span><span class="o">.</span><span class="n">gap_hi</span><span class="si">:</span><span class="s2">+.4f</span><span class="si">}</span><span class="s2">], P(peak = LSTM) = </span><span class="si">{</span><span class="n">bn824</span><span class="o">.</span><span class="n">p_peak_is_lstm</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bn824</span><span class="o">.</span><span class="n">gap</span> <span class="o">-</span> <span class="mf">0.0852</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bn824</span><span class="o">.</span><span class="n">gap_lo</span> <span class="o">-</span> <span class="mf">0.0832</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bn824</span><span class="o">.</span><span class="n">gap_hi</span> <span class="o">-</span> <span class="mf">0.0873</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">5e-4</span>
+<span class="k">assert</span> <span class="n">bn824</span><span class="o">.</span><span class="n">p_peak_is_lstm</span> <span class="o">==</span> <span class="mf">1.0</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dm</span><span class="p">))</span>
+<span class="n">depth_axis</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">layout</span><span class="p">(</span><span class="s2">"demucs"</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">auc_lo</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">auc_hi</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">MODEL_COLORS</span><span class="p">[</span><span class="s2">"demucs"</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">auc</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"^"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">MODEL_COLORS</span><span class="p">[</span><span class="s2">"demucs"</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"normalized AUC (C50 axis, 824 utts)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s2">"LSTM bottleneck"</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">auc</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span> <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mf">6.2</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">auc</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.06</span><span class="p">),</span> <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"normalized AUC"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Demucs: the recurrent bottleneck is the robustness maximum (shipped AUC statistic)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"lower left"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C50 alpha (paper's numbers): LSTM 0.8986 vs runner-up encoder.4 0.7444; point gap +0.154   (paper 0.8986 vs 0.7444, +0.154)
+  the paper's gap interval [+0.151, +0.158] and its 1,000/1,000 arg-max / arg-min counts need the
+  per-utterance C50 parquet, which is not shipped: not reproduced here, not asserted.
+SNR alpha (paper's numbers): LSTM 0.87754 vs runner-up decoder.0 0.71454 (paper 0.878 vs 0.715)
+normalised AUC (shipped supplementary statistic, demucs_bottleneck.csv, not in the paper): LSTM 0.9416 vs runner-up encoder.3 0.8564; gap +0.0852 [+0.0832, +0.0873], P(peak = LSTM) = 1.000
+</pre></div>
+</div>
+<img alt="../_images/6a7c845b3e005d04d249f54cdd772a4a6b4b8f00e7cf6eb25aa863f428d26194.png" src="../_images/6a7c845b3e005d04d249f54cdd772a4a6b4b8f00e7cf6eb25aa863f428d26194.png" />
+</div>
+</div>
+</section>
+<section id="optional-live-inference-with-the-reverb-fine-tuned-muse">
+<h1>Optional: live inference with the reverb fine-tuned MUSE<a class="headerlink" href="#optional-live-inference-with-the-reverb-fine-tuned-muse" title="Link to this heading">#</a></h1>
+<p>The cell below loads the epoch-48 fine-tuned checkpoint shipped via <code class="docutils literal notranslate"><span class="pre">scripts/setup.py</span></code> (HuggingFace <code class="docutils literal notranslate"><span class="pre">yairamr/SE-Probe-models</span></code>) and runs the probing pipeline on a single utterance. Training-from-scratch code lives under <code class="docutils literal notranslate"><span class="pre">training/</span></code>. Set <code class="docutils literal notranslate"><span class="pre">SE_PROBE_RUN_INFERENCE=1</span></code> to enable it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SE_PROBE_RUN_INFERENCE"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.activation_extraction</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_muse_activation_extractor_reverb</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">se_probe.cka</span><span class="w"> </span><span class="kn">import</span> <span class="n">cka</span>
+
+    <span class="c1"># scripts/setup.py downloads the reverb fine-tuned checkpoint to pretrained_models/muse/</span>
+    <span class="n">ckpt</span> <span class="o">=</span> <span class="n">REPO</span> <span class="o">/</span> <span class="s2">"pretrained_models/muse/muse_reverb_e48.pt"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ckpt</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="s2">"Reverb checkpoint not found. Run `python scripts/setup.py` to fetch it from HuggingFace."</span>
+        <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loading reverb FT MUSE from: </span><span class="si">{</span><span class="n">ckpt</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">extractor</span> <span class="o">=</span> <span class="n">load_muse_activation_extractor_reverb</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">DEVICE</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ckpt</span><span class="p">))</span>
+
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">sr</span> <span class="o">=</span> <span class="mi">16000</span>
+    <span class="n">clean</span> <span class="o">=</span> <span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span>
+    <span class="n">rir</span> <span class="o">=</span> <span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sr</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span>
+    <span class="n">rir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">rev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">clean</span><span class="p">,</span> <span class="n">rir</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"same"</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span>
+
+    <span class="n">act_clean</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">extractor</span><span class="p">(</span><span class="n">clean</span><span class="p">)</span>
+    <span class="n">act_rev</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">extractor</span><span class="p">(</span><span class="n">rev</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">act_clean</span><span class="p">))</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">cka</span><span class="p">(</span><span class="n">act_clean</span><span class="p">[</span><span class="n">layer</span><span class="p">],</span> <span class="n">act_rev</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Live CKA on synthetic reverb clip (</span><span class="si">{</span><span class="n">layer</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"SE_PROBE_RUN_INFERENCE not set — skipping live inference. Set it to '1' to enable."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>SE_PROBE_RUN_INFERENCE not set — skipping live inference. Set it to '1' to enable.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03_architectures_tradeoff.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Across architectures: the tradeoff and the saturation spread</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05_origin_in_training.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Origin of the profile in training</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Reverberation and dereverberation fine-tuning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-c50-axis">The C50 axis</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#held-out-dereverberation-quality-before-and-after-fine-tuning">Held-out dereverberation quality, before and after fine-tuning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#does-fine-tuning-reorganise-the-profile">Does fine-tuning reorganise the profile?</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-muse-profile-under-reverberation-with-bootstrap-intervals">The MUSE profile under reverberation, with bootstrap intervals</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-task-agreement-does-the-noise-profile-anticipate-the-reverberation-profile">Cross-task agreement: does the noise profile anticipate the reverberation profile?</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-recurrent-bottleneck-is-demucs-s-most-robust-layer-on-both-axes">The recurrent bottleneck is Demucs’s most robust layer, on both axes</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-live-inference-with-the-reverb-fine-tuned-muse">Optional: live inference with the reverb fine-tuned MUSE</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Yair Amar, Amir Ivry, Israel Cohen
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
